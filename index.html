@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-  <meta name="theme-color" content="#ffffff"/>
+  <meta name="theme-color" content="#e0f7fa">
   <meta name="baidu-site-verification" content="I4En6jbnXe" />
   <meta name="shenma-site-verification" content="b0e852576769d0d56a442bfd6227644e_1525273298"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/iview/2.13.1/styles/iview.css"/>
@@ -44,7 +44,7 @@
     <header class="nav-header">
       <div class="gy-nav-header" v-bind:class="{'gy-shadow-2': scrolled,'gy-hoverable': flag!='phone'}">
         <!-- 搜索框 -->
-        <div class="sear_wrap" @click.stop="" :style="{'border-color': Marchinelist[searchEngineindex].color}">
+        <div class="sear_wrap" @click.stop="" :style="{'border-color': Marchinelist[searchEngineindex].color,'border-width':border_width+'px'}">
           <div class="sear_marchine" @click="changeMarchine()">
             <Icon type="arrow-down-b"></Icon>
             <transition name="fade">
@@ -160,7 +160,7 @@
       </footer>
   </div>
 </body>
-<script src="js/index18_6_28.js"></script>
+<script src="js/index18_7_8.js"></script>
 <script>
   (function(){
       var bp = document.createElement('script');

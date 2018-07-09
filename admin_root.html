@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdui/0.4.1/css/mdui.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdui/0.4.1/js/mdui.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.7.0/vue-resource.min.js"></script>
+  <title>后台管理</title>
+</head>
+<body>
+  <div id="app" class="mdui-container">
+    <div class="mdui-card mdui-center" style="max-width: 600px;padding: 20px;">
+      <div class="mdui-textfield mdui-textfield-floating-label">
+        <label class="mdui-textfield-label">管理员账户</label>
+        <input class="mdui-textfield-input" type="text" v-model="adminname"/>
+      </div>
+      <div class="mdui-textfield mdui-textfield-floating-label">
+        <label class="mdui-textfield-label">管理员密码</label>
+        <input class="mdui-textfield-input" type="password" v-model="adminpassword"/>
+      </div>
+      <div class="mdui-textfield mdui-textfield-floating-label">
+        <label class="mdui-textfield-label">要删除的用户</label>
+        <input class="mdui-textfield-input" type="text" v-model="deleteuser"/>
+      </div>
+      <div class="mdui-color-pink-a200" style="margin-bottom: 15px;" v-if="mes">{{mes}}</div>
+      <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-pink-a200" @click="deleteyou">删除</button>
+    </div>
+  </div>
+</body>
+<script src="js/admin.js" charset="utf-8"></script>
+</html>

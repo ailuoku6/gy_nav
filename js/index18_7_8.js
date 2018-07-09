@@ -155,6 +155,7 @@ var allsite = new Vue({
     addpattern: /http/,
     color:'#7265e6',
     username:"未登录",
+    border_width:0.5,
   },
   methods: {
     handleScroll:function() {
@@ -287,6 +288,7 @@ var allsite = new Vue({
       for( var i=0;i<mobileAgents.length;i++){
         if(sUserAgent.indexOf(mobileAgents[i]) > -1){
             this.flag = "phone";
+            this.border_width = 1;
             break;
         }
       }
