@@ -7,11 +7,13 @@
   <meta name="theme-color" content="#e0f7fa">
   <meta name="baidu-site-verification" content="I4En6jbnXe" />
   <meta name="shenma-site-verification" content="b0e852576769d0d56a442bfd6227644e_1525273298"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/iview/2.13.1/styles/iview.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/iview/2.13.1/iview.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.7.0/vue-resource.min.js"></script>
-  <link rel="stylesheet" href="css/style18_6_28.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/muse-ui/dist/muse-ui.css">
+  <script src="https://unpkg.com/muse-ui/dist/muse-ui.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+  <link rel="stylesheet" href="https://cdn.bootcss.com/material-design-icons/3.0.1/iconfont/material-icons.css">
+  <link rel="stylesheet" href="css/style18_7_11.css"/>
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
   <style media="screen">
     #seacing_bar{
@@ -26,6 +28,7 @@
       align-items: center;
       width: 100%;
     }
+    input::-ms-clear, input::-ms-reveal{display: none;}
   </style>
   <script>
     var _hmt = _hmt || [];
@@ -46,17 +49,17 @@
         <!-- 搜索框 -->
         <div class="sear_wrap" @click.stop="" :style="{'border-color': Marchinelist[searchEngineindex].color,'border-width':border_width+'px'}">
           <div class="sear_marchine" @click="changeMarchine()">
-            <Icon type="arrow-down-b"></Icon>
-            <transition name="fade">
+            <mu-icon value="expand_more" size="15"></mu-icon>
+            <mu-expand-transition>
               <ul class="sug" id="sear_marchine_select" v-show="isShowSelect">
                 <a v-for="(marchinelist,index) in Marchinelist" @click="selectMarchine(index)" :class="{selected:searchEngineindex==index}">{{marchinelist.Marchine_name}}</a>
               </ul>
-            </transition>
+            </mu-expand-transition>
           </div>
           <div id="seacing_bar">
             <input type="text" id="input_bar" placeholder="搜你所想" v-model="keyword" @keyup.enter.prevent="baiduyixia" @keydown.down.prevent="selectDown" @keydown.up.prevent="selectUp" ref="input_area" autocomplete="off" @click="hidesug()" @input="requestData">
             <div style="display:  flex;align-items:  center;" v-if="keyword" @click="cleanKeyword()">
-              <Icon type="close-circled"></Icon>
+              <mu-icon value="cancel" size="15"></mu-icon>
             </div>
           </div>
           <div class="gy-button" id="seaching" @click="baiduyixia()" :style="{'background-color': Marchinelist[searchEngineindex].color}">{{button_value}}</div>
@@ -70,8 +73,8 @@
     <div class="gy-container gy-shadow-2" id="first_container">
       <div class="title" id="">常用站点</div>
       <div class="gy-divider gy-divider-coustom"></div>
-      <Row type="flex" justify="space-around" class="code-row-bg">
-        <i-col v-for="sitelist in comsitelist" :xs="8" :md="2" class="gy-cell">
+      <mu-row>
+        <div  v-for="sitelist in comsitelist" class="gy-cell">
           <li class="site gy-hoverable">
             <a v-bind:href="sitelist.url" target="_blank">
               <div>
@@ -80,70 +83,62 @@
               <span class="site-title">{{sitelist.site_name}}</span>
             </a>
           </li>
-        </i-col>
-      </Row>
+        </div>
+      </mu-row>
     </div>
 
       <div class="gy-container-full">
-        <Row :gutter="16" type="flex" justify="center" align="top">
-
-          <i-col v-for="(category,category_index) in categorylist" :xs="24" :sm="12" :md="8">
+        <mu-row gutter justify-content="center">
+          <mu-col span="12" sm="6" lg="4" v-for="(category,category_index) in categorylist">
             <div class="site-card gy-shadow-2">
               <div class="title" v-if="~edit">{{category.categoryname}}</div>
-              <div v-else>
-                <i-input v-model="category.categoryname" placeholder="输入分区名"></i-input>
-                <i-button type="error" size="small" @click="deleteCate(category_index)">删除分区</i-button>
-                <!-- <Icon type="plus-circled" size="25" color="#ff0000" class="add-button"@click="isAdd = !isAdd"></Icon> -->
-                <i-button type="primary" size="small" shape="circle" icon="plus-round" class="add-button" @click="category.isAdd = !category.isAdd"></i-button>
+              <div style="margin-bottom: -28px;" v-else>
+                <mu-text-field v-model="category.categoryname" placeholder="输入分区名" style="max-width: 50%;"></mu-text-field>
+                <mu-button color="error" small @click="deleteCate(category_index)">删除分区</mu-button>
+                <mu-button fab small color="red" @click="category.isAdd = !category.isAdd" style="width: 30px;height: 30px;bottom:-3px;margin-left:15px;">
+                  <mu-icon value="add"></mu-icon>
+                </mu-button>
               </div>
               <div class="gy-divider"></div>
               <div class="gy-list">
                 <li v-for="(sitelist,index) in category.sitelist" class="site-noicon gy-hoverable">
                   <div class="delete-button" v-show="edit" @click="deleteItem(category_index,index)">
-                      <Icon type="close-round" size="10" color="#ffffff"></Icon>
+                      <mu-icon value="clear" color="#ffffff" size="10"></mu-icon>
                   </div>
                   <a v-bind:href="sitelist.url" target="_blank">{{sitelist.site_name}}</a>
                 </li>
-                <!-- <li v-for="sitelist in category.sitelist" class="site-noicon gy-hoverable"><a v-bind:href="sitelist.url" target="_blank">{{sitelist.site_name}}</a></li> -->
               </div>
-              <transition name="bounce">
+              <mu-expand-transition>
                 <div class="add-form" v-if="category.isAdd&&edit">
-                  <i-input placeholder="输入网站名" v-model="inputSitename"></i-input>
-                  <i-input placeholder="输入网址" v-model="inputUrl"></i-input>
-                  <i-button type="primary" shape="circle" @click="addItem(category_index)" :disabled="(inputSitename == '')||(inputUrl == '')">添加</i-button>
+                  <mu-text-field v-model="inputSitename" placeholder="输入网站名" style="width:60%;"></mu-text-field>
+                  <mu-text-field v-model="inputUrl" placeholder="输入网址" style="width:60%;"></mu-text-field>
+                  <mu-button round color="success" @click="addItem(category_index)" :disabled="(inputSitename == '')||(inputUrl == '')">添加</mu-button>
                 </div>
-              </transition>
+              </mu-expand-transition>
             </div>
-          </i-col>
-          <i-col :xs="24" :sm="12" :md="8" v-show="edit">
+          </mu-col>
+          <mu-col span="12" sm="6" lg="4" v-show="edit">
             <div class="site-card gy-shadow-2"style="height: 120px;">
-              <div class="site-card-last"><i-button type="primary" size="large" shape="circle" icon="plus-round" @click="addCate"></i-button></div>
+              <div class="site-card-last">
+                <mu-button fab small color="blue" @click="addCate" style="width: 30px;height: 30px;">
+                  <mu-icon value="add"></mu-icon>
+                </mu-button>
+              </div>
             </div>
-          </i-col>
-        </Row>
+          </mu-col>
+        </mu-row>
       </div>
-
-      <a href="login.html" class="floatButton-wrap floatButton" style="bottom: 77px;">
-        <Avatar :style="{background: Marchinelist[searchEngineindex].color}">{{username}}</Avatar>
-      </a>
-
-      <div @click="editMode()" class="floatButton-wrap floatButton" :style="{'background-color': Marchinelist[searchEngineindex].color}">
-        <Icon type="ios-gear" size="25" color="#ffffff" v-if="~edit"></Icon>
-        <Icon type="checkmark-round" size="25" color="#ffffff" v-else></Icon>
-      </div>
-
-      <!-- <Modal
-        title="更新日志"
-        v-model="modal"
-        class-name="vertical-center-modal">
-        <p class="time">2018.3.11</p><p class="upitem">1.增加切换搜索引擎功能，你选择的搜索引擎记录在本地，如不能记录，请升级浏览器！</p>
-        <p class="upitem">2.搜索框输入网址可直接跳转，而不是搜索.(测试阶段)</p>
-        <p class="time">2018.3.12</p><p class="upitem">添加一些过渡动画,加入知乎搜索,百度文库搜索,csdn搜索</p>
-        <p class="time">2018.3.16</p><p class="upitem">修复了一个在edge浏览器上的bug</p>
-        <p class="time">2018.4.26</p><p class="upitem">重大消息！本站已备案成功！已迁回国内服务器，并加入用户自定义功能！用户登录后可在多个设备同步自己的自定义数据！我们的数据库经过单向加密，不用担心数据被泄露，甚至本站开发者自己也不能查看！</p>
-        <p class="time">2018.5.17</p><p class="upitem">正在上体育课,网站突然挂了,已修复</p><p class="upitem">优化搜索提示框逻辑</p>
-        <p class="time upitem">老用户如果遇到不能登陆的情况,请尝试清除浏览器缓存!</p>
-      </Modal> -->
+      <mu-tooltip placement="top" :content="username">
+        <mu-button fab class="floatButton-wrap floatButton" href="login.html" :style="{'background-color': Marchinelist[searchEngineindex].color,bottom: '77px',width:'30px',height:'30px'}">
+          <mu-avatar style="background-color: rgba(255, 255, 255, 0);" size="20">
+            {{username[0]}}
+          </mu-avatar>
+        </mu-button>
+      </mu-tooltip>
+      <mu-button fab @click="editMode()"  class="floatButton-wrap floatButton" :style="{'background-color': Marchinelist[searchEngineindex].color,width:'30px',height:'30px'}">
+        <mu-icon size="15" value="settings" color="#ffffff" v-if="~edit"></mu-icon>
+        <mu-icon size="15" value="check" color="#ffffff" v-else></mu-icon>
+      </mu-button>
       <div class="footer site-card  gy-shadow-2">
           友情链接:
         <div class="gy-list" style="padding:  0;">
@@ -158,9 +153,13 @@
           <div>网站备案号:桂ICP备18003700号</div>
         </div>
       </footer>
+      <mu-snackbar position="bottom" :open="bar_open">
+        操作成功!
+        <mu-button flat slot="action" color="secondary" @click="cancelDelete">撤销</mu-button>
+      </mu-snackbar>
   </div>
 </body>
-<script src="js/index18_7_8.js"></script>
+<script src="js/index18_7_11.js"></script>
 <script>
   (function(){
       var bp = document.createElement('script');

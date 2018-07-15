@@ -156,6 +156,9 @@ var allsite = new Vue({
     color:'#7265e6',
     username:"未登录",
     border_width:0.5,
+    bar_open:false,
+    timer:null,
+    tempCategorylist:null,
   },
   methods: {
     handleScroll:function() {
@@ -256,7 +259,7 @@ var allsite = new Vue({
     addItem:function (category_index){
       if (!(this.addpattern.test(this.inputUrl))) {
         this.inputUrl = "http://"+this.inputUrl;
-        console.log("没有https");
+        // console.log("没有https");
       }
       var newSite = {site_name:this.inputSitename,url:this.inputUrl};
       this.categorylist[category_index].sitelist.push(newSite);
@@ -276,7 +279,21 @@ var allsite = new Vue({
     },
     //删除分区
     deleteCate:function(category_index){
+      this.tempCategorylist = [].concat(this.categorylist);
       this.categorylist.splice(category_index,1);
+      this.openNormalSnackbar();
+    },
+    openNormalSnackbar:function(){
+      if (this.timer) clearTimeout(this.timer);
+      this.bar_open = true;
+      this.timer = setTimeout(() => {
+        this.bar_open = false;
+        this.tempCategorylist = null;
+      }, 3000);
+    },
+    cancelDelete:function () {
+      this.categorylist = [].concat(this.tempCategorylist);
+      this.bar_open = false;
     },
     editMode:function(){
       this.edit = ~this.edit;

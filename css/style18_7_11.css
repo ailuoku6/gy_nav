@@ -148,6 +148,7 @@ header{
   z-index: 100;
   height: 70px;
 }
+
 .sear_wrap{
   text-align: center;
   border: 0.5px solid #3f51b5;
@@ -172,13 +173,13 @@ header{
 
 .sear_marchine{
   display: inline-block;
-  margin-left: 6px;
-  margin-right: 3px;
+  margin-left: 3px;
+  margin-right: 0px;
 }
 
 #sear_marchine_select{
-  margin-left: -6px;
-  margin-top: 7px;
+  margin-left: -4px;
+  margin-top: 9px;
   width: 70px;
 }
 
@@ -195,6 +196,8 @@ header{
   background-color: #fafafa;
   /* border: 1px solid #3d8aff; */
   box-shadow: 0 2px 6px 0 rgba(63, 81, 181,0.5);
+  margin: 0;
+  padding: 0;
 }
 .sugindex{
   display:inline-flex;
@@ -238,6 +241,11 @@ header{
 }
 .gy-cell{
   text-align: center;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
+  display: block;
+  width: 33.33333333%;
 }
 .title{
   display: inline-block;
@@ -406,7 +414,6 @@ a:hover{
 
 /* 动画效果 */
 
-
 @media screen and (min-width:320px){
   #seacing_bar{
     width: 160px;
@@ -459,6 +466,9 @@ a:hover{
   .floatButton{
     right: 39px;
     bottom: 39px;
+  }
+  .gy-cell{
+    width: 10%;
   }
 }
 @media screen and (min-width:1024px){
