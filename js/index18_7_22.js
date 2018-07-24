@@ -159,6 +159,7 @@ var allsite = new Vue({
     bar_open:false,
     timer:null,
     tempCategorylist:null,
+    changeTime:0,
   },
   methods: {
     handleScroll:function() {
@@ -390,7 +391,9 @@ var allsite = new Vue({
       handler:function(newValue,oldValue){
         var data = JSON.stringify(newValue);
         localStorage.siteData1 = data;
-        this.postdata();
+        if (this.changeTime++) {
+          this.postdata();
+        }
       },
       deep:true,
     }
