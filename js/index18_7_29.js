@@ -1,7 +1,8 @@
+"use strict";
 
 var allsite = new Vue({
-  el:"#allsite",
-  data:{
+  el: "#allsite",
+  data: {
     //常用栏列表
     comsitelist:[
       {site_name:"百度",url:"https://www.baidu.com/",icon:"img/baidu.png"},
@@ -9,7 +10,7 @@ var allsite = new Vue({
       {site_name:"京东",url:"https://www.jd.com",icon:"img/jd.png"},
       {site_name:"知乎",url:"https://www.zhihu.com",icon:"img/zhihu.png"},
       {site_name:"谷歌翻译",url:"https://translate.google.cn/",icon:"img/googlefanyi.png"},
-      {site_name:"Github",url:"https://www.github.com",icon:"img/github.png"},
+      {site_name:"Github",url:"https://github.com/",icon:"img/github.png"},
       {site_name:"QQ邮箱",url:"https://mail.qq.com",icon:"img/qqmail.png"},
       {site_name:"新浪微博",url:"https://weibo.com",icon:"img/weibo.png"},
       {site_name:"网易云音乐",url:"https://music.163.com",icon:"img/wangyiyun.png"},
@@ -127,70 +128,71 @@ var allsite = new Vue({
       {site_name:"龙喵导航",url:"http://longmiao.wang/"},
       {site_name:"聚神铺导航",url:"http://jspoo.com/"},
       {site_name:"RioHsc",url:"https://riohsc.github.io/"},
+      {site_name:"电影网址导航",url:"https://www.dianyingdh.com"},
       {site_name:"友链申请",url:"http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=zK2loLmjp7n6jL294q_joQ"},
     ],
     formInline: {
-        user: '',
-        password: '',
-        comfpassword:''
+      user: '',
+      password: '',
+      comfpassword: ''
     },
-    button_value:"百度一下",
-    searApi:"",
-    searApi_weizui:"",
-    searchEngineindex:0,
-    scrolled:false,
-    myData:[],
-    keyword:'',
-    keysug:'',
-    sel_index:0,
-    isShow :false,
-    isShowSelect:false,
-    flag :"pc",
+    button_value: "百度一下",
+    searApi: "",
+    searApi_weizui: "",
+    searchEngineindex: 0,
+    scrolled: false,
+    myData: [],
+    keyword: '',
+    keysug: '',
+    sel_index: 0,
+    isShow: false,
+    isShowSelect: false,
+    flag: "pc",
     sugflag: false,
     edit: false,
-    inputSitename:"",
-    inputUrl:"",
-    apiUrl:'https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd',
+    inputSitename: "",
+    inputUrl: "",
+    apiUrl: 'https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd',
     pattern: /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:\/~\+#]*[\w\-\@?^=%&\/~\+#])?/,
     addpattern: /http/,
-    color:'#7265e6',
-    username:"未登录",
-    border_width:0.5,
-    bar_open:false,
-    timer:null,
-    tempCategorylist:null,
-    changeTime:0,
+    color: '#7265e6',
+    username: "未登录",
+    border_width: 0.5,
+    bar_open: false,
+    timer: null,
+    tempCategorylist: null,
+    changeTime: 0
   },
   methods: {
-    handleScroll:function() {
+    handleScroll: function handleScroll() {
       if ((window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop) == 0) {
         this.scrolled = false;
-      }else {
+      } else {
         this.scrolled = true;
       }
     },
-    hidesug:function(item){
+    hidesug: function hidesug(item) {
       if (item == "all") {
         this.isShow = false;
         this.isShowSelect = false;
-      }else if (item == "sug") {
+      } else if (item == "sug") {
         this.isShow = false;
-      }else {
+      } else {
         this.isShowSelect = false;
-        this.sugflag = ~ this.sugflag;
+        this.sugflag = ~this.sugflag;
         if (this.sugflag) {
           this.isShow = true;
-        }else {
+        } else {
           this.isShow = false;
         }
       }
     },
-    changeMarchine:function() {
-      this.isShowSelect = ~ this.isShowSelect;
-      this.isShow = false;//收起搜索建议
+    changeMarchine: function changeMarchine() {
+      this.isShowSelect = ~this.isShowSelect;
+      this.isShow = false; //收起搜索建议
     },
     //选择搜索引擎
-    selectMarchine:function(index){
+    selectMarchine: function selectMarchine(index) {
       this.button_value = this.Marchinelist[index].button_value;
       this.searApi = this.Marchinelist[index].searApi;
       this.searApi_weizui = this.Marchinelist[index].searApi_weizui;
@@ -199,51 +201,50 @@ var allsite = new Vue({
       localStorage.searchEngine = this.searchEngineindex;
     },
     //发起搜索
-    baiduyixia:function (){
+    baiduyixia: function baiduyixia() {
       this.isShowSelect = false;
-      if (this.pattern.test(this.keyword)) {//判断是否是网址
+      if (this.pattern.test(this.keyword)) {
+        //判断是否是网址
         if (this.flag == "phone") {
-          window.location.href=this.keyword;
-        }else {
+          window.location.href = this.keyword;
+        } else {
           window.open(this.keyword);
         }
-      }else {
+      } else {
         if (this.flag == "phone") {
-          window.location.href=this.searApi+this.keyword+this.searApi_weizui;
-        }else {
-          window.open(this.searApi+this.keyword+this.searApi_weizui);
+          window.location.href = this.searApi + this.keyword + this.searApi_weizui;
+        } else {
+          window.open(this.searApi + this.keyword + this.searApi_weizui);
         }
       }
     },
-    selectDown:function () {
-        this.sel_index = ++this.sel_index%this.myData.length;
-        this.keyword=this.myData[this.sel_index];
+    selectDown: function selectDown() {
+      this.sel_index = ++this.sel_index % this.myData.length;
+      this.keyword = this.myData[this.sel_index];
     },
-    selectUp:function () {
-        this.sel_index = (this.myData.length+(--this.sel_index))%this.myData.length;
-        this.keyword=this.myData[this.sel_index];
+    selectUp: function selectUp() {
+      this.sel_index = (this.myData.length + --this.sel_index) % this.myData.length;
+      this.keyword = this.myData[this.sel_index];
     },
     //请求搜索建议数据
-    requestData:function(){
-      this.$http.jsonp(this.apiUrl,{
-           wd:this.keyword
-      },{
-           jsonp:'cb'
+    requestData: function requestData() {
+      this.$http.jsonp(this.apiUrl, {
+        wd: this.keyword
+      }, {
+        jsonp: 'cb'
       }).then(function (res) {
-           this.myData=res.data.s;
-           this.myData.splice(0,0,this.keyword);
-      },function () {
-
-      });
+        this.myData = res.data.s;
+        this.myData.splice(0, 0, this.keyword);
+      }, function () {});
       this.sel_index = 0;
-      if (this.keyword.replace(/(^s*)|(s*$)/g, "")!="") {
+      if (this.keyword.replace(/(^s*)|(s*$)/g, "") != "") {
         this.isShow = true;
-      }else {
+      } else {
         this.isShow = false;
       }
     },
     //清空输入框
-    cleanKeyword:function(){
+    cleanKeyword: function cleanKeyword() {
       this.keyword = '';
       this.requestData();
       if (this.flag != "phone") {
@@ -251,128 +252,126 @@ var allsite = new Vue({
       }
     },
     //删除网站
-    deleteItem:function (category_index,index){
+    deleteItem: function deleteItem(category_index, index) {
       this.categorylist[category_index].sitelist.splice(index, 1);
-      if(this.categorylist[category_index].sitelist.length<1){
-        this.categorylist.splice(category_index,1);
+      if (this.categorylist[category_index].sitelist.length < 1) {
+        this.categorylist.splice(category_index, 1);
       }
     },
-    addItem:function (category_index){
-      if (!(this.addpattern.test(this.inputUrl))) {
-        this.inputUrl = "http://"+this.inputUrl;
+    addItem: function addItem(category_index) {
+      if (!this.addpattern.test(this.inputUrl)) {
+        this.inputUrl = "http://" + this.inputUrl;
         // console.log("没有https");
       }
-      var newSite = {site_name:this.inputSitename,url:this.inputUrl};
+      var newSite = { site_name: this.inputSitename, url: this.inputUrl };
       this.categorylist[category_index].sitelist.push(newSite);
       //清空两个输入框
-      this.inputSitename="";
-      this.inputUrl="";
+      this.inputSitename = "";
+      this.inputUrl = "";
       this.categorylist[category_index].isAdd = false;
     },
     //添加分区
-    addCate:function(){
+    addCate: function addCate() {
       var newCate = {
-        categoryname:"",
-        isAdd:false,
-        sitelist:[],
+        categoryname: "",
+        isAdd: false,
+        sitelist: []
       };
       this.categorylist.push(newCate);
     },
     //删除分区
-    deleteCate:function(category_index){
+    deleteCate: function deleteCate(category_index) {
       this.tempCategorylist = [].concat(this.categorylist);
-      this.categorylist.splice(category_index,1);
+      this.categorylist.splice(category_index, 1);
       this.openNormalSnackbar();
     },
-    openNormalSnackbar:function(){
+    openNormalSnackbar: function openNormalSnackbar() {
+      var _this = this;
+
       if (this.timer) clearTimeout(this.timer);
       this.bar_open = true;
-      this.timer = setTimeout(() => {
-        this.bar_open = false;
-        this.tempCategorylist = null;
+      this.timer = setTimeout(function () {
+        _this.bar_open = false;
+        _this.tempCategorylist = null;
       }, 3000);
     },
-    cancelDelete:function () {
+    cancelDelete: function cancelDelete() {
       this.categorylist = [].concat(this.tempCategorylist);
       this.bar_open = false;
     },
-    editMode:function(){
+    editMode: function editMode() {
       this.edit = ~this.edit;
     },
     //判断设备
-    judge:function(){
-      var sUserAgent=navigator.userAgent;
-      var mobileAgents=['Android','iPhone','Symbian','WindowsPhone','iPod','BlackBerry','Windows CE'];
-      for( var i=0;i<mobileAgents.length;i++){
-        if(sUserAgent.indexOf(mobileAgents[i]) > -1){
-            this.flag = "phone";
-            this.border_width = 1;
-            break;
+    judge: function judge() {
+      var sUserAgent = navigator.userAgent;
+      var mobileAgents = ['Android', 'iPhone', 'Symbian', 'WindowsPhone', 'iPod', 'BlackBerry', 'Windows CE'];
+      for (var i = 0; i < mobileAgents.length; i++) {
+        if (sUserAgent.indexOf(mobileAgents[i]) > -1) {
+          this.flag = "phone";
+          this.border_width = 1;
+          break;
         }
       }
     },
-    postdata:function(){//上载数据
-      this.$http.post("http://nav.ailuoku6.top/postdata.php",{
-        "name":this.formInline.user,
-        "passwoed":this.formInline.password,
-        "userdata":localStorage.siteData1,
-      },{emulateJSON:true})
-      .then(
-        (response)=>{
-          // console.log(response);
-          if (response.data.code==0) {
-            // console.log("succ");
-          }
-        },
-        (error)=>{
-          console.log(error);
+    postdata: function postdata() {
+      //上载数据
+      this.$http.post("http://nav.ailuoku6.top/postdata.php", {
+        "name": this.formInline.user,
+        "passwoed": this.formInline.password,
+        "userdata": localStorage.siteData1
+      }, { emulateJSON: true }).then(function (response) {
+        // console.log(response);
+        if (response.data.code == 0) {
+          // console.log("succ");
         }
-      );
+      }, function (error) {
+        console.log(error);
+      });
     },
-    sycndata:function(){//下载数据
-      this.$http.post("http://nav.ailuoku6.top/signin.php",{
-        "name":this.formInline.user,
-        "passwoed":this.formInline.password,
-      },{emulateJSON:true})
-      .then(
-        (response)=>{
-          // console.log(response);
-          if (response.data.code==0) {
-            // console.log("succ");
-            this.categorylist = JSON.parse(response.data.msg);
-          }else {
-            if (localStorage.siteData1) {
-              this.categorylist=JSON.parse(localStorage.siteData1);
-            }else {
-              localStorage.siteData1 = JSON.stringify(this.categorylist);
-            }
-          }
-        },
-        (error)=>{
-          console.log(error);
+    sycndata: function sycndata() {
+      var _this2 = this;
+
+      //下载数据
+      this.$http.post("http://nav.ailuoku6.top/signin.php", {
+        "name": this.formInline.user,
+        "passwoed": this.formInline.password
+      }, { emulateJSON: true }).then(function (response) {
+        // console.log(response);
+        if (response.data.code == 0) {
+          // console.log("succ");
+          _this2.categorylist = JSON.parse(response.data.msg);
+        } else {
           if (localStorage.siteData1) {
-            this.categorylist=JSON.parse(localStorage.siteData1);
-          }else {
-            localStorage.siteData1 = JSON.stringify(this.categorylist);
+            _this2.categorylist = JSON.parse(localStorage.siteData1);
+          } else {
+            localStorage.siteData1 = JSON.stringify(_this2.categorylist);
           }
         }
-      );
+      }, function (error) {
+        console.log(error);
+        if (localStorage.siteData1) {
+          _this2.categorylist = JSON.parse(localStorage.siteData1);
+        } else {
+          localStorage.siteData1 = JSON.stringify(_this2.categorylist);
+        }
+      });
     },
     //初始化
-    page_init:function(){
+    page_init: function page_init() {
       //初始化搜索建议框长度
       this.$refs.sug.style.width = this.$refs.input_area.clientWidth + 25 + 'px';
-      if (localStorage.searApi) {//初始化searapi
+      if (localStorage.searApi) {
+        //初始化searapi
         this.searApi = localStorage.searApi;
-      }
-      else {
+      } else {
         this.searApi = "https://www.baidu.com/s?wd=";
         localStorage.searApi = this.searApi;
       }
-      if (localStorage.searchEngine||localStorage.searchEngine==0) {//初始化searchEngine
+      if (localStorage.searchEngine || localStorage.searchEngine == 0) {
+        //初始化searchEngine
         this.searchEngineindex = localStorage.searchEngine;
-      }
-      else {
+      } else {
         this.searchEngineindex = 0;
         localStorage.searchEngine = this.searchEngineindex;
       }
@@ -384,26 +383,26 @@ var allsite = new Vue({
         }
       }
       this.sycndata();
-    },
+    }
   },
-  watch:{
-    'categorylist':{
-      handler:function(newValue,oldValue){
+  watch: {
+    'categorylist': {
+      handler: function handler(newValue, oldValue) {
         var data = JSON.stringify(newValue);
         localStorage.siteData1 = data;
         if (this.changeTime++) {
           this.postdata();
         }
       },
-      deep:true,
+      deep: true
     }
   },
-  mounted:function () {
+  mounted: function mounted() {
     window.addEventListener('scroll', this.handleScroll);
     this.judge();
     this.page_init();
   },
-  destroyed:function () {
-    window.removeEventListener('scroll', this.handleScroll)
-  },
+  destroyed: function destroyed() {
+    window.removeEventListener('scroll', this.handleScroll);
+  }
 });
