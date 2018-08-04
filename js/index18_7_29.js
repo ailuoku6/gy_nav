@@ -96,7 +96,7 @@ var allsite = new Vue({
         categoryname:"实用在线小工具",
         isAdd:false,
         sitelist:[
-          {site_name:"图片在线压缩",url:"http://optimizilla.com/zh/"},
+          {site_name:"图片在线压缩",url:"http://cut.ailuoku6.top/"},
           {site_name:"图片无损放大",url:"http://waifu2x.udp.jp/"},
           {site_name:"草料二维码",url:"https://cli.im/"},
           {site_name:"PS网页版",url:"http://www.uupoop.com/"},
