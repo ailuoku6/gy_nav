@@ -154,12 +154,15 @@ header{
   border: 0.5px solid #3f51b5;
   outline: 0;
   background-color: #fff;
+  /* display: flex;
+  align-items: center; */
 }
 #seacing_bar{
   display: inline-flex;
   flex-wrap: nowrap;
   width: 120px;
   height: 32px;
+  margin-bottom: -12.5px;
 }
 
 #input_bar{
