@@ -5,61 +5,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="theme-color" content="#03a9f4">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/iview/2.13.1/styles/iview.css"/>
   <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/iview/2.13.1/iview.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.7.0/vue-resource.min.js"></script>
+  <link rel="stylesheet" href="css/muse-ui.css">
+  <script src="js/muse-ui.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+  <link rel="stylesheet" href="https://cdn.bootcss.com/material-design-icons/3.0.1/iconfont/material-icons.css">
   <link rel="stylesheet" href="css/login.css">
   <title>登陆/注册</title>
 </head>
 <body>
   <div id="app">
-    <Card :bordered="false" style="width:350px;text-align:center;" v-if="loged">
-      <p slot="title">
-        Hello {{formInline.user}}
-      </p>
-      <Avatar :style="{background: color}" size="large">{{formInline.user}}</Avatar></br>
-      <div>
-        <i-button type="primary" style="margin-top:16px;"><a href="http://nav.ailuoku6.top" style="color:#ffffff;">返回</a></i-button>
-        <i-button style="margin-top:16px;" @click="logout">登出</i-button>
+    <mu-card style="width:350px;" v-if="loged">
+      <mu-card-title title="Hello!" :sub-title="formInline.user"></mu-card-title>
+      <mu-divider></mu-divider>
+      <div style="display:flex;justify-content:center;margin-top: 20px;">
+        <mu-avatar style="background-color: #02a9f3;" size="60">
+          {{formInline.user[0]}}
+        </mu-avatar>
       </div>
-      <!-- <i-button type="primary" style="margin-top:16px;"><a href="index.html" style="color:#ffffff;">返回</a></i-button></br>
-      <i-button style="margin-top:16px;" @click="logout">登出</i-button> -->
-    </Card>
-    <Card :bordered="false" style="width:350px" v-else>
-        <p slot="title">
-          <i-switch v-model="signup" size="large" @on-change="stateChange">
-              <span slot="open">注册</span>
-              <span slot="close">登陆</span>
-          </i-switch>
-        </p>
-        <i-form ref="formInline" :model="formInline" :rules="ruleInline" inline>
-            <FormItem prop="user">
-                <i-input type="text" v-model="formInline.user" placeholder="请输入用户名">
-                    <Icon type="ios-person-outline" slot="prepend"></Icon>
-                </i-input>
-            </FormItem>
-            <FormItem prop="password">
-                <i-input type="password" v-model="formInline.password" placeholder="请输入密码">
-                    <Icon type="ios-locked-outline" slot="prepend"></Icon>
-                </i-input>
-            </FormItem>
-            <FormItem prop="password" v-show="signup">
-                <i-input type="password" v-model="formInline.comfpassword" placeholder="请确认密码">
-                    <Icon type="ios-locked-outline" slot="prepend"></Icon>
-                </i-input>
-                <div v-show="(formInline.password!=formInline.comfpassword)&&formInline.comfpassword" style="color: #75723d;margin-bottom: 6px;font-size: 12px;">两次密码不一致</div>
-                <div v-show="formInline.user.length>9" style="color: #75723d;margin-bottom: 6px;font-size: 10px;">用户名长度应少于9个字符(字母、数字、中文、符号可自由组合)</div>
-            </FormItem>
-            <div v-show="err_tip" style="color: #75723d;margin-bottom: 6px;font-size: 12px;">{{err_tip}}</div>
-            <FormItem>
-                <i-button type="primary" @click="login()" :disabled="(formInline.user=='')||(formInline.password=='')" v-if="!signup">登陆</i-button>
-                <i-button type="primary" @click="logup()" :disabled="(formInline.password!=formInline.comfpassword)||formInline.password==''||formInline.user.length>9" v-else>注册</i-button>
-            </FormItem>
-        </i-form>
-    </Card>
+      <mu-card-actions  style="display:flex;justify-content:center;">
+        <mu-button color="primary" href="http://nav.ailuoku6.top">返回</mu-button>
+        <mu-button @click="logout()">登出</mu-button>
+      </mu-card-actions>
+    </mu-card>
+
+    <mu-card style="width: 98%; max-width: 475px; margin: 0 auto;" v-else>
+      <mu-flex class="select-control-row" style="margin: 15px;">
+        <mu-switch v-model="signup" :label="signup?'注册':'登陆'"></mu-switch>
+      </mu-flex>
+      <mu-divider></mu-divider>
+      <mu-form ref="form" :model="formInline" style="width: 93%;margin: 15px;">
+        <mu-form-item label="用户名" prop="username">
+          <mu-text-field v-model="formInline.user" prop="username"></mu-text-field>
+        </mu-form-item>
+        <mu-form-item label="密码" prop="password">
+            <mu-text-field type="password" v-model="formInline.password" prop="password"></mu-text-field>
+        </mu-form-item>
+        <mu-form-item label="确认密码" prop="password"  v-show="signup">
+            <mu-text-field type="password" v-model="formInline.comfpassword" prop="password"></mu-text-field>
+            <div v-show="(formInline.password!=formInline.comfpassword)&&formInline.comfpassword" style="color: #75723d;margin: 12px 0px -8px 5px;font-size: 12px;">两次密码不一致</div>
+            <div v-show="formInline.user.length>9" style="color: #75723d;margin: 12px 0px -8px 5px;font-size: 10px;">用户名长度应少于9个字符(字母、数字、中文、符号可自由组合)</div>
+        </mu-form-item>
+        <div v-show="err_tip" style="color: #75723d;margin: 12px 0px -8px 5px;font-size: 12px;">{{err_tip}}</div>
+        <mu-form-item>
+          <mu-button color="primary" @click="login()" :disabled="(formInline.user=='')||(formInline.password=='')" v-if="!signup">登陆</mu-button>
+          <mu-button color="primary" @click="logup()" :disabled="(formInline.password!=formInline.comfpassword)||formInline.password==''||formInline.user.length>9||formInline.user.length==0" v-else>注册</mu-button>
+        </mu-form-item>
+      </mu-form>
+    </mu-card>
   </div>
 </body>
-<script src="js/login_7_27.js" charset="utf-8"></script>
+<script src="js/login_8_29.js" charset="utf-8"></script>
 </html>

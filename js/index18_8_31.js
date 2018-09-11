@@ -130,6 +130,7 @@ var allsite = new Vue({
       {site_name:"RioHsc",url:"https://riohsc.github.io/"},
       {site_name:"电影网址导航",url:"https://www.dianyingdh.com"},
       {site_name:"野创导航",url:"http://www.yechuang.top/"},
+      {site_name:"安逸导航",url:"https://anyi.life/"},
       {site_name:"友链申请",url:"http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=zK2loLmjp7n6jL294q_joQ"},
     ],
     formInline: {
