@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="css/muse-ui.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
   <link rel="stylesheet" href="https://cdn.bootcss.com/material-design-icons/3.0.1/iconfont/material-icons.css">
-  <link rel="stylesheet" href="css/style18_8_15_2.css"/>
+  <link rel="stylesheet" href="css/style18_9_27.css"/>
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
   <style media="screen">
     #seacing_bar{
@@ -49,7 +49,7 @@
             <mu-icon value="expand_more" size="15"></mu-icon>
             <mu-expand-transition>
               <ul class="sug" id="sear_marchine_select" v-show="isShowSelect">
-                <a v-for="(marchinelist,index) in Marchinelist" @click="selectMarchine(index)" :class="{selected:searchEngineindex==index}">{{marchinelist.Marchine_name}}</a>
+                <a v-for="(marchinelist,index) in Marchinelist" @click="selectMarchine(index)" :class="{selected:searchEngineindex==index}" class="sug_list">{{marchinelist.Marchine_name}}</a>
               </ul>
             </mu-expand-transition>
           </div>
@@ -61,7 +61,7 @@
           </div>
           <div class="gy-button" id="seaching" @click="baiduyixia()" :style="{'background-color': Marchinelist[searchEngineindex].color}">{{button_value}}</div>
           <ul class="sug" v-show="isShow" ref="sug">
-            <a v-for="(value,index) in myData" v-show="index!=0" :class="{selected:index==sel_index}" v-bind:href="[searApi+value+searApi_weizui]" target="_blank"><div class="sugindex" :style="{'background-color': (index>3) ? '#afaea0' : '#3b4042'}">{{index}}</div>{{value}}</a>
+            <a v-for="(value,index) in myData" v-show="index!=0" :class="{selected:index==sel_index}" v-bind:href="[searApi+value+searApi_weizui]" target="_blank" class="sug_plus"><div class="sugindex" :style="{'background-color': (index>3) ? '#afaea0' : '#3b4042'}">{{index}}</div>{{value}}</a>
           </ul>
         </div>
       </div>
@@ -136,7 +136,7 @@
         <mu-icon size="15" value="settings" color="#ffffff" v-if="~edit"></mu-icon>
         <mu-icon size="15" value="check" color="#ffffff" v-else></mu-icon>
       </mu-button>
-      <div class="footer site-card  gy-shadow-2">
+      <div class="footer gy-shadow-2">
           友情链接:
         <div class="gy-list" style="padding:  0;">
           <li v-for="(sitelist,index) in friendlink" class="site-noicon gy-hoverable" style="padding: 2px 5px;">
