@@ -38,6 +38,10 @@ var app = new Vue({
         console.log(error);
       });
     },
+    onEnterlogin: function onEnterlogin() {
+      if (this.signup||this.formInline.user===''||this.formInline.password==='') return;
+      this.login();
+    },
     logup: function logup() {
       var _this2 = this;
 
@@ -59,6 +63,10 @@ var app = new Vue({
       }, function (error) {
         console.log(error);
       });
+    },
+    onEnterlogup:function onEnterlogup() {
+      if (!this.signup||this.formInline.user===''||this.formInline.password===''||this.formInline.password!=this.formInline.comfpassword||this.formInline.user.length>9) return;
+      this.logup();
     },
     logout: function logout() {
       this.loged = false;

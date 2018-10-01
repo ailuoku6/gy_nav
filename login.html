@@ -41,10 +41,10 @@
           <mu-text-field v-model="formInline.user" prop="username"></mu-text-field>
         </mu-form-item>
         <mu-form-item label="密码" prop="password">
-            <mu-text-field type="password" v-model="formInline.password" prop="password"></mu-text-field>
+            <mu-text-field type="password" v-model="formInline.password" prop="password" @keyup.enter="onEnterlogin()"></mu-text-field>
         </mu-form-item>
         <mu-form-item label="确认密码" prop="password"  v-show="signup">
-            <mu-text-field type="password" v-model="formInline.comfpassword" prop="password"></mu-text-field>
+            <mu-text-field type="password" v-model="formInline.comfpassword" prop="password" @keyup.enter="onEnterlogup()"></mu-text-field>
             <div v-show="(formInline.password!=formInline.comfpassword)&&formInline.comfpassword" style="color: #75723d;margin: 12px 0px -8px 5px;font-size: 12px;">两次密码不一致</div>
             <div v-show="formInline.user.length>9" style="color: #75723d;margin: 12px 0px -8px 5px;font-size: 10px;">用户名长度应少于9个字符(字母、数字、中文、符号可自由组合)</div>
         </mu-form-item>
@@ -57,5 +57,5 @@
     </mu-card>
   </div>
 </body>
-<script src="js/login_8_29.js" charset="utf-8"></script>
+<script src="js/login_10_1.js" charset="utf-8"></script>
 </html>
