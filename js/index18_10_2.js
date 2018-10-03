@@ -126,7 +126,7 @@ var allsite = new Vue({
       {site_name:"爱达导航",url:"https://ada97.com/"},
       {site_name:"小呆导航",url:"http://webjike.com/"},
       {site_name:"悠悠导航",url:"https://uu456.cn/"},
-      {site_name:"龙喵导航",url:"http://longmiao.wang/"},
+      {site_name:"龙喵导航",url:"http://ailongmiao.com/"},
       {site_name:"聚神铺导航",url:"http://jspoo.com/"},
       {site_name:"RioHsc",url:"https://riohsc.github.io/"},
       {site_name:"电影网址导航",url:"https://www.dianyingdh.com"},
