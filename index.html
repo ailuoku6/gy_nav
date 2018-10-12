@@ -114,15 +114,17 @@
               </mu-expand-transition>
             </div>
           </mu-col>
-          <mu-col span="12" sm="6" lg="4" v-show="edit">
-            <div class="site-card gy-shadow-2" style="height: 120px;">
-              <div class="site-card-last">
-                <mu-button fab small color="blue" @click="addCate" style="width: 30px;height: 30px;">
-                  <mu-icon value="add"></mu-icon>
-                </mu-button>
+          <mu-expand-transition>
+            <mu-col span="12" sm="6" lg="4" v-show="edit">
+              <div class="site-card gy-shadow-2" style="height: 120px;">
+                <div class="site-card-last">
+                  <mu-button fab small color="blue" @click="addCate" style="width: 30px;height: 30px;">
+                    <mu-icon value="add"></mu-icon>
+                  </mu-button>
+                </div>
               </div>
-            </div>
-          </mu-col>
+            </mu-col>
+          </mu-expand-transition>
         </mu-row>
       </div>
       <mu-tooltip placement="top" :content="username">
