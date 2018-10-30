@@ -156,6 +156,8 @@ var allsite = new Vue({
     inputSitename: "",
     inputUrl: "",
     apiUrl: 'https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd',
+    sycndataApi:"signin.php",
+    postdataApi:"postdata.php",
     pattern: /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:\/~\+#]*[\w\-\@?^=%&\/~\+#])?/,
     addpattern: /http/,
     color: '#7265e6',
@@ -319,7 +321,7 @@ var allsite = new Vue({
     },
     postdata: function postdata() {
       //上载数据
-      this.$http.post("http://nav.ailuoku6.top/postdata.php", {
+      this.$http.post(this.postdataApi, {
         "name": this.formInline.user,
         "passwoed": this.formInline.password,
         "userdata": localStorage.siteData1
@@ -336,7 +338,7 @@ var allsite = new Vue({
       var _this2 = this;
 
       //下载数据
-      this.$http.post("http://nav.ailuoku6.top/signin.php", {
+      this.$http.post(_this2.sycndataApi, {
         "name": this.formInline.user,
         "passwoed": this.formInline.password
       }, { emulateJSON: true }).then(function (response) {

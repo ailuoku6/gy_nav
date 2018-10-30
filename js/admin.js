@@ -5,10 +5,11 @@ var app = new Vue({
     adminpassword:"",
     deleteuser:"",
     mes:"",
+    api:"adminMan.php",
   },
   methods:{
     deleteyou:function(){
-      this.$http.post("http://nav.ailuoku6.top/adminMan.php",{
+      this.$http.post(this.api,{
         "name":this.adminname,
         "passwoed":this.adminpassword,
         "deleteuser":this.deleteuser,

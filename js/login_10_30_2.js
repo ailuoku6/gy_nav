@@ -12,6 +12,8 @@ var app = new Vue({
       comfpassword: '',
     },
     color: '#7265e6',
+    loginApi:"signin.php",
+    logupApi:"signup.php",
   },
   methods: {
     stateChange: function stateChange() {
@@ -20,7 +22,7 @@ var app = new Vue({
     login: function login() {
       var _this = this;
 
-      this.$http.post("http://nav.ailuoku6.top/signin.php", {
+      this.$http.post(_this.loginApi, {
         "name": this.formInline.user,
         "passwoed": this.formInline.password
       }, { emulateJSON: true }).then(function (response) {
@@ -45,7 +47,7 @@ var app = new Vue({
     logup: function logup() {
       var _this2 = this;
 
-      this.$http.post("http://nav.ailuoku6.top/signup.php", {
+      this.$http.post(_this2.logupApi, {
         "name": this.formInline.user,
         "passwoed": this.formInline.comfpassword,
         "userdata": localStorage.siteData1
