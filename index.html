@@ -61,7 +61,8 @@
           </div>
           <div class="gy-button" id="seaching" @click="baiduyixia()" :style="{'background-color': Marchinelist[searchEngineindex].color}">{{button_value}}</div>
           <ul class="sug" v-show="isShow" ref="sug">
-            <a v-for="(value,index) in myData" v-show="index!=0" :class="{selected:index==sel_index}" v-bind:href="[searApi+value+searApi_weizui]" target="_blank" class="sug_plus"><div class="sugindex" :style="{'background-color': (index>3) ? '#afaea0' : '#3b4042'}">{{index}}</div>{{value}}</a>
+            <a v-for="(value,index) in myData" v-show="index!=0" :class="{selected:index==sel_index}" v-bind:href="[searApi+encodeURIComponent(value)+searApi_weizui]" target="_blank" class="sug_plus"><div class="sugindex" :style="{'background-color': (index>3) ? '#afaea0' : '#3b4042'}">{{index}}</div>{{value}}</a>
+            <!-- <a v-for="(value,index) in myData" v-show="index!=0" :class="{selected:index==sel_index}" v-bind:href="[searApi+value+searApi_weizui]" target="_blank" class="sug_plus"><div class="sugindex" :style="{'background-color': (index>3) ? '#afaea0' : '#3b4042'}">{{index}}</div>{{value}}</a> -->
           </ul>
         </div>
       </div>
@@ -161,7 +162,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.7.0/vue-resource.min.js"></script>
   <script src="js/muse-ui.js"></script>
-  <script src="js/index18_10_30_2.js?20181030"></script>
+  <script src="js/index18_11_14.js?2018111411"></script>
   <script>
     (function(){
         var bp = document.createElement('script');

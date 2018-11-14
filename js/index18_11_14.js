@@ -103,7 +103,8 @@ var allsite = new Vue({
           {site_name:"在线进制转换",url:"http://tool.lu/hexconvert/"},
           {site_name:"邮编区号查询",url:"http://tool.lu/zipcode/"},
           {site_name:"百度网盘搜索",url:"http://www.pansoso.com/"},
-          {site_name:"更多在线工具",url:"http://tool.lu/"}
+          {site_name:"微词云",url:"https://minitagcloud.com/"},
+          {site_name:"更多在线工具",url:"http://tool.lu/"},
         ],
       },
     ],
@@ -132,6 +133,7 @@ var allsite = new Vue({
       {site_name:"电影网址导航",url:"https://www.dianyingdh.com"},
       {site_name:"野创导航",url:"http://www.yechuang.top/"},
       {site_name:"安逸导航",url:"https://anyi.life/"},
+      {site_name:"微词云",url:"https://minitagcloud.com/"},
       {site_name:"友链申请",url:"http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=zK2loLmjp7n6jL294q_joQ"},
     ],
     formInline: {
@@ -209,7 +211,7 @@ var allsite = new Vue({
     baiduyixia: function baiduyixia() {
       this.isShowSelect = false;
       if (this.pattern.test(this.keyword)) {
-        //判断是否是网址
+        //判断是否是网址,是就直接跳转
         if (this.flag == "phone") {
           window.location.href = this.keyword;
         } else {
@@ -217,9 +219,9 @@ var allsite = new Vue({
         }
       } else {
         if (this.flag == "phone") {
-          window.location.href = this.searApi + this.keyword + this.searApi_weizui;
+          window.location.href = this.searApi + encodeURIComponent(this.keyword) + this.searApi_weizui;
         } else {
-          window.open(this.searApi + this.keyword + this.searApi_weizui);
+          window.open(this.searApi + encodeURIComponent(this.keyword) + this.searApi_weizui);
         }
       }
     },
