@@ -172,7 +172,7 @@ var allsite = new Vue({
   },
   methods: {
     handleScroll: function handleScroll() {
-      if ((window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop) == 0) {
+      if ((window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop) <= 0) {//safari浏览器的拖动会使其为负数
         this.scrolled = false;
       } else {
         this.scrolled = true;
