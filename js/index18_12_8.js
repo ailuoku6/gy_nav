@@ -134,6 +134,7 @@ var allsite = new Vue({
       {site_name:"野创导航",url:"http://www.yechuang.top/"},
       {site_name:"安逸导航",url:"https://anyi.life/"},
       {site_name:"微词云",url:"https://minitagcloud.com/"},
+      {site_name:"果汁导航",url:"http://guozhivip.com/nav/"},
       {site_name:"友链申请",url:"http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=zK2loLmjp7n6jL294q_joQ"},
     ],
     formInline: {
@@ -168,7 +169,8 @@ var allsite = new Vue({
     bar_open: false,
     timer: null,
     tempCategorylist: null,
-    changeTime: 0
+    changeTime: 0,
+    openSimple: false
   },
   methods: {
     handleScroll: function handleScroll() {
@@ -390,6 +392,12 @@ var allsite = new Vue({
         }
       }
       this.sycndata();
+    },
+    openSimpleDialog () {
+      this.openSimple = true;
+    },
+    closeSimpleDialog () {
+      this.openSimple = false;
     }
   },
   watch: {

@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="css/muse-ui.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/material-design-icons/3.0.1/iconfont/material-icons.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/style18_9_27.css"/>
+  <link rel="stylesheet" href="css/style18_12_8.css"/>
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
   <style media="screen">
     #seacing_bar{
@@ -24,6 +24,10 @@
       justify-content: center;
       align-items: center;
       width: 100%;
+    }
+    .mu-dialog-title {
+        font-size: 17px;
+        line-height: 12px;
     }
     input::-ms-clear, input::-ms-reveal{display: none;}
   </style>
@@ -128,6 +132,19 @@
           </mu-expand-transition>
         </mu-row>
       </div>
+      <div id="red_packet" @click="openSimpleDialog">
+          <img src="img/red_packet.png" style="height: 25px;">
+      </div>
+      <mu-dialog title="有你的支持，我们走的更远..." width="360" :open.sync="openSimple">
+          <p style="font-size: 14px;">
+            GY导航上线近一周年了!由最初的一个挂在github的静态页,变成了一个比较完善的网站...上线以来,一直坚持免费,开源且无广告.</br>
+            如果你喜欢本站,领个红包帮作者分担一下服务器费用吧...
+          </p>
+          <div width = "100%" style="display: flex;height: 190px;align-items: center;justify-content: center;">
+            <img src="img/red_packet_m.png" style="max-width: 200px;">
+          </div>
+          <mu-button slot="actions" flat color="primary" @click="closeSimpleDialog">不用了</mu-button>
+      </mu-dialog>
       <mu-tooltip placement="top" :content="username">
         <mu-button fab class="floatButton-wrap floatButton" href="login.html" :style="{'background-color': Marchinelist[searchEngineindex].color,bottom: '77px',width:'30px',height:'30px'}">
           <mu-avatar style="background-color: rgba(255, 255, 255, 0);" size="20">
@@ -162,7 +179,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.7.0/vue-resource.min.js"></script>
   <script src="js/muse-ui.js"></script>
-  <script src="js/index18_11_24.js?2018112411"></script>
+  <script src="js/index18_12_8.js?20181208"></script>
   <script>
     (function(){
         var bp = document.createElement('script');
