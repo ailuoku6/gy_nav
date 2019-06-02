@@ -259,7 +259,7 @@ export default {
         {Marchine_name:"csdn",button_value:"搜csdn",searApi:"http://so.csdn.net/so/search/s.do?q=",searApi_weizui:"",color:"#be1a21"},
       ],
       friendlink:[
-        {site_name:"爱达导航",url:"https://ada97.com/"},
+        {site_name:"爱达杂货铺",url:"https://adzhp.cn/"},
         {site_name:"小呆导航",url:"http://webjike.com/"},
         {site_name:"悠悠导航",url:"https://uu456.cn/"},
         {site_name:"龙喵导航",url:"http://ailongmiao.com/"},
@@ -268,7 +268,7 @@ export default {
         {site_name:"电影网址导航",url:"https://www.dianyingdh.com"},
         {site_name:"野创导航",url:"http://www.yechuang.top/"},
         {site_name:"安逸导航",url:"https://anyi.life/"},
-        {site_name:"微词云",url:"https://minitagcloud.com/"},
+        {site_name:"微词云",url:"https://minitagcloud.cn/"},
         {site_name:"果汁导航",url:"http://guozhivip.com/nav/"},
         {site_name:"友链申请",url:"http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=zK2loLmjp7n6jL294q_joQ"},
       ],

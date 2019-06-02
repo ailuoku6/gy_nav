@@ -7,16 +7,19 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "material-icons": "^0.3.0",
+    "material-design-icons": "^3.0.1",
     "muse-ui": "^3.0.2",
+    "prerender-spa-plugin": "^3.4.0",
     "sass-loader": "^7.1.0",
     "vue": "^2.6.6",
-    "vue-resource": "^0.7.0"
+    "vue-resource": "^0.7.0",
+    "webpack-bundle-analyzer": ">=3.3.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.5.0",
     "@vue/cli-service": "^3.5.0",
-    "vue-template-compiler": "^2.5.21"
+    "vue-template-compiler": "^2.5.21",
+    "webpack-bundle-analyzer": ">=3.3.2"
   },
   "postcss": {
     "plugins": {
