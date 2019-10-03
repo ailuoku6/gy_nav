@@ -8,7 +8,7 @@
             <mu-icon value="expand_more" size="15"></mu-icon>
             <mu-expand-transition>
               <ul class="sug" id="sear_marchine_select" v-show="isShowSelect">
-                <a v-for="(marchinelist,index) in Marchinelist" @click="selectMarchine(index)" :class="{selected:searchEngineindex==index}" class="sug_list">{{marchinelist.Marchine_name}}</a>
+                <a v-for="(marchinelist,index) in Marchinelist" :key="marchinelist" @click="selectMarchine(index)" :class="{selected:searchEngineindex==index}" class="sug_list">{{marchinelist.Marchine_name}}</a>
               </ul>
             </mu-expand-transition>
           </div>
@@ -20,7 +20,7 @@
           </div>
           <div class="gy-button" id="seaching" @click="baiduyixia()" :style="{'background-color': Marchinelist[searchEngineindex].color}">{{button_value}}</div>
           <ul class="sug" v-show="isShow" ref="sug">
-            <a v-for="(value,index) in myData" v-show="index!=0" :class="{selected:index==sel_index}" v-bind:href="[searApi+encodeURIComponent(value)+searApi_weizui]" target="_blank" class="sug_plus"><div class="sugindex" :style="{'background-color': (index>3) ? '#afaea0' : '#3b4042'}">{{index}}</div>{{value}}</a>
+            <a v-for="(value,index) in myData" :key="value" v-show="index!=0" :class="{selected:index==sel_index}" v-bind:href="[searApi+encodeURIComponent(value)+searApi_weizui]" target="_blank" class="sug_plus"><div class="sugindex" :style="{'background-color': (index>3) ? '#afaea0' : '#3b4042'}">{{index}}</div>{{value}}</a>
             <!-- <a v-for="(value,index) in myData" v-show="index!=0" :class="{selected:index==sel_index}" v-bind:href="[searApi+value+searApi_weizui]" target="_blank" class="sug_plus"><div class="sugindex" :style="{'background-color': (index>3) ? '#afaea0' : '#3b4042'}">{{index}}</div>{{value}}</a> -->
           </ul>
         </div>
@@ -31,7 +31,7 @@
       <div class="title" id="">常用站点</div>
       <div class="gy-divider gy-divider-coustom"></div>
       <mu-row>
-        <div  v-for="sitelist in comsitelist" class="gy-cell">
+        <div  v-for="sitelist in comsitelist" :key="sitelist" class="gy-cell">
           <li class="site gy-hoverable">
             <a v-bind:href="sitelist.url" target="_blank">
               <div>
@@ -46,7 +46,7 @@
 
     <div class="gy-container-full">
       <mu-row gutter justify-content="center">
-        <mu-col span="12" sm="6" lg="4" v-for="(category,category_index) in categorylist">
+        <mu-col span="12" sm="6" lg="4" v-for="(category,category_index) in categorylist" :key="category">
           <div class="site-card gy-shadow-2">
             <div class="title" v-if="~edit">{{category.categoryname}}</div>
             <div style="margin-bottom: -28px;" v-else>
@@ -58,7 +58,7 @@
             </div>
             <div class="gy-divider"></div>
             <div class="gy-list">
-              <li v-for="(sitelist,index) in category.sitelist" class="site-noicon gy-hoverable">
+              <li v-for="(sitelist,index) in category.sitelist" :key="sitelist" class="site-noicon gy-hoverable">
                 <div class="delete-button" v-show="edit" @click="deleteItem(category_index,index)">
                   <mu-icon value="clear" color="#ffffff" size="10"></mu-icon>
                 </div>
@@ -114,7 +114,7 @@
     <div class="footer gy-shadow-2">
       友情链接:
       <div class="gy-list" style="padding:  0;">
-        <li v-for="(sitelist,index) in friendlink" class="site-noicon gy-hoverable" style="padding: 2px 5px;">
+        <li v-for="(sitelist,index) in friendlink" :key="sitelist" class="site-noicon gy-hoverable" style="padding: 2px 5px;">
           <a v-bind:href="sitelist.url" target="_blank">{{sitelist.site_name}}</a>
         </li>
       </div>
@@ -238,7 +238,7 @@ export default {
             {site_name:"在线进制转换",url:"http://tool.lu/hexconvert/"},
             {site_name:"邮编区号查询",url:"http://tool.lu/zipcode/"},
             {site_name:"百度网盘搜索",url:"http://www.pansoso.com/"},
-            {site_name:"微词云",url:"https://minitagcloud.com/"},
+            {site_name:"微词云",url:"https://www.weiciyun.com/"},
             {site_name:"更多在线工具",url:"http://tool.lu/"},
           ],
         },
@@ -268,7 +268,7 @@ export default {
         {site_name:"电影网址导航",url:"https://www.dianyingdh.com"},
         {site_name:"野创导航",url:"http://www.yechuang.top/"},
         {site_name:"安逸导航",url:"https://anyi.life/"},
-        {site_name:"微词云",url:"https://minitagcloud.cn/"},
+        {site_name:"微词云",url:"https://www.weiciyun.com/"},
         {site_name:"果汁导航",url:"http://guozhivip.com/nav/"},
         {site_name:"友链申请",url:"http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=zK2loLmjp7n6jL294q_joQ"},
       ],
