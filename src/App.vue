@@ -49,7 +49,7 @@
         <draggable v-model="categorylist" @start="drag=true" @end="drag=false" v-bind="dragOptions">
           <mu-col span="12" sm="6" lg="4" v-for="(category,category_index) in categorylist" :key="category" style="display: inline-flex" :class="edit?'move-cursor':''">
             <div class="site-card gy-shadow-2">
-              <div class="title" v-if="~edit">{{category.categoryname}}</div>
+              <div class="title" v-if="!edit">{{category.categoryname}}</div>
               <div style="margin-bottom: -28px;" v-else>
                 <mu-text-field v-model="category.categoryname" placeholder="输入分区名" style="max-width: 50%;"></mu-text-field>
                 <mu-button color="error" small @click="deleteCate(category_index)">删除分区</mu-button>

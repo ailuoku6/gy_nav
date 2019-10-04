@@ -340,6 +340,7 @@ a:hover{
     margin-bottom: 5px;
 }
 .site-card{
+    width: 100%;
     padding-bottom: 8px;
     margin: 15px 0px 0px 0px;
     background-color: rgba(250, 250, 250, 1.0);
