@@ -46,34 +46,39 @@
 
     <div class="gy-container-full">
       <mu-row gutter justify-content="center">
-        <mu-col span="12" sm="6" lg="4" v-for="(category,category_index) in categorylist" :key="category">
-          <div class="site-card gy-shadow-2">
-            <div class="title" v-if="~edit">{{category.categoryname}}</div>
-            <div style="margin-bottom: -28px;" v-else>
-              <mu-text-field v-model="category.categoryname" placeholder="输入分区名" style="max-width: 50%;"></mu-text-field>
-              <mu-button color="error" small @click="deleteCate(category_index)">删除分区</mu-button>
-              <mu-button fab small color="red" @click="category.isAdd = !category.isAdd" style="width: 30px;height: 30px;bottom:-3px;margin-left:15px;">
-                <mu-icon value="add"></mu-icon>
-              </mu-button>
-            </div>
-            <div class="gy-divider"></div>
-            <div class="gy-list">
-              <li v-for="(sitelist,index) in category.sitelist" :key="sitelist" class="site-noicon gy-hoverable">
-                <div class="delete-button" v-show="edit" @click="deleteItem(category_index,index)">
-                  <mu-icon value="clear" color="#ffffff" size="10"></mu-icon>
-                </div>
-                <a v-bind:href="sitelist.url" target="_blank">{{sitelist.site_name}}</a>
-              </li>
-            </div>
-            <mu-expand-transition>
-              <div class="add-form" v-if="category.isAdd&&edit">
-                <mu-text-field v-model="inputSitename" placeholder="输入网站名" style="width:60%;"></mu-text-field>
-                <mu-text-field v-model="inputUrl" placeholder="输入网址" style="width:60%;"></mu-text-field>
-                <mu-button round color="success" @click="addItem(category_index)" :disabled="(inputSitename == '')||(inputUrl == '')">添加</mu-button>
+        <draggable v-model="categorylist" @start="drag=true" @end="drag=false" v-bind="dragOptions">
+          <mu-col span="12" sm="6" lg="4" v-for="(category,category_index) in categorylist" :key="category" style="display: inline-flex" :class="edit?'move-cursor':''">
+            <div class="site-card gy-shadow-2">
+              <div class="title" v-if="~edit">{{category.categoryname}}</div>
+              <div style="margin-bottom: -28px;" v-else>
+                <mu-text-field v-model="category.categoryname" placeholder="输入分区名" style="max-width: 50%;"></mu-text-field>
+                <mu-button color="error" small @click="deleteCate(category_index)">删除分区</mu-button>
+                <mu-button fab small color="red" @click="category.isAdd = !category.isAdd" style="width: 30px;height: 30px;bottom:-3px;margin-left:15px;">
+                  <mu-icon value="add"></mu-icon>
+                </mu-button>
               </div>
-            </mu-expand-transition>
-          </div>
-        </mu-col>
+              <div class="gy-divider"></div>
+              <div class="gy-list">
+                <draggable v-model="category.sitelist" v-bind="dragOptions" @start="drag=true" @end="drag=false">
+                  <li v-for="(sitelist,index) in category.sitelist" :key="sitelist" class="site-noicon gy-hoverable" :class="edit?'move-cursor':''">
+                    <div class="delete-button" v-show="edit" @click="deleteItem(category_index,index)">
+                      <mu-icon value="clear" color="#ffffff" size="10"></mu-icon>
+                    </div>
+                    <a v-bind:href="sitelist.url" target="_blank">{{sitelist.site_name}}</a>
+                  </li>
+                </draggable>
+              </div>
+              <mu-expand-transition>
+                <div class="add-form" v-if="category.isAdd&&edit">
+                  <mu-text-field v-model="inputSitename" placeholder="输入网站名" style="width:60%;"></mu-text-field>
+                  <mu-text-field v-model="inputUrl" placeholder="输入网址" style="width:60%;"></mu-text-field>
+                  <mu-button round color="success" @click="addItem(category_index)" :disabled="(inputSitename == '')||(inputUrl == '')">添加</mu-button>
+                </div>
+              </mu-expand-transition>
+            </div>
+          </mu-col>
+        </draggable>
+
         <mu-expand-transition>
           <mu-col span="12" sm="6" lg="4" v-show="edit">
             <div class="site-card gy-shadow-2" style="height: 120px;">
@@ -108,7 +113,7 @@
       </mu-button>
     </mu-tooltip>
     <mu-button fab @click="editMode()"  class="floatButton-wrap floatButton" :style="{'background-color': Marchinelist[searchEngineindex].color,width:'30px',height:'30px'}">
-      <mu-icon size="15" value="settings" color="#ffffff" v-if="~edit"></mu-icon>
+      <mu-icon size="15" value="settings" color="#ffffff" v-if="!edit"></mu-icon>
       <mu-icon size="15" value="check" color="#ffffff" v-else></mu-icon>
     </mu-button>
     <div class="footer gy-shadow-2">
@@ -133,9 +138,22 @@
 </template>
 
 <script>
-
+import draggable from 'vuedraggable'
 export default {
   name: 'allsite',
+  components:{
+    draggable
+  },
+  computed: {
+    dragOptions() {
+      return {
+        animation: 200,
+        // group: "description",
+        disabled: !this.edit,
+        ghostClass: "ghost"
+      };
+    }
+  },
   data() {
     //常用栏列表
     return {
@@ -445,7 +463,7 @@ export default {
       this.bar_open = false;
     },
     editMode: function editMode() {
-      this.edit = ~this.edit;
+      this.edit = !this.edit;
     },
     //判断设备
     judge: function judge() {
@@ -561,4 +579,11 @@ export default {
 
 <style rel="stylesheet/css" lang="css" scoped>
   @import "~@/assets/index.css";
+  .ghost {
+    opacity: 0.5;
+    background: #c8ebfb;
+  }
+  .move-cursor{
+    cursor: move;
+  }
 </style>

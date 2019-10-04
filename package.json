@@ -13,6 +13,7 @@
     "sass-loader": "^7.1.0",
     "vue": "^2.6.6",
     "vue-resource": "^0.7.0",
+    "vuedraggable": "^2.23.2",
     "webpack-bundle-analyzer": ">=3.3.2"
   },
   "devDependencies": {

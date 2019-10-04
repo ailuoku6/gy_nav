@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b1c1c292-a77b-4fac-92ad-cbf44ea444ab" name="Default Changelist" comment="修复bug">
+    <list default="true" id="b1c1c292-a77b-4fac-92ad-cbf44ea444ab" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.vue" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -31,6 +33,12 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
@@ -81,6 +89,9 @@
       <workItem from="1556702161515" duration="305000" />
       <workItem from="1559446946028" duration="500000" />
       <workItem from="1569913771755" duration="1473000" />
+      <workItem from="1570114169375" duration="302000" />
+      <workItem from="1570152341052" duration="3403000" />
+      <workItem from="1570166590596" duration="1179000" />
     </task>
     <task id="LOCAL-00001" summary="修复bug">
       <created>1559447427104</created>
@@ -89,7 +100,14 @@
       <option name="project" value="LOCAL" />
       <updated>1559447427104</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="备份">
+      <created>1570114324981</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1570114324981</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -100,7 +118,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
@@ -108,6 +128,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="修复bug" />
-    <option name="LAST_COMMIT_MESSAGE" value="修复bug" />
+    <MESSAGE value="备份" />
+    <option name="LAST_COMMIT_MESSAGE" value="备份" />
   </component>
 </project>
