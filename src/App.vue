@@ -8,7 +8,7 @@
             <mu-icon value="expand_more" size="15"></mu-icon>
             <mu-expand-transition>
               <ul class="sug" id="sear_marchine_select" v-show="isShowSelect">
-                <a v-for="(marchinelist,index) in Marchinelist" :key="marchinelist" @click="selectMarchine(index)" :class="{selected:searchEngineindex==index}" class="sug_list">{{marchinelist.Marchine_name}}</a>
+                <a v-for="(marchinelist,index) in Marchinelist" :key="JSON.stringify(marchinelist)" @click="selectMarchine(index)" :class="{selected:searchEngineindex==index}" class="sug_list">{{marchinelist.Marchine_name}}</a>
               </ul>
             </mu-expand-transition>
           </div>
@@ -20,7 +20,7 @@
           </div>
           <div class="gy-button" id="seaching" @click="baiduyixia()" :style="{'background-color': Marchinelist[searchEngineindex].color}">{{button_value}}</div>
           <ul class="sug" v-show="isShow" ref="sug">
-            <a v-for="(value,index) in myData" :key="value" v-show="index!=0" :class="{selected:index==sel_index}" v-bind:href="[searApi+encodeURIComponent(value)+searApi_weizui]" target="_blank" class="sug_plus"><div class="sugindex" :style="{'background-color': (index>3) ? '#afaea0' : '#3b4042'}">{{index}}</div>{{value}}</a>
+            <a v-for="(value,index) in myData" :key="JSON.stringify(value)" v-show="index!=0" :class="{selected:index==sel_index}" v-bind:href="[searApi+encodeURIComponent(value)+searApi_weizui]" target="_blank" class="sug_plus"><div class="sugindex" :style="{'background-color': (index>3) ? '#afaea0' : '#3b4042'}">{{index}}</div>{{value}}</a>
             <!-- <a v-for="(value,index) in myData" v-show="index!=0" :class="{selected:index==sel_index}" v-bind:href="[searApi+value+searApi_weizui]" target="_blank" class="sug_plus"><div class="sugindex" :style="{'background-color': (index>3) ? '#afaea0' : '#3b4042'}">{{index}}</div>{{value}}</a> -->
           </ul>
         </div>
@@ -29,9 +29,12 @@
 
     <div class="gy-container gy-shadow-2" id="first_container">
       <div class="title" id="">常用站点</div>
+<!--      <div>-->
+<!--        {{categorylist}}-->
+<!--      </div>-->
       <div class="gy-divider gy-divider-coustom"></div>
       <mu-row>
-        <div  v-for="sitelist in comsitelist" :key="sitelist" class="gy-cell">
+        <div  v-for="sitelist in comsitelist" :key="JSON.stringify(sitelist)" class="gy-cell">
           <li class="site gy-hoverable">
             <a v-bind:href="sitelist.url" target="_blank">
               <div>
@@ -46,8 +49,8 @@
 
     <div class="gy-container-full">
       <mu-row gutter justify-content="center">
-        <draggable v-model="categorylist" @start="drag=true" @end="drag=false" v-bind="dragOptions">
-          <mu-col span="12" sm="6" lg="4" v-for="(category,category_index) in categorylist" :key="category" style="display: inline-flex" :class="edit?'move-cursor':''">
+        <draggable v-model="categorylist" @start="drag=true" @end="drag=false" v-bind="dragOptions" style="display: flex;flex-wrap: wrap;justify-content: center;align-items: flex-start;">
+          <mu-col span="12" sm="6" lg="4" v-for="(category,category_index) in categorylist" :key="JSON.stringify(category)" style="display: inline-flex" :class="edit?'move-cursor':''">
             <div class="site-card gy-shadow-2">
               <div class="title" v-if="!edit">{{category.categoryname}}</div>
               <div style="margin-bottom: -28px;" v-else>
@@ -60,7 +63,7 @@
               <div class="gy-divider"></div>
               <div class="gy-list">
                 <draggable v-model="category.sitelist" v-bind="dragOptions" @start="drag=true" @end="drag=false">
-                  <li v-for="(sitelist,index) in category.sitelist" :key="sitelist" class="site-noicon gy-hoverable" :class="edit?'move-cursor':''">
+                  <li v-for="(sitelist,index) in category.sitelist" :key="JSON.stringify(sitelist)" class="site-noicon gy-hoverable" :class="edit?'move-cursor':''">
                     <div class="delete-button" v-show="edit" @click="deleteItem(category_index,index)">
                       <mu-icon value="clear" color="#ffffff" size="10"></mu-icon>
                     </div>
@@ -77,8 +80,11 @@
               </mu-expand-transition>
             </div>
           </mu-col>
-        </draggable>
 
+<!--          <mu-expand-transition>-->
+<!--            -->
+<!--          </mu-expand-transition>-->
+        </draggable>
         <mu-expand-transition>
           <mu-col span="12" sm="6" lg="4" v-show="edit">
             <div class="site-card gy-shadow-2" style="height: 120px;">
@@ -90,6 +96,7 @@
             </div>
           </mu-col>
         </mu-expand-transition>
+
       </mu-row>
     </div>
     <div id="red_packet" @click="openSimpleDialog">
@@ -119,7 +126,7 @@
     <div class="footer gy-shadow-2">
       友情链接:
       <div class="gy-list" style="padding:  0;">
-        <li v-for="(sitelist,index) in friendlink" :key="sitelist" class="site-noicon gy-hoverable" style="padding: 2px 5px;">
+        <li v-for="(sitelist,index) in friendlink" :key="JSON.stringify(sitelist)" class="site-noicon gy-hoverable" style="padding: 2px 5px;">
           <a v-bind:href="sitelist.url" target="_blank">{{sitelist.site_name}}</a>
         </li>
       </div>
@@ -391,6 +398,12 @@ export default {
     },
     //请求搜索建议数据
     requestData: function requestData() {
+
+      if (this.keyword==='') {
+        this.isShow = false;
+        return;
+      }
+
       this.$http.jsonp(this.apiUrl, {
         wd: this.keyword
       }, {

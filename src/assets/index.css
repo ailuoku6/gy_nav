@@ -372,6 +372,7 @@ a:hover{
     background-color: #ff0000;
     align-items: center;
     justify-content: center;
+    cursor: default;
 }
 .site-noicon:hover a {
     color: #E65100;
