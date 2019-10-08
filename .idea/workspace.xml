@@ -4,7 +4,6 @@
     <list default="true" id="b1c1c292-a77b-4fac-92ad-cbf44ea444ab" name="Default Changelist" comment="拖放修复">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/assets/index.css" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -96,6 +95,9 @@
       <workItem from="1570114169375" duration="302000" />
       <workItem from="1570152341052" duration="3403000" />
       <workItem from="1570166590596" duration="1179000" />
+      <workItem from="1570330983853" duration="725000" />
+      <workItem from="1570444160675" duration="3604000" />
+      <workItem from="1570499020632" duration="1175000" />
     </task>
     <task id="LOCAL-00001" summary="修复bug">
       <created>1559447427104</created>
@@ -111,7 +113,14 @@
       <option name="project" value="LOCAL" />
       <updated>1570114324981</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="修复bug">
+      <created>1570329937782</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1570329937782</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -136,9 +145,9 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="修复bug" />
     <MESSAGE value="备份" />
     <MESSAGE value="拖放修复" />
-    <option name="LAST_COMMIT_MESSAGE" value="拖放修复" />
+    <MESSAGE value="修复bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="修复bug" />
   </component>
 </project>

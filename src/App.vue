@@ -81,9 +81,6 @@
             </div>
           </mu-col>
 
-<!--          <mu-expand-transition>-->
-<!--            -->
-<!--          </mu-expand-transition>-->
         </draggable>
         <mu-expand-transition>
           <mu-col span="12" sm="6" lg="4" v-show="edit">
@@ -401,6 +398,7 @@ export default {
 
       if (this.keyword==='') {
         this.isShow = false;
+        this.myData = [];
         return;
       }
 
