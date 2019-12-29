@@ -50,7 +50,7 @@
     <div class="gy-container-full">
       <mu-row gutter justify-content="center">
         <draggable v-model="categorylist" @start="drag=true" @end="drag=false" v-bind="dragOptions" style="display: flex;flex-wrap: wrap;justify-content: center;align-items: flex-start;">
-          <mu-col span="12" sm="6" lg="4" v-for="(category,category_index) in categorylist" :key="JSON.stringify(category)" style="display: inline-flex" :class="edit?'move-cursor':''">
+          <mu-col span="12" sm="6" lg="4" v-for="(category,category_index) in categorylist" :key="category_index" style="display: inline-flex" :class="edit?'move-cursor':''">
             <div class="site-card gy-shadow-2">
               <div class="title" v-if="!edit">{{category.categoryname}}</div>
               <div style="margin-bottom: -28px;" v-else>
@@ -78,6 +78,7 @@
                   <mu-button round color="success" @click="addItem(category_index)" :disabled="(inputSitename == '')||(inputUrl == '')">添加</mu-button>
                 </div>
               </mu-expand-transition>
+<!--              <mu-icon v-if="edit" value="drag_handle" class="handle"></mu-icon>-->
             </div>
           </mu-col>
 
@@ -153,7 +154,7 @@ export default {
       return {
         animation: 200,
         // group: "description",
-        disabled: !this.edit,
+        disabled: (!this.edit)||this.flag==='phone',
         ghostClass: "ghost"
       };
     }

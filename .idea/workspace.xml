@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b1c1c292-a77b-4fac-92ad-cbf44ea444ab" name="Default Changelist" comment="拖放修复">
+    <list default="true" id="b1c1c292-a77b-4fac-92ad-cbf44ea444ab" name="Default Changelist" comment="修复bug">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.vue" afterDir="false" />
     </list>
@@ -24,7 +24,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="1ac6ef887021bd0b62f3d6e53ca65c90f60c65f1" />
+        <entry key="$PROJECT_DIR$" value="0793c4a1241a5619cb1dc7d525d7afd805aaf0cd" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -37,7 +37,6 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="node.js.detected.package.eslint" value="true" />
-    <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -92,12 +91,20 @@
       <workItem from="1556702161515" duration="305000" />
       <workItem from="1559446946028" duration="500000" />
       <workItem from="1569913771755" duration="1473000" />
-      <workItem from="1570114169375" duration="302000" />
-      <workItem from="1570152341052" duration="3403000" />
-      <workItem from="1570166590596" duration="1179000" />
-      <workItem from="1570330983853" duration="725000" />
-      <workItem from="1570444160675" duration="3604000" />
-      <workItem from="1570499020632" duration="1175000" />
+      <workItem from="1570525376243" duration="749000" />
+      <workItem from="1570541521104" duration="329000" />
+      <workItem from="1570542106581" duration="124000" />
+      <workItem from="1570667320720" duration="1063000" />
+      <workItem from="1570689184626" duration="28000" />
+      <workItem from="1570691267042" duration="672000" />
+      <workItem from="1570694931342" duration="4810000" />
+      <workItem from="1570761056274" duration="2060000" />
+      <workItem from="1570768409767" duration="1627000" />
+      <workItem from="1570846219921" duration="837000" />
+      <workItem from="1571365397849" duration="678000" />
+      <workItem from="1571411196382" duration="24000" />
+      <workItem from="1571412496205" duration="642000" />
+      <workItem from="1577623673414" duration="613000" />
     </task>
     <task id="LOCAL-00001" summary="修复bug">
       <created>1559447427104</created>
@@ -106,21 +113,7 @@
       <option name="project" value="LOCAL" />
       <updated>1559447427104</updated>
     </task>
-    <task id="LOCAL-00002" summary="备份">
-      <created>1570114324981</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1570114324981</updated>
-    </task>
-    <task id="LOCAL-00003" summary="修复bug">
-      <created>1570329937782</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1570329937782</updated>
-    </task>
-    <option name="localTasksCounter" value="4" />
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -129,7 +122,7 @@
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
-        <entry key="2">
+        <entry key="1">
           <value>
             <State />
           </value>
@@ -145,8 +138,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="备份" />
-    <MESSAGE value="拖放修复" />
     <MESSAGE value="修复bug" />
     <option name="LAST_COMMIT_MESSAGE" value="修复bug" />
   </component>
