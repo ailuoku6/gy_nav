@@ -13,7 +13,7 @@
             </mu-expand-transition>
           </div>
           <div id="seacing_bar">
-            <input type="text" id="input_bar" placeholder="搜你所想" v-model="keyword" @keyup.enter.prevent="baiduyixia" @keydown.down.prevent="selectDown" @keydown.up.prevent="selectUp" ref="input_area" autocomplete="off" @click="hidesug()" @input="requestData">
+            <input type="text" id="input_bar" placeholder="搜你所想" v-model="keyword" @keyup.enter.prevent="baiduyixia" @keydown.down.prevent="selectDown" @keydown.up.prevent="selectUp" ref="input_area" autocomplete="off" @click="hidesug()" @input="handleInput">
             <div style="display:  flex;align-items:  center;" v-if="keyword" @click="cleanKeyword()">
               <mu-icon value="cancel" size="15"></mu-icon>
             </div>
@@ -132,7 +132,8 @@
     <footer>
       <div class="about">
         <div>BY <a href="http://weibo.com/ailuoku6" target="_blank">@爱咯酷6</a> | 论坛: <a href="http://bbs.ailuoku6.top" target="_blank"><img src="img/bbs.png"></a></div>
-        <div>网站备案号:桂ICP备18003700号</div>
+        <div>网站备案号:<a href="http://www.beian.miit.gov.cn/">桂ICP备18003700号</a></div>
+
       </div>
     </footer>
     <mu-snackbar position="bottom" :open="bar_open">
@@ -144,6 +145,11 @@
 
 <script>
 import draggable from 'vuedraggable'
+
+import debounce from "./utils/debounce";
+
+let debounceFn = null;
+
 export default {
   name: 'allsite',
   components:{
@@ -293,6 +299,7 @@ export default {
         {site_name:"安逸导航",url:"https://anyi.life/"},
         {site_name:"微词云",url:"https://www.weiciyun.com/"},
         {site_name:"果汁导航",url:"http://guozhivip.com/nav/"},
+        {site_name:"烈风云点播",url:"https://smallfilm.cam"},
         {site_name:"友链申请",url:"http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=zK2loLmjp7n6jL294q_joQ"},
       ],
       formInline: {
@@ -328,7 +335,7 @@ export default {
       timer: null,
       tempCategorylist: null,
       changeTime: 0,
-      openSimple: false
+      openSimple: false,
     }
   },
   methods: {
@@ -394,6 +401,13 @@ export default {
       this.sel_index = (this.myData.length + --this.sel_index) % this.myData.length;
       this.keyword = this.myData[this.sel_index];
     },
+
+    handleInput:function handleInput(){
+        //debounce(this.requestData,1000)();
+        if (!debounceFn) debounceFn = debounce(this.requestData,400);
+        debounceFn();
+    },
+
     //请求搜索建议数据
     requestData: function requestData() {
 
