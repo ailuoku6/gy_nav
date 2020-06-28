@@ -147,8 +147,10 @@
 import draggable from 'vuedraggable'
 
 import debounce from "./utils/debounce";
+import throttle from "./utils/throttle";
 
 let debounceFn = null;
+let throttleFn = null;
 
 export default {
   name: 'allsite',
@@ -404,7 +406,9 @@ export default {
 
     handleInput:function handleInput(){
         //debounce(this.requestData,1000)();
-        if (!debounceFn) debounceFn = debounce(this.requestData,400);
+        if (!debounceFn) {
+          debounceFn = debounce(this.requestData,400);
+        }
         debounceFn();
     },
 
@@ -593,12 +597,19 @@ export default {
     }
   },
   mounted: function mounted() {
-    window.addEventListener('scroll', this.handleScroll);
+    //window.addEventListener('scroll', this.handleScroll);
+    if (!throttleFn){
+      throttleFn = throttle(this.handleScroll,30);
+    }
+    window.addEventListener('scroll', throttleFn);
     this.judge();
     this.page_init();
   },
   destroyed: function destroyed() {
-    window.removeEventListener('scroll', this.handleScroll);
+    //window.removeEventListener('scroll', this.handleScroll);
+    if (throttleFn){
+      window.removeEventListener('scroll', throttleFn);
+    }
   }
 }
 </script>
