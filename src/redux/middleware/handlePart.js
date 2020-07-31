@@ -29,10 +29,12 @@ const handlePart = store => next => action =>{
         debounceGet(store.getState().Partition.data);
         if(action.type===TYPE.SET_PARTITION){//
             if(action.isStore) debounceStorePart(store.getState().Partition.data);
-            if(action.isUp) debouncePost(store.getState().Partition.data);
+            if(action.isUp&&(store.getState().User.user)) debouncePost(store.getState().Partition.data);
         }else{
             debounceStorePart(store.getState().Partition.data);
-            debouncePost(store.getState().Partition.data);
+            if(store.getState().User.user){
+                debouncePost(store.getState().Partition.data);
+            }
         }
         
     }else if(action.type===TYPE.SET_MARCHINE_INDEX&&action.isStore){

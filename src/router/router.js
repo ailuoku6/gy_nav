@@ -11,14 +11,14 @@ import { Router,Switch, Route,Redirect} from "react-router-dom";
 
 import { createBrowserHistory } from 'history';
 
-const history =  createBrowserHistory({forceRefresh:'true'});
+const history =  createBrowserHistory();
 
 const route = (
     <Router history={history}>
         <Switch>
             {/*<Redirect from="/" exact to="/index"/>*/}
-            <Route exact path="/login" component={Login}/>
-            <Route exact path="/" component={Home} />
+            <Route path="/login" component={Login}/>
+            <Route path="/" component={Home} />
 
         </Switch>
 

@@ -49,6 +49,7 @@ const MarchineIndex = (state = {index:0},action)=>{
 };
 
 const Partition = (state = {data:data},action)=>{
+    console.log("partData被修改",action,state);
     let data = [...state.data];
     switch (action.type) {
         case TYPE.ADD_PART2REAR:
