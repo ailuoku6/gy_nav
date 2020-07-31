@@ -73,7 +73,9 @@ class Home extends React.Component{
             // }
 
             let partData = GetPartDataStore();
-            this.props.setPartition(partData,false);//从本地读取，所以没必要再存回本地
+            if(partData){
+                this.props.setPartition(partData,false,false);//从本地读取，所以没必要再存回本地
+            }
 
         }else{
             //优先读取网络partData,不成功则读取本地partData
@@ -86,12 +88,18 @@ class Home extends React.Component{
                 }else{
                     console.log("使用本地的数据");
                     let partData = GetPartDataStore();
-                    this.props.setPartition(partData,false,false);//从本地读取，所以没必要再存回本地
+                    if(partData){
+                        this.props.setPartition(partData,false,false);//从本地读取，所以没必要再存回本地
+                    }
+                    
                 }
             }).catch((err)=>{
                 console.log("使用本地的数据");
                 let partData = GetPartDataStore();
-                this.props.setPartition(partData,false,false);//从本地读取，所以没必要再存回本地
+                if(partData){
+                    this.props.setPartition(partData,false,false);//从本地读取，所以没必要再存回本地
+                }
+                
                 console.log(err);
             })
         }

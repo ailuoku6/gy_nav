@@ -129,7 +129,7 @@ class Login extends React.Component{
         //userName,passWord
         data.userName = this.state.userName;
         data.passWord = this.state.passWord;
-        data.partData = this.props.Partition;
+        data.partData = JSON.stringify(this.props.Partition);
         post(SignUp,data).then((data)=>{
             console.log(data);
             if (data.result===false){
