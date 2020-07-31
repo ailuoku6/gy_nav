@@ -57,7 +57,16 @@ class Site extends React.Component{
                     {sites.map((item,index)=>{
                         return(
                             <div className={'site-noicon gy-hoverable'} key={index} style={edit?{minWidth:40}:null}>
-                                <a href={item.url?item.url:''} target={'_blank'}>{item.site_name?item.site_name:'网站名缺失'}</a>
+                                {
+                                    edit&&this.props.device==='phone'?(
+                                        <div>{item.site_name?item.site_name:'网站名缺失'}</div>
+                                    ):(
+                                        <a href={item.url?item.url:''} target={'_blank'}>
+                                            {item.site_name?item.site_name:'网站名缺失'}
+                                        </a>
+                                    )
+                                }
+                                
                                 {edit===true&&(
                                     <div className={'delMenu'}>
                                         <div style={{width:'50%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',padding:5,borderRadius:5,backgroundColor:'#2525b1a1'}}
@@ -119,8 +128,8 @@ class Site extends React.Component{
     }
 }
 
-const mapStateToProps = ({})=>({
-
+const mapStateToProps = ({Device})=>({
+    device: Device.device,
 })
 
 const mapDispacthToProps = {addSite2Part,delSite,modifySite,moveSite};

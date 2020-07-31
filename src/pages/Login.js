@@ -7,6 +7,7 @@ import Tab from '@material-ui/core/Tab';
 import TextField from '@material-ui/core/TextField';
 import { post } from '../utils/http';
 import { Signin,SignUp } from "../utils/Api";
+import {pswPattern} from '../utils/veriLink'
 import {Link} from "react-router-dom";
 import './login.css'
 
@@ -118,6 +119,12 @@ class Login extends React.Component{
     }
 
     handleSignup(){
+        if(this.state.passWord.length<6||pswPattern.test(this.state.passWord)){
+            this.setState({
+                tipText:'密码不能少于6位，且不能含有中文'
+            });
+            return;
+        }
         if (this.state.passWord!==this.state.passWord1){
             this.setState({
                 tipText:'两次输入的密码不一致'
