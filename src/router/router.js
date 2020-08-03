@@ -3,6 +3,7 @@ import React from 'react';
 //引入需要用到的页面组件
 import Home from '../pages/Home';
 import Login from "../pages/Login";
+import NotFound from '../pages/NotFound'
 // import About from './pages/about';
 //引入一些模块
 //Router
@@ -18,7 +19,9 @@ const route = (
         <Switch>
             {/*<Redirect from="/" exact to="/index"/>*/}
             <Route path="/login" component={Login}/>
-            <Route path="/" component={Home} />
+            <Route path="/not-found" component={NotFound} />
+            <Route exact path="/" component={Home} />
+            <Redirect to="/not-found" />
 
         </Switch>
 

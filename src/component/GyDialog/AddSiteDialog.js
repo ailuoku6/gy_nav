@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -16,10 +16,20 @@ import { connect } from "react-redux";
 function AddSiteDialog(props) {
     //console.log(props);
     const [siteName,setSiteName] = useState(props.defaultName?props.defaultName:'');
-    const [siteAddr,setSiteAddr] = useState(props.defaultAddr?props.defaultAddr:'');
+    const [siteAddr,setSiteAddr] = useState(props.defaultAddr?props.defaultAddr:'http://');
     const [isError,setIsError] = useState(false);
     const [helpText,setHelpText] = useState("");
     //console.log("AddSiteDialog刷新了");
+
+    useEffect(() => {
+        if(props.open){
+            setSiteAddr(props.defaultAddr?props.defaultAddr:'http://');
+            console.log("设置siteAddr");
+        }
+        return () => {
+            
+        }
+    }, [props.open])
     return (
         <Dialog
             open={props.open}
@@ -51,7 +61,8 @@ function AddSiteDialog(props) {
                     helperText={helpText}
                     label="输入网址"
                     // fullWidth
-                    value={siteAddr?siteAddr:'http://'}
+                    //value={siteAddr?siteAddr:'http://'}
+                    value={siteAddr}
                     onChange={(event)=>{
                         setSiteAddr(event.target.value)
                     }}
