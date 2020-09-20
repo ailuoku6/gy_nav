@@ -1,0 +1,18 @@
+@media (prefers-color-scheme: dark) {
+    /* html {
+        filter: invert(1) hue-rotate(180deg);
+    } */
+    .headBar, .sear_wrap,#input_bar{
+        background-color: #333;
+    }
+    .sug{
+        background-color: #333;
+        color: white;
+    }
+    .sear_marchine{
+        color: #fff9;
+    }
+    #input_bar{
+        color:#fff;
+    }
+}

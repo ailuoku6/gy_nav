@@ -16,6 +16,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import {addPart2Rear,addSite2Part, delPart,delSite,modifyPart,modifySite,setPartition,insertPart,movePart} from "../../redux/actions";
 
 import './index.css';
+import './dark.css';
 
 
 class Partition extends React.Component{

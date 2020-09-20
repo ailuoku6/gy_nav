@@ -1,0 +1,12 @@
+
+@media (prefers-color-scheme: dark) {
+    .gy-container{
+        background-color: #333;
+    }
+    .title{
+        color: #fff;
+    }
+    a,a:hover{
+        color: white;
+    }
+}

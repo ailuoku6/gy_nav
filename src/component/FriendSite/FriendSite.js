@@ -1,6 +1,7 @@
 import React from 'react';
 import Site from "../site/Site";
 import './index.css';
+import './dark.css';
 import { get } from '../../utils/http'
 import {GetAllFS} from '../../utils/Api'
 
