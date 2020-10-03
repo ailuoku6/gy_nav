@@ -56,7 +56,7 @@ class Home extends React.Component{
         document.title = "GY导航";
         // window.addEventListener('scroll', this.handleScroll);
         window.addEventListener('scroll', this.throttleHandleScroll);
-        window.addEventListener('keypress',this.handleKeyDown);
+        window.addEventListener('keydown',this.handleKeyDown);
         //this.appRef.current.addEventListener('keypress',this.handleKeyDown);
         //React.addEventListener('keypress',this.handleKeyDown);
         this.JudgeDevice();
@@ -168,7 +168,7 @@ class Home extends React.Component{
     componentWillUnmount() {
         // window.removeEventListener('scroll', this.handleScroll);
         window.removeEventListener('scroll', this.throttleHandleScroll);
-        window.removeEventListener('keypress',this.handleKeyDown);
+        window.removeEventListener('keydown',this.handleKeyDown);
         //React.removeEventListener('keypress',this.handleKeyDown);
         
     }
