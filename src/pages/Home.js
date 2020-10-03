@@ -30,11 +30,14 @@ import {GetInitData,ValidToken,GetPartData} from "../utils/Api";
 import {GetlocalStorage, SetlocalStorage,GetMarchineIndexStore,SetUserStore,GetUserStore,GetPartDataStore} from "../utils/localStorageUtil";
 
 import throttle from "../utils/throttle";
+import eventBus from "../utils/EventEmitter";
+import {homeKeyDown} from '../utils/Events';
 
 class Home extends React.Component{
     // eslint-disable-next-line no-useless-constructor
     constructor(props){
         super(props);
+        this.appRef = React.createRef();
         this.state = {
             edit:false,
             scrolled:false,
@@ -44,10 +47,18 @@ class Home extends React.Component{
         this.user = null;
     }
 
+    handleKeyDown(e){
+        console.log('home监听',e);
+        eventBus.emit(homeKeyDown,[e]);
+    }
+
     componentDidMount() {
         document.title = "GY导航";
         // window.addEventListener('scroll', this.handleScroll);
         window.addEventListener('scroll', this.throttleHandleScroll);
+        window.addEventListener('keypress',this.handleKeyDown);
+        //this.appRef.current.addEventListener('keypress',this.handleKeyDown);
+        //React.addEventListener('keypress',this.handleKeyDown);
         this.JudgeDevice();
         // 读取搜索引擎数据
         this.initMarchine();
@@ -109,7 +120,7 @@ class Home extends React.Component{
     initMarchine(){
         let marchineIndex = GetMarchineIndexStore();
         console.log("启动时读取搜索引擎选择",marchineIndex);
-        if(marchineIndex!=null&&marchineIndex!=undefined){
+        if(marchineIndex!==null&&marchineIndex!==undefined){
             this.props.setMarchineIndex(Number.parseInt(marchineIndex),false);
         }
     }
@@ -157,23 +168,23 @@ class Home extends React.Component{
     componentWillUnmount() {
         // window.removeEventListener('scroll', this.handleScroll);
         window.removeEventListener('scroll', this.throttleHandleScroll);
+        window.removeEventListener('keypress',this.handleKeyDown);
+        //React.removeEventListener('keypress',this.handleKeyDown);
+        
     }
 
     render() {
 
-        console.log("home刷新了");
-
         let fabColor = Marchinelist[this.props.selectMcIndex].color;
 
         return(
-            <div className="App" onClick={()=>{
+            <div className="App" ref={this.appRef} onClick={()=>{
                 if(this.props.Show.marchine){
                     this.props.setMarchineShow(false);
                 }
                 if(this.props.Show.sug){
                     this.props.setSugShow(false);
                 }
-                
             }}>
                 <HeadBar Scrolled={this.state.scrolled}/>
                 <MarginHead/>

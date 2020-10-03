@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-
+//import './dark.css';
 import Router from './router/router'
 import { setUser } from './redux/actions';
 import {GetUserStore} from "./utils/localStorageUtil";
@@ -35,7 +35,6 @@ class App extends React.Component{
     }
 
     render() {
-        console.log("App刷新了");
 
         // const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 

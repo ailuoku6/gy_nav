@@ -51,7 +51,8 @@ function AddSiteDialog(props) {
                     // fullWidth
                     value={siteName}
                     onChange={(event)=>{
-                        setSiteName(event.target.value)
+                        setSiteName(event.target.value);
+                        event.stopPropagation();
                     }}
                 />
                 <br/>
@@ -64,7 +65,8 @@ function AddSiteDialog(props) {
                     //value={siteAddr?siteAddr:'http://'}
                     value={siteAddr}
                     onChange={(event)=>{
-                        setSiteAddr(event.target.value)
+                        setSiteAddr(event.target.value);
+                        event.stopPropagation();
                     }}
                 />
 

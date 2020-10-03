@@ -24,7 +24,7 @@ const handlePart = store => next => action =>{
     let result = next(action);
 
     //console.log('next state',store.getState());
-    if(action.type.indexOf('PART')!=-1||action.type.indexOf('SITE')!=-1){
+    if(action.type.indexOf('PART')!==-1||action.type.indexOf('SITE')!==-1){
         console.log("修改分区时触发");
         debounceGet(store.getState().Partition.data);
         if(action.type===TYPE.SET_PARTITION){//

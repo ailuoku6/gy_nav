@@ -16,7 +16,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import {addPart2Rear,addSite2Part, delPart,delSite,modifyPart,modifySite,setPartition,insertPart,movePart} from "../../redux/actions";
 
 import './index.css';
-import './dark.css';
+//import './dark.css';
 
 
 class Partition extends React.Component{
@@ -46,6 +46,7 @@ class Partition extends React.Component{
                                 <Input value={item.categoryname} className={'flexInput'}
                                     onChange={(e)=>{
                                         this.props.modifyPart(index,e.target.value);
+                                        e.stopPropagation();
                                         // console.log(e.target.value)
                                     }}
                                 />
@@ -83,8 +84,6 @@ class Partition extends React.Component{
 
 
     render() {
-
-        console.log("partition刷新了");
 
         //let pts = this.props.Pts;
         let pts = this.props.Partition;

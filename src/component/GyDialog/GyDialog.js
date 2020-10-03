@@ -10,7 +10,6 @@ function GyDialog(props) {
     //console.log(props);
     const [partName,setpartName] = useState('');
 
-    console.log("GyDialog刷新了");
     return (
         <Dialog
             open={props.open}
@@ -28,7 +27,8 @@ function GyDialog(props) {
                     // fullWidth
                     value={partName}
                     onChange={(event)=>{
-                        setpartName(event.target.value)
+                        setpartName(event.target.value);
+                        event.stopPropagation();
                     }}
                 />
 

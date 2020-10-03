@@ -1,6 +1,6 @@
 import React from 'react';
 import './index.css';
-import './dark.css';
+//import './dark.css';
 import Divider from '@material-ui/core/Divider';
 import Grid from "@material-ui/core/Grid";
 import {connect} from 'react-redux'
@@ -18,8 +18,6 @@ class PopularSite extends React.Component{
     }
 
     render() {
-
-        console.log("popular Site 刷新了");
 
         let pts = this.props.popularSite.pSite;
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import './index.css';
-import './dark.css';
+//import './dark.css';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Collapse from '@material-ui/core/Collapse';
 import CancelIcon from '@material-ui/icons/Cancel';
@@ -12,6 +12,9 @@ import Marchinelist from "../../utils/SearchMarchine";
 //import { debounce } from 'throttle-debounce';
 import debounce from "../../utils/debounce";
 import {linkPattern} from '../../utils/veriLink'
+import eventBus from "../../utils/EventEmitter"
+import {homeKeyDown} from '../../utils/Events'
+import dbClick from '../../utils/DoubleClick'
 // import http from '../../utils/http';
 
 // const get = http.get;
@@ -30,22 +33,24 @@ class HeadBar extends React.Component{
             keyWord:'',
             Marchineselect_index:0,
             sugSelectIndex:0,
-            // Marchinelist:[
-            //     {Marchine_name:"百度",button_value:"百度一下",searApi:"https://www.baidu.com/s?wd=",searApi_weizui:"",color:"#38F"},
-            //     {Marchine_name:"谷歌",button_value:"谷歌一下",searApi:"https://www.google.com/#q=",searApi_weizui:"",color:"#3b78e7"},
-            //     {Marchine_name:"搜狗",button_value:"搜狗搜索",searApi:"https://www.sogou.com/web?query=",searApi_weizui:"",color:"#ff5943"},
-            //     {Marchine_name:"360搜索",button_value:"360搜",searApi:"https://www.so.com/s?ie=utf-8&fr=none&src=360sou_newhome&q=",searApi_weizui:"",color:"#19b955"},
-            //     {Marchine_name:"必应搜索",button_value:"必应搜索",searApi:"https://www.bing.com/search?q=",searApi_weizui:"",color:"#1688b1"},
-            //     {Marchine_name:"Github",button_value:"Github",searApi:"https://github.com/search?q=",searApi_weizui:"",color:"#00302e"},
-            //     {Marchine_name:"知乎搜索",button_value:"知乎搜索",searApi:"https://www.zhihu.com/search?type=content&q=",searApi_weizui:"",color:"#0077e6"},
-            //     {Marchine_name:"百度文库",button_value:"搜文库",searApi:"https://wk.baidu.com/search?word=",searApi_weizui:"",color:"#38F"},
-            //     {Marchine_name:"图片搜索",button_value:"图片搜索",searApi:"http://image.so.com/i?q=",searApi_weizui:"&src=srp",color:"#19b955"},
-            //     {Marchine_name:"贴吧",button_value:"贴吧搜索",searApi:"https://tieba.baidu.com/f?kw=",searApi_weizui:"",color:"#38F"},
-            //     {Marchine_name:"知道",button_value:"百度知道",searApi:"https://zhidao.baidu.com/search?word=",searApi_weizui:"",color:"#38F"},
-            //     {Marchine_name:"网盘",button_value:"搜网盘",searApi:"http://www.panduoduo.net/s/name/",searApi_weizui:"",color:"#3f51b5"},
-            //     {Marchine_name:"csdn",button_value:"搜csdn",searApi:"http://so.csdn.net/so/search/s.do?q=",searApi_weizui:"",color:"#be1a21"},
-            // ],
         }
+        this.inputRef = React.createRef();
+    }
+
+    handleHomeKeyDown = (e)=>{
+        console.log('headbar reciver',e.target.tagName);
+        let focuEle = e.target.tagName;
+        if(focuEle!=='INPUT'){
+            this.inputRef.current.focus();
+        }
+    }
+
+    componentDidMount(){
+        eventBus.on(homeKeyDown,this.handleHomeKeyDown);
+    }
+
+    componentWillUnmount(){
+        eventBus.off(homeKeyDown,this.handleHomeKeyDown);
     }
 
     debounceGetSug = undefined;
@@ -135,7 +140,7 @@ class HeadBar extends React.Component{
 
     render() {
 
-        console.log("HeadBar刷新了");
+        //console.log('inputref',this.inputRef);
 
         if(!this.debounceGetSug){
             this.debounceGetSug = debounce(this.GetSug,200);
@@ -190,23 +195,6 @@ class HeadBar extends React.Component{
                             })}
                         </Collapse>
 
-                        {/*{this.props.marchine&&(*/}
-                        {/*    */}
-                        {/*    <ul id={'sear_marchine_select'} className={'sug'}>*/}
-                        {/*        {Marchinelist.map((item,index)=>{*/}
-                        {/*            return (*/}
-                        {/*                <a className={this.props.selectMcIndex===index?'selected':''} onClick={()=>{*/}
-                        {/*                    // this.setState({*/}
-                        {/*                    //     Marchineselect_index:index,*/}
-                        {/*                    //     // showMarchine:false*/}
-                        {/*                    // });*/}
-                        {/*                    this.props.setMarchineIndex(index);*/}
-                        {/*                    this.props.setMarchineShow(false)*/}
-                        {/*                }} style={{textDecoration: 'none',fontSize:14}}>{item.Marchine_name}</a>*/}
-                        {/*            )*/}
-                        {/*        })}*/}
-                        {/*    </ul>*/}
-                        {/*)}*/}
                     </div>
                     <div id={'seacing_bar'} ref={'Bar'}>
                         <input
@@ -264,7 +252,9 @@ class HeadBar extends React.Component{
                                 });
                                 // console.log(e.target.value)
                             }}
-                        ref={'keyWordInput'}/>
+                            // ref={'keyWordInput'}
+                            ref={this.inputRef}
+                        />
 
                         {this.state.keyWord&&(
                             <div style={{display:'flex',alignItems:'center'}} onClick={()=>{
@@ -272,7 +262,8 @@ class HeadBar extends React.Component{
                                     keyWord:'',
                                     sug:[],
                                 });
-                                this.refs.keyWordInput.focus();
+                                //this.refs.keyWordInput.focus();
+                                this.inputRef.current.focus();
                                 // console.log(this.refs.wrap.clientWidth-this.refs.searchBtn.clientWidth)
                             }}>
                                 <CancelIcon fontSize={'inherit'} style={{fontSize:15}}/>

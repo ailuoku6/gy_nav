@@ -1,7 +1,7 @@
 import React from 'react';
 import Site from "../site/Site";
 import './index.css';
-import './dark.css';
+//import './dark.css';
 import { get } from '../../utils/http'
 import {GetAllFS} from '../../utils/Api'
 
@@ -42,7 +42,6 @@ class FriendSite extends React.Component{
     }
 
     render() {
-        console.log("friendsite刷新了");
         return(
             <div className={'footer gy-shadow-2'}>
                 友情链接:

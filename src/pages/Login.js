@@ -169,8 +169,6 @@ class Login extends React.Component{
 
     render() {
 
-        console.log("login刷新了");
-
         let isLogin = this.props.user!==null&&this.state.validToken;
 
         // let fabColor = '#3388ff';

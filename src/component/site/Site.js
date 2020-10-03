@@ -1,6 +1,6 @@
 import React from 'react';
 import './index.css';
-import './dark.css';
+//import './dark.css';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ReactSortable from 'react-sortablejs'
@@ -24,8 +24,6 @@ class Site extends React.Component{
         }
     }
     render() {
-
-        console.log("site刷新了");
 
         let sites = Array.isArray(this.props.Sites)?this.props.Sites:[];
         let edit = this.props.Edit&&this.props.PartIndex!==null;

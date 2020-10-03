@@ -14,8 +14,6 @@ class MarginHead extends React.Component{
 
     render() {
 
-        console.log("marginhead刷新了");
-
         return(
             <div className={'autoMargin'}>
 

@@ -14,9 +14,6 @@ class Footer extends React.Component{
     }
 
     render() {
-
-        console.log("footer刷新了");
-
         return(
             <footer>
                 <div className={'about'}>
