@@ -11,7 +11,7 @@ class EventEmitter{
 
     off(event,callBack){
         let callBacks = this.events[event]||[];
-        this.events[event] = callBacks.filters(item=>item!==callBack);
+        this.events[event] = callBacks.filter(item=>item!==callBack);
         // this.events[event] = callBacks;
     }
     emit(event,data){

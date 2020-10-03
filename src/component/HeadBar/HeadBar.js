@@ -14,7 +14,7 @@ import debounce from "../../utils/debounce";
 import {linkPattern} from '../../utils/veriLink'
 import eventBus from "../../utils/EventEmitter"
 import {homeKeyDown} from '../../utils/Events'
-import dbClick from '../../utils/DoubleClick'
+// import dbClick from '../../utils/DoubleClick'
 // import http from '../../utils/http';
 
 // const get = http.get;

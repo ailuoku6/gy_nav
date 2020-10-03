@@ -1,6 +1,7 @@
 import React from 'react';
-import LoginRegister from 'react-mui-login-register';import { connect } from "react-redux";
-import { setDevice,setSugShow,setMarchineShow,setMarchineIndex,setUser,setPartition } from './../redux/actions';
+// import LoginRegister from 'react-mui-login-register';
+import { connect } from "react-redux";
+import { setDevice,setUser,setPartition } from './../redux/actions';
 import {AppBar,Toolbar,Typography,Paper,Button,Avatar} from '@material-ui/core'
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -11,7 +12,7 @@ import {pswPattern} from '../utils/veriLink'
 import {Link} from "react-router-dom";
 import './login.css'
 
-import { GetlocalStorage,RemovelocalStorage,SetlocalStorage,SetUserStore,GetTokenStore,SetTokenStore,GetUserStore } from "../utils/localStorageUtil";
+import { SetUserStore,GetTokenStore,SetTokenStore,GetUserStore } from "../utils/localStorageUtil";
 import {history} from '../router/router'
 
 function a11yProps(index) {

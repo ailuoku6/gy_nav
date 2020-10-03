@@ -4,7 +4,7 @@
 import axios from 'axios';
 import QS from 'qs';
 import { BaseUrl } from './Api'
-import {GetlocalStorage,SetlocalStorage,GetTokenStore,SetTokenStore} from './localStorageUtil'
+import {GetTokenStore,SetTokenStore} from './localStorageUtil'
 import {history} from '../router/router'
 // import store from '../redux/store'
 // import { createHashHistory,createBrowserHistory } from 'history';

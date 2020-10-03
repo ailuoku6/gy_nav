@@ -1,8 +1,8 @@
 import debounce from '../../utils/debounce'
-import {TYPE, setMarchineIndex} from '../actions'
+import {TYPE} from '../actions'
 import {UpPartData} from '../../utils/Api'
 import { SetMarchineIndexStore,SetUserStore,SetPartDataStore } from '../../utils/localStorageUtil'
-import {get,post} from "../../utils/http"
+import {post} from "../../utils/http"
 
 
 const debounceGet = debounce((data)=>{

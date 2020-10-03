@@ -2,7 +2,7 @@ import React from 'react';
 import './index.css';
 //import './dark.css';
 import Divider from '@material-ui/core/Divider';
-import Grid from "@material-ui/core/Grid";
+// import Grid from "@material-ui/core/Grid";
 import {connect} from 'react-redux'
 
 import {setPopularSite} from '../../redux/actions'
