@@ -1,4 +1,4 @@
-const linkPattern = /(http:\/\/|https:\/\/)(\w|[\u4e00-\u9fa5])+\.(\w|[\u4e00-\u9fa5])+(\.)*(\w|[\u4e00-\u9fa5])*\/*/;
+const linkPattern = /(http:\/\/|https:\/\/)[\w\W]+\.[\w\W]+(\.)*[\w\W]+/;
 
 const pswPattern = /[^\x00-\xff]+/;
 
