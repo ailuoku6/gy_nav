@@ -51,7 +51,7 @@
     "react": "^16.10.2",
     "react-app-polyfill": "^1.0.4",
     "react-css-collapse": "^3.6.1",
-    "react-dev-utils": "^9.1.0",
+    "react-dev-utils": "^11.0.4",
     "react-dom": "^16.10.2",
     "react-mui-login-register": "^0.7.3",
     "react-redux": "^7.1.1",
