@@ -33,3 +33,13 @@
 .flexInput{
     flex:1;
 }
+
+
+@media (prefers-color-scheme: dark) {
+    .partition{
+        background-color: #1e1f2b !important;
+    }
+    .partition .title{
+        color: #fff;
+    }
+}

@@ -81,3 +81,16 @@
         width: 11%;
     }
 }
+
+
+@media (prefers-color-scheme: dark) {
+    .gy-container{
+        background-color: #1e1f2b;
+    }
+    .title{
+        color: #fff;
+    }
+    a,a:hover{
+        color: white;
+    }
+}

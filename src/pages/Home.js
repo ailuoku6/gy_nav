@@ -1,5 +1,6 @@
 import React from 'react';
 // import './App.css';
+import './home.css'
 import HeadBar from "./../component/HeadBar/HeadBar";
 import Partition from "./../component/Partition/Partition";
 import Fab from '@material-ui/core/Fab';

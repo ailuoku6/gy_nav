@@ -3,7 +3,7 @@
         filter: invert(1) hue-rotate(180deg);
     } */
     .headBar, .sear_wrap,#input_bar{
-        background-color: #333;
+        background-color: #1a1926;
     }
     .sug{
         background-color: #333;
