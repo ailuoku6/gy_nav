@@ -1,6 +1,6 @@
 const Marchinelist = [
     {Marchine_name:"百度",button_value:"百度一下",searApi:"https://www.baidu.com/s?wd=",searApi_weizui:"",color:"#38F"},
-    {Marchine_name:"谷歌",button_value:"谷歌一下",searApi:"https://www.google.com/#q=",searApi_weizui:"",color:"#3b78e7"},
+    {Marchine_name:"谷歌",button_value:"谷歌一下",searApi:"https://www.google.com/search?q=",searApi_weizui:"",color:"#3b78e7"},
     {Marchine_name:"搜狗",button_value:"搜狗搜索",searApi:"https://www.sogou.com/web?query=",searApi_weizui:"",color:"#ff5943"},
     {Marchine_name:"360搜索",button_value:"360搜",searApi:"https://www.so.com/s?ie=utf-8&fr=none&src=360sou_newhome&q=",searApi_weizui:"",color:"#19b955"},
     {Marchine_name:"必应搜索",button_value:"必应搜索",searApi:"https://www.bing.com/search?q=",searApi_weizui:"",color:"#1688b1"},
