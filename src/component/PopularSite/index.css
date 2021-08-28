@@ -85,12 +85,15 @@
 
 @media (prefers-color-scheme: dark) {
     .gy-container{
-        background-color: #1e1f2b;
+        background-color: #22282d;
     }
     .title{
-        color: #fff;
+        color: #adbac7;
     }
     a,a:hover{
-        color: white;
+        color: #adbac7;
+    }
+    .divider{
+        background-color: #373e47 !important;
     }
 }

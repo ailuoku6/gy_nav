@@ -266,11 +266,11 @@
 
 @media (prefers-color-scheme: dark) {
     .headBar, .sear_wrap,#input_bar{
-        background-color: #1a1926;
+        background-color: #22272e;
     }
     .sug{
         background-color: #333;
-        color: white;
+        color: #adbac7;
     }
     .sear_marchine{
         color: #fff9;

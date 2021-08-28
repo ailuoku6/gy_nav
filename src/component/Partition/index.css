@@ -37,9 +37,12 @@
 
 @media (prefers-color-scheme: dark) {
     .partition{
-        background-color: #1e1f2b !important;
+        background-color: #22282d !important;
     }
     .partition .title{
-        color: #fff;
+        color: #adbac7;
+    }
+    .divider{
+        background-color: #373e47;
     }
 }

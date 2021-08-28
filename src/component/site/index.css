@@ -69,6 +69,6 @@ a, a:hover {
 @media (prefers-color-scheme: dark) 
 {
     .site-noicon:hover a {
-        color: tan;
+        color: #539bf5;
     }
 }
