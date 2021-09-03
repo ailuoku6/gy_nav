@@ -1,21 +1,21 @@
 import React from 'react';
 // import './App.css';
-import HeadBar from "./../component/HeadBar/HeadBar";
-import Partition from "./../component/Partition/Partition";
+import HeadBar from "../../component/HeadBar";
+import Partition from "../../component/Partition";
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
-import FriendSite from "./../component/FriendSite/FriendSite";
-import Footer from "./../component/Footer/Footer";
+import FriendSite from "../../component/FriendSite";
+import Footer from "../../component/Footer";
 import SettingsIcon from '@material-ui/icons/Settings';
 import DoneIcon from '@material-ui/icons/Done';
 //import Paper from '@material-ui/core/Paper';
 //import Grid from '@material-ui/core/Grid';
-import MarginHead from "./../component/MarginHead/MarginHead";
-import PopularSite from "./../component/PopularSite/PopularSite";
+import MarginHead from "../../component/MarginHead";
+import PopularSite from "../../component/PopularSite";
 import { connect } from "react-redux";
-import { setDevice,setSugShow,setMarchineShow,setMarchineIndex,setUser,addPart2Rear,setPartition, setGlobalMsg} from './../redux/actions';
-import Marchinelist from "./../utils/SearchMarchine";
-import GyDialog from "../component/GyDialog/GyDialog";
+import { setDevice,setSugShow,setMarchineShow,setMarchineIndex,setUser,addPart2Rear,setPartition, setGlobalMsg} from '../../redux/actions';
+import Marchinelist from "../../utils/SearchMarchine";
+import GyDialog from "../../component/GyDialog";
 import Snackbar from '@material-ui/core/Snackbar';
 //import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
@@ -25,13 +25,13 @@ import { Link } from 'react-router-dom';
 // import DialogContentText from '@material-ui/core/DialogContentText';
 // import DialogTitle from '@material-ui/core/DialogTitle';
 import Tooltip from '@material-ui/core/Tooltip';
-import {post} from "../utils/http";
-import {ValidToken,GetPartData} from "../utils/Api";
-import {GetMarchineIndexStore,SetUserStore,GetUserStore,GetPartDataStore} from "../utils/localStorageUtil";
+import {post} from "../../utils/http";
+import {ValidToken,GetPartData} from "../../utils/Api";
+import {GetMarchineIndexStore,SetUserStore,GetUserStore,GetPartDataStore} from "../../utils/localStorageUtil";
 
-import throttle from "../utils/throttle";
-import eventBus from "../utils/EventEmitter";
-import {homeKeyDown} from '../utils/Events';
+import throttle from "../../utils/throttle";
+import eventBus from "../../utils/EventEmitter";
+import {homeKeyDown} from '../../utils/Events';
 
 class Home extends React.Component{
     // eslint-disable-next-line no-useless-constructor
@@ -70,18 +70,6 @@ class Home extends React.Component{
         }
         if (this.user===null){
             console.log("读取本地");
-            // let userinfo = GetUserStore();
-            // console.log(userinfo);
-            // this.props.setUser(userinfo);
-            //let datas = localStorage.getItem("datas");
-            // let datas = GetlocalStorage('datas');
-            // if (datas!=null&&datas!=''){
-            //     this.setState({
-            //         datas:datas
-            //     })
-            // }else {
-            //     this.getInitData();
-            // }
 
             let partData = GetPartDataStore();
             if(partData){

@@ -8,10 +8,6 @@ import ReactSortable from 'react-sortablejs'
 import {connect} from 'react-redux'
 import {addSite2Part,delSite,modifySite,moveSite} from '../../redux/actions'
 
-// import Button from '@material-ui/core/Button';
-// import ButtonGroup from '@material-ui/core/ButtonGroup';
-// import Grid from "@material-ui/core/Grid";
-
 import AddSiteDialog from "../GyDialog/AddSiteDialog"
 
 class Site extends React.Component{
@@ -36,13 +32,6 @@ class Site extends React.Component{
                 <ReactSortable
                     key={key}
                     onChange={(order, sortable, evt)=>{
-                        // if (!edit) return;
-                        console.log("order",order);
-                        console.log("sortable",sortable);
-                        console.log("evt",evt.oldIndex);
-                        // this.setState({
-                        //     list:order
-                        // })
                         if(partIndex<0) return;
                         this.props.moveSite(partIndex,evt.oldIndex,evt.newIndex);
                     }}
@@ -138,5 +127,3 @@ export default connect(
     mapStateToProps,
     mapDispacthToProps
 )(Site)
-
-//export default Site;

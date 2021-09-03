@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import Fab from '@material-ui/core/Fab';
 import ReactSortable from 'react-sortablejs'
 import AddIcon from '@material-ui/icons/Add';
-import Site from "../site/Site";
+import Site from "../site";
 import { connect } from "react-redux";
 
 import AddSiteDialog from '../GyDialog/AddSiteDialog'

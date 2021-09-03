@@ -1,16 +1,9 @@
 import React from 'react';
 import './App.css';
-//import './dark.css';
 import Router from './router/router'
 import { setUser } from './redux/actions';
 import {GetUserStore} from "./utils/localStorageUtil";
-// import {GetPartData,ValidToken} from './utils/Api'
-// import {get,post} from "./utils/http";
 import { connect } from "react-redux";
-
-// import useMediaQuery from '@material-ui/core/useMediaQuery';
-// import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-// import CssBaseline from '@material-ui/core/CssBaseline';
 
 class App extends React.Component{
     // eslint-disable-next-line no-useless-constructor
@@ -36,25 +29,8 @@ class App extends React.Component{
 
     render() {
 
-        // const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-
-        // const theme = React.useMemo(
-        //     () =>
-        //     createMuiTheme({
-        //         palette: {
-        //             type: prefersDarkMode ? 'dark' : 'light',
-        //         },
-        //     }),
-        //     [prefersDarkMode],
-        // );
-
         return(
-            // <ThemeProvider theme={theme}>
-            //     <CssBaseline/>
-            //     <Router/>
-            // </ThemeProvider>
             <Router/>
-            
         )
     }
 
@@ -66,10 +42,7 @@ const mapStateToProps = ({User}) => ({
 
 const mapDispatchToProps = { setUser };
 
-// export default App;
-
 export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(App);
-// export default App;

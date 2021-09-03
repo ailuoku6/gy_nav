@@ -1,9 +1,9 @@
 import {combineReducers} from 'redux';
 import {TYPE} from './actions';
-import data from "../utils/data";
+import initData from "../utils/data";
 import {popularSite} from '../utils/data'
 
-const User = (state = {user:null},action)=>{
+const User = (state = {user:null},action:any)=>{
     console.log("设置user",state.user,action.user);
     switch (action.type) {
         case TYPE.SET_USER:
@@ -17,7 +17,7 @@ const User = (state = {user:null},action)=>{
 
 };
 
-const Device = (state = {device:'pc'},action)=>{
+const Device = (state = {device:'pc'},action:any)=>{
     switch (action.type) {
         case TYPE.SET_DEVICE:
             return {...state,device:action.device};
@@ -26,7 +26,7 @@ const Device = (state = {device:'pc'},action)=>{
     }
 };
 
-const Show = (state = {marchine:false,sug:false},action)=>{
+const Show = (state = {marchine:false,sug:false},action:any)=>{
     switch (action.type) {
         case TYPE.SET_MARCHINE_SHOW:
             //if(action.show===state.marchine) return state;
@@ -39,7 +39,7 @@ const Show = (state = {marchine:false,sug:false},action)=>{
     }
 };
 
-const MarchineIndex = (state = {index:0},action)=>{
+const MarchineIndex = (state = {index:0},action:any)=>{
     switch (action.type) {
         case TYPE.SET_MARCHINE_INDEX:
             return {...state,index:action.index};
@@ -48,12 +48,12 @@ const MarchineIndex = (state = {index:0},action)=>{
     }
 };
 
-const Partition = (state = {data:data},action)=>{
+const Partition = (state:{data:any} = {data:initData},action:any)=>{
     console.log("partData被修改",action,state);
-    let data = [...state.data];
+    let data:any[] = [...state.data];
     switch (action.type) {
         case TYPE.ADD_PART2REAR:
-            let newPart = {};
+            let newPart:{[key:string]:any} = {};
             newPart.categoryname = action.partName;
             newPart.sitelist = [];
             data.push(newPart);
@@ -111,7 +111,7 @@ const Partition = (state = {data:data},action)=>{
     }
 };
 
-const GlobalMsg = (state = {show:false,msg:''},action)=>{
+const GlobalMsg = (state = {show:false,msg:''},action:any)=>{
     switch (action.type) {
         case TYPE.SET_GLOBALMSG:
             return {...state,show:action.show,msg:action.msg};
@@ -120,7 +120,7 @@ const GlobalMsg = (state = {show:false,msg:''},action)=>{
     }
 };
 
-const PopularSite = (state={pSite:popularSite},action)=>{
+const PopularSite = (state={pSite:popularSite},action:any)=>{
     switch(action.type){
         case TYPE.SET_POPULARSITE:
             return {...state,pSite:action.pSite};

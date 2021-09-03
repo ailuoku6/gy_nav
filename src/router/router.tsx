@@ -25,23 +25,11 @@ const route = (
 
         </Switch>
 
-        {/*<Route path="/about" component={About} />*/}
     </Router>
 );
 
 function router(){
     return route;
-    // return (
-    //     <Router>
-    //         <Switch>
-    //             {/*<Redirect from="/" exact to="/index"/>*/}
-    //             <Route exact path="/login" component={Login}/>
-    //             <Route exact path="/" component={Home} />
-
-    //         </Switch>
-
-    //         {/*<Route path="/about" component={About} />*/}
-    //     </Router>);
 }
 export {history};
 export default router;
