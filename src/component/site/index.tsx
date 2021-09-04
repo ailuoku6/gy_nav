@@ -1,129 +1,125 @@
-import React from 'react';
-import './index.css';
+import React, { useState } from "react";
+import "./index.css";
 //import './dark.css';
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
-import ReactSortable from 'react-sortablejs'
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
+import ReactSortable from "react-sortablejs";
+import {
+  addSite2Part,
+  delSite,
+  modifySite,
+  moveSite,
+} from "../../redux/actions";
 
-import {connect} from 'react-redux'
-import {addSite2Part,delSite,modifySite,moveSite} from '../../redux/actions'
+import { connect, useDispatch, useSelector } from "react-redux";
 
-import AddSiteDialog from "../GyDialog/AddSiteDialog"
+import AddSiteDialog from "../GyDialog/AddSiteDialog";
 
-class Site extends React.Component{
+import { UIDelMenu, UISiteNoIcon, UIOperatorBtnWrap } from "./style";
 
-    // eslint-disable-next-line no-useless-constructor
-    constructor(props) {
-        super(props);
-        this.state = {
-            selectedIndex:-1
-        }
-    }
-    render() {
+export default function Site(props: any) {
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
-        let sites = Array.isArray(this.props.Sites)?this.props.Sites:[];
-        let edit = this.props.Edit&&this.props.PartIndex!==null;
-        let partIndex = this.props.PartIndex!==undefined&&this.props.partIndex!==null?this.props.PartIndex:-1;
-        let key = "PlaceHolderKey-"+(edit ? 'on' : 'off');
-        let selectedIndex = this.state.selectedIndex;
+  const { device } = useSelector((state: any) => ({
+    device: state.Device.device,
+  }));
+  const dispatch = useDispatch();
 
-        return(
-            <div>
-                <ReactSortable
-                    key={key}
-                    onChange={(order, sortable, evt)=>{
-                        if(partIndex<0) return;
-                        this.props.moveSite(partIndex,evt.oldIndex,evt.newIndex);
+  let sites = Array.isArray(props.Sites) ? props.Sites : [];
+  let edit = props.Edit && props.PartIndex !== null;
+  let partIndex =
+    props.PartIndex !== undefined && props.partIndex !== null
+      ? props.PartIndex
+      : -1;
+  let key = "PlaceHolderKey-" + (edit ? "on" : "off");
+  // let selectedIndex = this.state.selectedIndex;
+
+  return (
+    <div>
+      <ReactSortable
+        key={key}
+        onChange={(order, sortable, evt) => {
+          if (partIndex < 0) return;
+          dispatch(moveSite(partIndex, evt.oldIndex, evt.newIndex));
+        }}
+        options={{
+          animation: 150,
+          easing: "cubic-bezier(1, 0, 0, 1)",
+          ghostClass: "sortable-ghost",
+          disabled: !edit,
+        }}
+      >
+        {sites.map((item, index) => {
+          return (
+            <UISiteNoIcon key={index} style={edit ? { minWidth: 40 } : null}>
+              {edit && device === "phone" ? (
+                <div>{item.site_name ? item.site_name : "网站名缺失"}</div>
+              ) : (
+                <a href={item.url ? item.url : ""} target={"_blank"}>
+                  {item.site_name ? item.site_name : "网站名缺失"}
+                </a>
+              )}
+              {edit === true && (
+                <UIDelMenu>
+                  <UIOperatorBtnWrap
+                    style={{
+                      backgroundColor: "#2525b1a1",
                     }}
-                    options={{
-                        animation: 150,
-                        easing: "cubic-bezier(1, 0, 0, 1)",
-                        ghostClass: "sortable-ghost",
-                        disabled:!edit
+                    onClick={() => {
+                      setSelectedIndex(index);
                     }}
-                >
-                    {sites.map((item,index)=>{
-                        return(
-                            <div className={'site-noicon gy-hoverable'} key={index} style={edit?{minWidth:40}:null}>
-                                {
-                                    edit&&this.props.device==='phone'?(
-                                        <div>{item.site_name?item.site_name:'网站名缺失'}</div>
-                                    ):(
-                                        <a href={item.url?item.url:''} target={'_blank'}>
-                                            {item.site_name?item.site_name:'网站名缺失'}
-                                        </a>
-                                    )
-                                }
-                                
-                                {edit===true&&(
-                                    <div className={'delMenu'}>
-                                        <div style={{width:'50%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',padding:5,borderRadius:5,backgroundColor:'#2525b1a1'}}
-                                            onClick={()=>{
-                                                this.setState({
-                                                    selectedIndex:index
-                                                })
-                                            }}
-                                        >
-                                            <EditIcon fontSize={'small'} color={'inherit'} style={{color:'#fff'}}/>
-                                        </div>
-                                        <div style={{width:'50%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',padding:5,borderRadius:5,backgroundColor:'#ff0000b8'}}
-                                            onClick={()=>{
-                                                this.props.delSite(partIndex,index);
-                                            }}
-                                        >
-                                            <DeleteIcon fontSize={'small'} color={'inherit'} style={{color:'#fff'}}/>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        )
-                    })}
-                </ReactSortable>
-                {selectedIndex>=0&&(
-                    <AddSiteDialog
-                        open={selectedIndex>=0}
-                        title={'编辑站点'}
-                        ConfirmText={'修改'}
-                        defaultName={sites[selectedIndex].site_name}
-                        defaultAddr={sites[selectedIndex].url}
-                        onClose={()=>{
-                            this.setState({
-                                selectedIndex:-1
-                            })
-                        }}
-                        onCancel={()=>{
-                            this.setState({
-                                selectedIndex:-1
-                            })
-                        }}
-                        onConfirm={(siteName,siteAddr)=>{
-                            if(siteName&&siteAddr){//这里应该加验证
-                                //this.props.addSite2Part(this.state.selectedIndex,siteName,siteAddr);
-                                this.props.modifySite(partIndex,selectedIndex,siteName,siteAddr);
-                            }else{
-                                console.log("给点东西吧");
-                            }
-                            this.setState({
-                                selectedIndex:-1
-                            })
-                        }}
+                  >
+                    <EditIcon
+                      fontSize={"small"}
+                      color={"inherit"}
+                      style={{ color: "#fff" }}
                     />
-                )}
-                
-            </div>
-            
-        )
-    }
+                  </UIOperatorBtnWrap>
+                  <UIOperatorBtnWrap
+                    style={{
+                      backgroundColor: "#ff0000b8",
+                    }}
+                    onClick={() => {
+                      dispatch(delSite(partIndex, index));
+                    }}
+                  >
+                    <DeleteIcon
+                      fontSize={"small"}
+                      color={"inherit"}
+                      style={{ color: "#fff" }}
+                    />
+                  </UIOperatorBtnWrap>
+                </UIDelMenu>
+              )}
+            </UISiteNoIcon>
+          );
+        })}
+      </ReactSortable>
+      {selectedIndex >= 0 && (
+        <AddSiteDialog
+          open={selectedIndex >= 0}
+          title={"编辑站点"}
+          ConfirmText={"修改"}
+          defaultName={sites[selectedIndex].site_name}
+          defaultAddr={sites[selectedIndex].url}
+          onClose={() => {
+            setSelectedIndex(-1);
+          }}
+          onCancel={() => {
+            setSelectedIndex(-1);
+          }}
+          onConfirm={(siteName: string, siteAddr: string) => {
+            if (siteName && siteAddr) {
+              //这里应该加验证
+              //this.props.addSite2Part(this.state.selectedIndex,siteName,siteAddr);
+              dispatch(modifySite(partIndex, selectedIndex, siteName, siteAddr));
+            } else {
+              console.log("给点东西吧");
+            }
+            setSelectedIndex(-1);
+          }}
+        />
+      )}
+    </div>
+  );
 }
-
-const mapStateToProps = ({Device})=>({
-    device: Device.device,
-})
-
-const mapDispacthToProps = {addSite2Part,delSite,modifySite,moveSite};
-
-
-export default connect(
-    mapStateToProps,
-    mapDispacthToProps
-)(Site)

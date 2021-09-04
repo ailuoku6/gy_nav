@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 // import LoginRegister from 'react-mui-login-register';
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -14,10 +14,11 @@ import Tab from "@material-ui/core/Tab";
 import TextField from "@material-ui/core/TextField";
 import { post } from "../../utils/http";
 import { Signin, SignUp } from "../../utils/Api";
+import { setDevice, setUser, setPartition } from "./../../redux/actions";
 import { pswPattern } from "../../utils/veriLink";
 import { Link } from "react-router-dom";
 import "./index.css";
-import { UILoginWrap } from "./style";
+import { UILoginWrap, UITipText } from "./style";
 
 import {
   SetUserStore,
@@ -41,9 +42,11 @@ export default function Login(props: any) {
     user: state.User.user,
     Partition: state.Partition.data,
   }));
-  const { setDevice, setUser, setPartition } = useDispatch();
+  const dispatch = useDispatch();
 
-  const [user, setUser] = useState<any>(null);
+  const localUser = useRef<any>(null);
+
+  // const [localUser, setLocalUSer] = useState<any>(null);
 
   const [index, setIndex] = useState<number>(0);
 
@@ -61,7 +64,9 @@ export default function Login(props: any) {
     let user: any = GetUserStore();
     if (user !== null && user !== undefined) {
       console.log("从本地读取到了用户", user.userName);
-      setUser(user);
+      //   setUser(user);
+      // setLocalUSer(user);
+      localUser.current = user;
     }
   };
 
@@ -89,8 +94,8 @@ export default function Login(props: any) {
         delete user.partData;
         user.passWord = passWord;
 
-        setPartition(JSON.parse(partData), true, false);
-        setUser(user);
+        dispatch(setPartition(JSON.parse(partData), true, false));
+        dispatch(setUser(user));
 
         history.replace("/");
       })
@@ -130,8 +135,8 @@ export default function Login(props: any) {
         delete user.partData;
         user.passWord = passWord;
 
-        setPartition(JSON.parse(partData), true, false);
-        setUser(user);
+        dispatch(setPartition(JSON.parse(partData), true, false));
+        dispatch(setUser(user));
         history.replace("/");
       })
       .catch((err) => {
@@ -143,9 +148,9 @@ export default function Login(props: any) {
     document.title = "注册/登陆";
     console.log("读取配置", user);
     initUser();
-    if (user !== null) {
-      setUserName(user.userName);
-      setPassWord(user.passWord);
+    if (localUser.current !== null) {
+      setUserName(localUser.current.userName);
+      setPassWord(localUser.current.passWord);
     }
     let token = GetTokenStore();
     if (token) {
@@ -159,7 +164,7 @@ export default function Login(props: any) {
         <AppBar position="static">
           <Toolbar>
             <Typography variant="title" color="inherit">
-              {"欢迎你， " + user.userName}
+              {"欢迎你， " + localUser.current.userName}
             </Typography>
           </Toolbar>
         </AppBar>
@@ -172,7 +177,7 @@ export default function Login(props: any) {
               padding: 10,
             }}
           >
-            <Avatar>{user.userName[0]}</Avatar>
+            <Avatar>{localUser.current.userName[0]}</Avatar>
           </div>
 
           <Link to={"/"}>
@@ -190,7 +195,7 @@ export default function Login(props: any) {
             onClick={() => {
               SetTokenStore("");
               SetUserStore("");
-              setUser(null);
+              dispatch(setUser(null));
             }}
           >
             登出
@@ -243,7 +248,7 @@ export default function Login(props: any) {
                 setTipText("");
               }}
             />
-            {tipText && <div style={{ color: "#ff430f" }}>{tipText}</div>}
+            {tipText && <UITipText>{tipText}</UITipText>}
 
             <Button
               variant="contained"
@@ -287,7 +292,7 @@ export default function Login(props: any) {
                 setTipText("");
               }}
             />
-            {tipText && <div style={{ color: "#ff430f" }}>{tipText}</div>}
+            {tipText && <UITipText>{tipText}</UITipText>}
             <Button
               variant="contained"
               color="secondary"
