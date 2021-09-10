@@ -1,57 +1,48 @@
-import React from 'react';
-import './index.css';
+import React from "react";
 //import './dark.css';
-import Divider from '@material-ui/core/Divider';
-// import Grid from "@material-ui/core/Grid";
-import {connect} from 'react-redux'
+import Divider from "@material-ui/core/Divider";
+import { useDispatch, useSelector } from "react-redux";
 
-import {setPopularSite} from '../../redux/actions'
+import { setPopularSite } from "../../redux/actions";
+import {
+  UIContainer,
+  UITitle,
+  SiteContainer,
+  UISite,
+  UISiteIcon,
+  UISiteTitle,
+} from "./style";
 
+export default function PopularSite(props: any) {
+  const { popularSite } = useSelector((state) => ({
+    popularSite: state.PopularSite,
+  }));
+  const dispatch = useDispatch();
 
-class PopularSite extends React.Component{
+  let pts = popularSite.pSite;
 
-    // eslint-disable-next-line no-useless-constructor
-    constructor(props){
-        super(props);
-        this.state = {
-        }
-    }
-
-    render() {
-
-        let pts = this.props.popularSite.pSite;
-
-        return(
-            <div className={'gy-container gy-shadow-2'}>
-                <div className={'title'}>常用站点</div>
-                <Divider/>
-                <div className={'site-container'}>
-                    {pts.map((item,index)=>{
-                        return (
-                            <div key={index}>
-                                <li className={'gy-hoverable site'}>
-                                    <a style={{textDecoration: 'none'}} href={item.url} target="_blank">
-                                        <img className={'site-icon'} src={item.icon}/>
-                                        <span className={'site-title'}>{item.site_name}</span>
-                                    </a>
-                                </li>
-                            </div>
-                        )
-                    })}
-                </div>
+  return (
+    <UIContainer>
+      <UITitle>常用站点</UITitle>
+      <Divider />
+      <SiteContainer>
+        {pts.map((item, index) => {
+          return (
+            <div key={index}>
+              <UISite>
+                <a
+                  style={{ textDecoration: "none" }}
+                  href={item.url}
+                  target="_blank"
+                >
+                  <UISiteIcon src={item.icon} alt={item.icon} />
+                  <UISiteTitle>{item.site_name}</UISiteTitle>
+                </a>
+              </UISite>
             </div>
-        )
-    }
+          );
+        })}
+      </SiteContainer>
+    </UIContainer>
+  );
 }
-
-const mapStateToProps = ({PopularSite})=>({
-    popularSite:PopularSite
-});
-
-const mapDispatchToProps = {setPopularSite};
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(PopularSite)
-//export default PopularSite;

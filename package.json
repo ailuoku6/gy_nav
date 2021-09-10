@@ -147,12 +147,8 @@
       "jest-watch-typeahead/testname"
     ]
   },
-  "babel": {
-    "presets": [
-      "react-app"
-    ]
-  },
   "devDependencies": {
+    "@babel/plugin-proposal-optional-chaining": "^7.14.5",
     "@types/react-redux": "^7.1.18",
     "@types/react-router-dom": "^5.1.8",
     "@types/styled-components": "^5.1.13"
