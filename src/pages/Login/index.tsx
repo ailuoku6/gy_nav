@@ -97,6 +97,7 @@ export default function Login(props: any) {
         dispatch(setPartition(JSON.parse(partData), true, false));
         dispatch(setUser(user));
         localUser.current = user;
+
         history.replace("/");
       })
       .catch((err) => {

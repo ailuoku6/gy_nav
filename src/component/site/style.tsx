@@ -26,6 +26,23 @@ export const UIHoverable = styled.div`
 `;
 
 export const UIDelMenu = styled.div`
+  @keyframes menutrans {
+    from {
+      height: 0;
+    }
+    to {
+      height: 100%;
+    }
+  }
+
+  @-webkit-keyframes menutrans /*Safari and Chrome*/ {
+    from {
+      height: 0;
+    }
+    to {
+      height: 100%;
+    }
+  }
   position: absolute;
   display: none;
   align-items: center;
