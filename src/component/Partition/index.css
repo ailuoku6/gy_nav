@@ -1,35 +1,6 @@
-.partition{
-    min-height: 50px;
-    padding: 10px;
-}
-.partition .title{
-    display: inline-block;
-    font-size: 1em;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    color: #0d47a1;
-}
-.gy-container-full {
-    margin-top: 10px;
-    max-width: 1095px;
-}
-.gy-container, .gy-container-full {
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    padding-right: 8px;
-    padding-left: 8px;
-    margin-right: auto;
-    margin-left: auto;
-}
+
 .sortable-ghost {
     opacity: 0.5;
     background: #c8ebfb;
 }
 
-.editWrap{
-    display: flex;
-}
-
-.flexInput{
-    flex:1;
-}

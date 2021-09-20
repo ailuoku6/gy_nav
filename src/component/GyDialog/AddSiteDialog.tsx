@@ -11,9 +11,10 @@ import TextField from "@material-ui/core/TextField";
 // import InputLabel from '@material-ui/core/InputLabel';
 import {linkPattern} from '../../utils/veriLink';
 import {setGlobalMsg} from '../../redux/actions'
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 
-function AddSiteDialog(props) {
+
+export default function AddSiteDialog(props) {
     //console.log(props);
     const [siteName,setSiteName] = useState(props.defaultName?props.defaultName:'');
     const [siteAddr,setSiteAddr] = useState(props.defaultAddr?props.defaultAddr:'http://');
@@ -21,10 +22,11 @@ function AddSiteDialog(props) {
     const [helpText,setHelpText] = useState("");
     //console.log("AddSiteDialog刷新了");
 
+    const dispatch = useDispatch();
+
     useEffect(() => {
         if(props.open){
             setSiteAddr(props.defaultAddr?props.defaultAddr:'http://');
-            console.log("设置siteAddr");
         }
         return () => {
             
@@ -41,7 +43,6 @@ function AddSiteDialog(props) {
                 props.onClose();
             }}
             aria-labelledby="alert-dialog-title"
-            // aria-describedby="alert-dialog-description"
         >
             <DialogTitle id="alert-dialog-title">{props.title}</DialogTitle>
             <DialogContent>
@@ -61,8 +62,6 @@ function AddSiteDialog(props) {
                     error={isError}
                     helperText={helpText}
                     label="输入网址"
-                    // fullWidth
-                    //value={siteAddr?siteAddr:'http://'}
                     value={siteAddr}
                     onChange={(event)=>{
                         setSiteAddr(event.target.value);
@@ -91,7 +90,6 @@ function AddSiteDialog(props) {
                         console.log("地址不合法");
                         setIsError(true);
                         setHelpText("输入有误！输入的不是网址");
-                        //props.setGlobalMsg("输入的地址不合法",true);
                     }
                     
                 }} color="primary">
@@ -101,18 +99,3 @@ function AddSiteDialog(props) {
         </Dialog>
     )
 }
-
-const mapStateToProps = ({}) => ({
-    
-});
-
-const mapDispatchToProps = { setGlobalMsg };
-
-// export default App;
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(AddSiteDialog);
-
-//xport default AddSiteDialog;

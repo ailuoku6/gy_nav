@@ -1,9 +1,0 @@
-
-@media (prefers-color-scheme: dark) {
-    .partition{
-        background-color: #333 !important;
-    }
-    .partition .title{
-        color: #fff;
-    }
-}
