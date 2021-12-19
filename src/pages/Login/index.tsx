@@ -14,7 +14,7 @@ import Tab from "@material-ui/core/Tab";
 import TextField from "@material-ui/core/TextField";
 import { post } from "../../utils/http";
 import { Signin, SignUp } from "../../utils/Api";
-import { setDevice, setUser, setPartition } from "./../../redux/actions";
+import { setUser, setPartition } from "./../../redux/actions";
 import { pswPattern } from "../../utils/veriLink";
 import { Link } from "react-router-dom";
 import "./index.css";
@@ -37,8 +37,8 @@ function a11yProps(index) {
 }
 
 export default function Login(props: any) {
-  const { device, user, Partition } = useSelector((state: any) => ({
-    device: state.Device.device,
+  const { user, Partition } = useSelector((state: any) => ({
+    // device: state.Device.device,
     user: state.User.user,
     Partition: state.Partition.data,
   }));

@@ -27,6 +27,7 @@ export const UIImage = styled.image`
 
 export const UILink = styled.a`
   text-decoration: none;
+  color: #fff;
 `;
 
 export const UIBeianWrap = styled.div`
