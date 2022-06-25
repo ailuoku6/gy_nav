@@ -15,8 +15,7 @@ export default function App() {
     let user = GetUserStore();
     if (user !== null && user !== undefined) {
       console.log("从本地读取到了用户", user.userName);
-      //this.user = user;
-      // this.props.setUser(user);
+
       dispatch(setUser(user));
     }
   }, []);
@@ -25,37 +24,3 @@ export default function App() {
 
   return <Router />;
 }
-
-// class App extends React.Component {
-//   // eslint-disable-next-line no-useless-constructor
-//   constructor(props) {
-//     super(props);
-//     this.state = {};
-//     //this.user = null;
-//   }
-
-//   componentDidMount() {
-//     this.initUser();
-//   }
-
-//   initUser() {
-//     let user = GetUserStore();
-//     if (user !== null && user !== undefined) {
-//       console.log("从本地读取到了用户", user.userName);
-//       //this.user = user;
-//       this.props.setUser(user);
-//     }
-//   }
-
-//   render() {
-//     return <Router />;
-//   }
-// }
-
-// const mapStateToProps = ({ User }) => ({
-//   user: User.user,
-// });
-
-// const mapDispatchToProps = { setUser };
-
-// export default connect(mapStateToProps, mapDispatchToProps)(App);
