@@ -13,7 +13,7 @@ import {
 
 import { connect, useDispatch, useSelector } from "react-redux";
 
-import AddSiteDialog from "../GyDialog/AddSiteDialog";
+import AddSiteDialog from "../../component/GyDialog/AddSiteDialog";
 
 import { UIDelMenu, UISiteNoIcon, UIOperatorBtnWrap } from "./style";
 
@@ -112,7 +112,9 @@ export default function Site(props: any) {
             if (siteName && siteAddr) {
               //这里应该加验证
               //this.props.addSite2Part(this.state.selectedIndex,siteName,siteAddr);
-              dispatch(modifySite(partIndex, selectedIndex, siteName, siteAddr));
+              dispatch(
+                modifySite(partIndex, selectedIndex, siteName, siteAddr)
+              );
             } else {
               console.log("给点东西吧");
             }

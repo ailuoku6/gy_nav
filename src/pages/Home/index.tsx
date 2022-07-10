@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 // import './App.css';
-import HeadBar from "../../component/HeadBar";
-import Partition from "../../component/Partition";
+import HeadBar from "../../containers/HeadBar";
+import Partition from "../../containers/Partition";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
 import FriendSite from "../../component/FriendSite";

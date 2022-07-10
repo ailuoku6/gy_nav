@@ -10,7 +10,7 @@ import AddIcon from "@material-ui/icons/Add";
 import Site from "../site";
 import { useDispatch, useSelector } from "react-redux";
 
-import AddSiteDialog from "../GyDialog/AddSiteDialog";
+import AddSiteDialog from "../../component/GyDialog/AddSiteDialog";
 import Snackbar from "@material-ui/core/Snackbar";
 
 import {
