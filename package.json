@@ -47,7 +47,7 @@
     "postcss-normalize": "7.0.1",
     "postcss-preset-env": "6.7.0",
     "postcss-safe-parser": "4.0.1",
-    "qs": "^6.9.0",
+    "qs": "^6.9.7",
     "react": "^16.10.2",
     "react-app-polyfill": "^1.0.4",
     "react-css-collapse": "^3.6.1",
