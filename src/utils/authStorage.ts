@@ -1,4 +1,4 @@
-const HEADER_KEY = "nav_header";
+const HEADER_KEY = "authorization";
 
 export const authUtil = (function () {
   // 初始化拿值

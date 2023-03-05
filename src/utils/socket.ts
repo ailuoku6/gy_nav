@@ -14,6 +14,9 @@ class SocketManager {
     this.initEventListener();
   }
 
+  // socket事件拦截，事件预处理，如401事件
+  private interceptor() {}
+
   private initEventListener() {
     this.io.onAny((event: string, restArg: any[]) => {
       const callbacks = this.eventHandlers.get(event) || [];
@@ -34,6 +37,7 @@ class SocketManager {
     this.io.disconnect();
   }
 
+  // 注册监听事件
   public onMsg(event: string, callback: (...arg: any[]) => void) {
     const callbacks = this.eventHandlers.get(event) || [];
     callbacks.push(callback);

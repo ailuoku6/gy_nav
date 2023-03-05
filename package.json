@@ -6,6 +6,7 @@
     "@babel/core": "7.6.0",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
+    "@reduxjs/toolkit": "^1.8.3",
     "@svgr/webpack": "4.3.2",
     "@types/jest": "^27.0.1",
     "@types/node": "^16.7.4",
@@ -83,7 +84,11 @@
   },
   "scripts": {
     "start": "node scripts/start.js",
+    "start:dev": "yarn start env=dev",
+    "start:prd": "yarn start env=prd",
     "build": "node scripts/build.js",
+    "build:dev": "yarn build env=dev",
+    "build:prd": "yarn build env=prd",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {
