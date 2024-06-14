@@ -277,7 +277,7 @@ class HeadBar extends React.Component{
                             {this.state.sug.map((item,index)=>{
                                 if (index===0) return null;
                                 return(
-                                    <a key={index} className={index===this.state.sugSelectIndex?'selected':''} style={{textDecoration: 'none'}} onClick={()=>{
+                                    <a key={index} className={index===this.state.sugSelectIndex?'selected':''} style={{textDecoration: 'none',cursor:'pointer'}} onClick={()=>{
                                         this.setState({
                                             keyWord:item
                                         },()=>{
