@@ -190,7 +190,7 @@ class HeadBar extends React.Component{
                                         // });
                                         this.props.setMarchineIndex(index);
                                         this.props.setMarchineShow(false)
-                                    }} style={{textDecoration: 'none',fontSize:14}}>{item.Marchine_name}</a>
+                                    }} style={{textDecoration: 'none',fontSize:14,cursor:'pointer'}}>{item.Marchine_name}</a>
                                 )
                             })}
                         </Collapse>
