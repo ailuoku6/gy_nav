@@ -71,7 +71,7 @@ class Partition extends React.Component{
                         ):(
                             <div className={'title'}>{item.categoryname}</div>
                         )}
-                        <Divider style={{marginTop:5,marginBottom:5}}/>
+                        <Divider style={{marginTop:5,marginBottom:5}} className='divider' />
                         <Site PartIndex={index} Edit={edit} Sites={item.sitelist}/>
                     </Paper>
 

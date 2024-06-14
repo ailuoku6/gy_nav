@@ -65,3 +65,10 @@ a, a:hover {
     opacity: 0.5;
     background: #c8ebfb;
 }
+
+@media (prefers-color-scheme: dark) 
+{
+    .site-noicon:hover a {
+        color: #539bf5;
+    }
+}

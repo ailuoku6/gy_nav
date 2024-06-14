@@ -263,3 +263,19 @@
         width: 850px;
     }
 }
+
+@media (prefers-color-scheme: dark) {
+    .headBar, .sear_wrap,#input_bar{
+        background-color: #22272e;
+    }
+    .sug{
+        background-color: #333;
+        color: #adbac7;
+    }
+    .sear_marchine{
+        color: #fff9;
+    }
+    #input_bar{
+        color:#fff;
+    }
+}

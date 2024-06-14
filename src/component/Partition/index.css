@@ -33,3 +33,16 @@
 .flexInput{
     flex:1;
 }
+
+
+@media (prefers-color-scheme: dark) {
+    .partition{
+        background-color: #22282d !important;
+    }
+    .partition .title{
+        color: #adbac7;
+    }
+    .divider{
+        background-color: #373e47;
+    }
+}

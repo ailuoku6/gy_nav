@@ -174,7 +174,7 @@ class Login extends React.Component{
 
         // let fabColor = '#3388ff';
         return(
-            <div style={{width:'100%',height:'100%',display:'flex',justifyContent:'center',backgroundColor:'#03a9f4'}}>
+            <div className='login-wrap'>
                 <div>
                     <Paper style={{width:350,marginTop:60}}>
 

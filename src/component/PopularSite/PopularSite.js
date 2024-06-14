@@ -24,7 +24,7 @@ class PopularSite extends React.Component{
         return(
             <div className={'gy-container gy-shadow-2'}>
                 <div className={'title'}>常用站点</div>
-                <Divider/>
+                <Divider className='divider' />
                 <div className={'site-container'}>
                     {pts.map((item,index)=>{
                         return (
