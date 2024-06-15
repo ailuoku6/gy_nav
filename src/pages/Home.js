@@ -7,6 +7,7 @@ import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import FriendSite from "./../component/FriendSite/FriendSite";
 import Footer from "./../component/Footer/Footer";
+import FeaturePanel from "../component/FeaturePanel/index";
 import SettingsIcon from '@material-ui/icons/Settings';
 import DoneIcon from '@material-ui/icons/Done';
 //import Paper from '@material-ui/core/Paper';
@@ -187,6 +188,7 @@ class Home extends React.Component{
                     this.props.setSugShow(false);
                 }
             }}>
+                <FeaturePanel />
                 <HeadBar Scrolled={this.state.scrolled}/>
                 <MarginHead/>
                 <PopularSite/>
