@@ -9,6 +9,8 @@ const GetPartData = "/api/getPartData";
 const UpPartData = "/api/upPartData"
 const ValidToken = 'api/veriToken'
 const GetAllFS = "/api/getAllFS"
+const WriteRemoteClipBoard = "/api/writeClipBoard";
+const GetRemoteClipBoard = "/api/getClipBoard";
 
 const GetInitData = 'getInitData';
 
@@ -21,5 +23,7 @@ export {
     ValidToken,
     GetPartData,
     UpPartData,
-    GetAllFS
+    GetAllFS,
+    WriteRemoteClipBoard,
+    GetRemoteClipBoard
 }
