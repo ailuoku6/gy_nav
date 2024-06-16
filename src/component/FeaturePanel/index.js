@@ -46,8 +46,10 @@ const FeaturePanel = () => {
     }
 
     timer.current = setTimeout(async () => {
-      const res = post(GetRemoteClipBoard);
+      const res = await post(GetRemoteClipBoard,{});
+
       if (!res.result) {
+        setMsg("云端剪切板为空或已过期");
         return;
       }
       const remoteClipBoard = res.data;
