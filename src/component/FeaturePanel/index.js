@@ -60,6 +60,7 @@ const FeaturePanel = () => {
           content: "点击复制",
           callback: () => {
             writeToClipboard(remoteClipBoard);
+            setMsg({ content: "", callback: null });
           },
         });
       } else {
