@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogContentText,
   Snackbar,
+  Button,
 } from "@material-ui/core";
 
 import { post } from "../../utils/http";
@@ -19,9 +20,11 @@ import copy from "../../assets/copy.png";
 import whatsnew from "../../assets/new.png";
 
 import "./index.css";
+import { isSafari } from "../../utils/device";
 
 const FeaturePanel = () => {
   const [display, setDisplay] = useState(false);
+  const [actionCallback, setActionCallback] = useState(null);
   const timer = useRef(null);
 
   const [msg, setMsg] = useState("");
@@ -38,6 +41,7 @@ const FeaturePanel = () => {
     }
 
     setMsg("");
+    setActionCallback(null);
   };
 
   const handleCopyClick = () => {
@@ -46,15 +50,22 @@ const FeaturePanel = () => {
     }
 
     timer.current = setTimeout(async () => {
-      const res = await post(GetRemoteClipBoard,{});
+      const res = await post(GetRemoteClipBoard, {});
 
       if (!res.result) {
         setMsg("云端剪切板为空或已过期");
         return;
       }
       const remoteClipBoard = res.data;
-      await writeToClipboard(remoteClipBoard);
-      setMsg("拉取云剪切板成功");
+      if (isSafari()) {
+        setMsg("点击复制");
+        setActionCallback(async () => {
+          await writeToClipboard(remoteClipBoard);
+        });
+      } else {
+        await writeToClipboard(remoteClipBoard);
+        setMsg("拉取云剪切板成功");
+      }
     }, 400);
   };
 
@@ -72,6 +83,12 @@ const FeaturePanel = () => {
     }
   };
 
+  const snackbarAction = actionCallback ? (
+    <Button color="secondary" size="small" onClick={actionCallback}>
+      复制
+    </Button>
+  ) : null;
+
   return (
     <div
       onBlur={() => setDisplay(false)}
@@ -87,7 +104,7 @@ const FeaturePanel = () => {
         autoHideDuration={2000}
         onClose={handleMsgClose}
         message={msg}
-        action={<></>}
+        action={snackbarAction}
       />
       <div
         class="pull-ring"
@@ -127,13 +144,11 @@ const FeaturePanel = () => {
       >
         <DialogTitle id="simple-dialog-title">更新说明</DialogTitle>
         <DialogContent>
-          <DialogContentText>云剪切板 (用于同一账户跨设备同步信息)</DialogContentText>
-          <div>
-            双击拷贝剪切板内容到云端，单击从云端拷贝剪切板内容到本地
-          </div>
-          <div>
-            隐私相关：用户剪切板内容加密存储，5分钟后过期自动从云端删除
-          </div>
+          <DialogContentText>
+            云剪切板 (用于同一账户跨设备同步信息)
+          </DialogContentText>
+          <div>双击拷贝剪切板内容到云端，单击从云端拷贝剪切板内容到本地</div>
+          <div>隐私相关：用户剪切板内容加密存储，5分钟后过期自动从云端删除</div>
           <div>但即便如此，仍不建议将密码等敏感信息存储到云剪切板</div>
         </DialogContent>
       </Dialog>
