@@ -1,0 +1,1 @@
+sudo cp build/* /www/wwwroot/nav.ailuoku6.top -r
