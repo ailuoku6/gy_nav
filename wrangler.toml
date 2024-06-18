@@ -1,5 +1,0 @@
-name = "functions"
-pages_build_output_dir = "./build"
-
-# [vars]
-# MY_VAR = "my-variable"

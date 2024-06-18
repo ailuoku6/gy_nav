@@ -1,0 +1,10 @@
+name = "functions"
+pages_build_output_dir = "./build"
+
+# [vars]
+# MY_VAR = "my-variable"
+
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "gy_nav"
+# database_id = "468b4939-9622-4192-b867-fc20fb41b456"
