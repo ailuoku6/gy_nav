@@ -87,7 +87,7 @@
     "test": "node scripts/test.js",
     "dev-api": "vite",
     "build-api": "vite build",
-    "preview-api": "wrangler pages dev --d1 DB=468b4939-9622-4192-b867-fc20fb41b456",
+    "preview-api": "wrangler pages dev",
     "deploy-api": "$npm_execpath run build && wrangler pages deploy"
   },
   "eslintConfig": {
