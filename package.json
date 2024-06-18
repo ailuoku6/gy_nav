@@ -2,6 +2,7 @@
   "name": "gy_nav_react",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@babel/core": "7.6.0",
     "@material-ui/core": "^4.11.0",
@@ -71,12 +72,24 @@
     "webpack": "4.41.0",
     "webpack-dev-server": "3.2.1",
     "webpack-manifest-plugin": "2.1.1",
-    "workbox-webpack-plugin": "4.3.1"
+    "workbox-webpack-plugin": "4.3.1",
+    "hono": "^4.4.6"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240529.0",
+    "@hono/vite-cloudflare-pages": "^0.4.0",
+    "@hono/vite-dev-server": "^0.12.1",
+    "vite": "^5.2.12",
+    "wrangler": "^3.57.2"
   },
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "dev-api": "vite",
+    "build-api": "vite build",
+    "preview-api": "wrangler pages dev",
+    "deploy-api": "$npm_execpath run build && wrangler pages deploy"
   },
   "eslintConfig": {
     "extends": "react-app"
