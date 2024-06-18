@@ -1,7 +1,17 @@
 import { Hono } from "hono";
-const app = new Hono();
+
+type Bindings = {
+//   MY_KV: KVNamespace;
+  DB: D1Database;
+};
+
+const app = new Hono<{ Bindings: Bindings }>();
 
 app.get("/api", (ctx) => ctx.text("Hello world, this is Hono!!"));
-app.get("/api/users", (ctx) => ctx.text("Hello users!!"));
+app.get("/api/users", async (ctx) => {
+  const ps = ctx.env.DB.prepare("SELECT * from users");
+  const data = await ps.all();
+  ctx.text("Hello users!!",JSON.stringify(data.results));
+});
 
 export default app;
