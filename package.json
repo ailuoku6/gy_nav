@@ -91,7 +91,10 @@
     "deploy-api": "$npm_execpath run build && wrangler pages deploy"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "rules": {
+      "jsx-a11y/anchor-is-valid": "off"
+    }
   },
   "browserslist": {
     "production": [
