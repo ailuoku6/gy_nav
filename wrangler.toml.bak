@@ -1,0 +1,10 @@
+name = "functions"
+pages_build_output_dir = "./api"
+
+# [vars]
+# MY_VAR = "my-variable"
+
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "my-database"
+# database_id = ""
