@@ -18,7 +18,7 @@ app.get("/api/users", async (ctx) => {
   } catch (error) {
     res = JSON.stringify(error);
   }
-  ctx.text(`Hello users!!,${res}`);
+  return ctx.text(`Hello users!!,${res}`);
 });
 
 export default app;
