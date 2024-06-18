@@ -83,7 +83,7 @@
   },
   "scripts": {
     "start": "node --openssl-legacy-provider scripts/start.js",
-    "build": "node --openssl-legacy-provider scripts/build.js",
+    "build": "node --openssl-legacy-provider scripts/build.js && cp -r functions build/ && cp -r lib build/",
     "test": "node scripts/test.js",
     "dev-api": "vite",
     "build-api": "vite build",
