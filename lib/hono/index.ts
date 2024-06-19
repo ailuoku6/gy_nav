@@ -6,9 +6,9 @@ import { Bindings } from "./types";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-app.use('/api/*', (c, next) => {
+app.use("/api/*", (c, next) => {
   const jwtMiddleware = jwt({
-    secret: c.env.TokenSecret,
+    secret: c.env.TokenSecret || "",
   });
   return jwtMiddleware(c, next);
 });
