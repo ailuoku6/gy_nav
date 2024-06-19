@@ -1,13 +1,17 @@
 import { Hono } from "hono";
 
-type Bindings = {
-  //   MY_KV: KVNamespace;
-  DataSecretKey: string;
-  PasswordSecret: string;
-  DB: D1Database;
-};
+import { jwt } from "hono/jwt";
+
+import { Bindings } from "./types";
 
 const app = new Hono<{ Bindings: Bindings }>();
+
+app.use('/api/*', (c, next) => {
+  const jwtMiddleware = jwt({
+    secret: c.env.TokenSecret,
+  });
+  return jwtMiddleware(c, next);
+});
 
 app.get("/api", (ctx) => ctx.text("Hello world, this is Hono!!"));
 app.get("/api/users", async (ctx) => {
@@ -20,9 +24,9 @@ app.get("/api/users", async (ctx) => {
   } catch (error) {
     res = JSON.stringify(error);
   }
-  return ctx.text(`Hello users!!,${res},${ctx.env.DataSecretKey},${ctx.env.PasswordSecret}`);
+  return ctx.text(
+    `Hello users!!,${res},${ctx.env.DataSecretKey},${ctx.env.PasswordSecret}`
+  );
 });
-
-
 
 export default app;
