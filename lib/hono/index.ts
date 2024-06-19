@@ -2,6 +2,8 @@ import { Hono } from "hono";
 
 type Bindings = {
   //   MY_KV: KVNamespace;
+  DataSecretKey: string;
+  PasswordSecret: string;
   DB: D1Database;
 };
 
@@ -18,7 +20,9 @@ app.get("/api/users", async (ctx) => {
   } catch (error) {
     res = JSON.stringify(error);
   }
-  return ctx.text(`Hello users!!,${res}`);
+  return ctx.text(`Hello users!!,${res},${ctx.env.DataSecretKey},${ctx.env.PasswordSecret}`);
 });
+
+
 
 export default app;
