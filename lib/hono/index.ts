@@ -44,7 +44,7 @@ app.get("/api/login", async (ctx) => {
     tokenSecret
   );
   console.info("-------decodeData22", await verify(res2,tokenSecret));
-  return ctx.text(`${tokenSecret}-----${res2}`);
+  return ctx.text(`-----${res2}`);
 });
 app.get("/api/users", async (ctx) => {
   let res = null;
