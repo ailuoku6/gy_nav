@@ -92,7 +92,10 @@ app.post("/api/signup", async (ctx) => {
 
   // 检查是否提供了用户名和密码
   if (!userName || !passWord || !partData) {
-    return ctx.json({ error: "Username and passWord are required" }, 400);
+    return ctx.json(
+      { result: false, msg: "Username and passWord are required" },
+      400
+    );
   }
 
   // 加密密码
@@ -203,7 +206,7 @@ app.post("/api/writeClipBoard", async (ctx) => {
   const { clipboardString } = await ctx.req.json();
 
   if (!clipboardString) {
-    return ctx.json({ error: "clipboardString is required" }, 400);
+    return ctx.json({ result: false, msg: "clipboardString is required" }, 400);
   }
 
   try {
@@ -273,7 +276,7 @@ app.post("/api/getClipBoard", async (ctx) => {
       `${dataSecretKey}-${payloadJson.id}`
     );
 
-    return ctx.json({ content: content.content });
+    return ctx.json({ result: true, data, msg: "success" });
   } catch (error: any) {
     return ctx.json({ result: false, msg: error.message }, 500);
   }
