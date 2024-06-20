@@ -11,6 +11,7 @@ database_name = "DB"
 
 [env.production]
 compatibility_date = "2024-06-18"
+compatibility_flags = [ "nodejs_compat" ]
 
   [[env.production.d1_databases]]
   database_id = "468b4939-9622-4192-b867-fc20fb41b456"
