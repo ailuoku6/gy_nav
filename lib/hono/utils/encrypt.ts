@@ -1,4 +1,4 @@
-import crypto, { createHash } from "crypto";
+import crypto, { createHash } from "node:crypto";
 
 const encryp = (algorithm: string, content: string) => {
   let hash = createHash(algorithm);
