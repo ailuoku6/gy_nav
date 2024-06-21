@@ -165,16 +165,6 @@ app.post("/api/getPartData", async (ctx) => {
   }
 });
 
-app.post("/api/testjwt", async (ctx) => {
-  try {
-    const payloadJson = ctx.get("jwtPayload");
-
-    return ctx.json({ result: true, payloadJson });
-  } catch (error: any) {
-    return ctx.json({ result: false, msg: error.message }, 500);
-  }
-});
-
 app.post("/api/upPartData", async (ctx) => {
   const { partData } = await ctx.req.json();
 
@@ -286,7 +276,7 @@ app.post("/api/getClipBoard", async (ctx) => {
 
     if (!content) {
       return ctx.json(
-        { result: false, msg: "No valid clipboard content found" },
+        { result: false, data: "", msg: "No valid clipboard content found" },
         404
       );
     }
