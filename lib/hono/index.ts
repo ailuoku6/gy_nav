@@ -82,7 +82,12 @@ app.post("/api/login", async (ctx) => {
     // 生成 JWT
     const token = await signToken({ user: userToken }, tokenSecret);
 
-    return ctx.json({ result: true, user, msg: "Login successful", token });
+    return ctx.json({
+      result: true,
+      user: { id: user.id, userName: user.userName, partData: user.partData },
+      msg: "Login successful",
+      token,
+    });
   } catch (error: any) {
     return ctx.json({ result: false, msg: error.message }, 500);
   }
@@ -142,8 +147,8 @@ app.post("/api/signup", async (ctx) => {
 
 app.post("/api/getPartData", async (ctx) => {
   try {
-    const payload = ctx.get("jwtPayload");
-    const payloadJson = JSON.parse(payload);
+    const payloadJson = ctx.get("jwtPayload");
+    // const payloadJson = JSON.parse(payload);
     const db = ctx.env.DB;
     const user = await db
       .prepare("SELECT partData FROM users WHERE id = ?")
@@ -169,8 +174,8 @@ app.post("/api/upPartData", async (ctx) => {
   }
 
   try {
-    const payload = ctx.get("jwtPayload");
-    const payloadJson = JSON.parse(payload);
+    const payloadJson = ctx.get("jwtPayload");
+    // const payloadJson = JSON.parse(payload);
     const db = ctx.env.DB;
 
     const result = await db
@@ -212,8 +217,8 @@ app.post("/api/writeClipBoard", async (ctx) => {
   }
 
   try {
-    const payload = ctx.get("jwtPayload");
-    const payloadJson = JSON.parse(payload);
+    const payloadJson = ctx.get("jwtPayload");
+    // const payloadJson = JSON.parse(payload);
     const db = ctx.env.DB;
 
     const dataSecretKey = ctx.env.DataSecretKey || "GY";
@@ -228,7 +233,10 @@ app.post("/api/writeClipBoard", async (ctx) => {
       .bind(
         payloadJson.id,
         JSON.stringify(
-          await encryptData(clipboardString, `${dataSecretKey}-${payloadJson.id}`)
+          await encryptData(
+            clipboardString,
+            `${dataSecretKey}-${payloadJson.id}`
+          )
         ),
         expiresAt
       )
@@ -254,8 +262,8 @@ app.post("/api/getClipBoard", async (ctx) => {
   const dataSecretKey = ctx.env.DataSecretKey || "GY";
 
   try {
-    const payload = ctx.get("jwtPayload");
-    const payloadJson = JSON.parse(payload);
+    const payloadJson = ctx.get("jwtPayload");
+    // const payloadJson = JSON.parse(payload);
     const db = ctx.env.DB;
 
     const now = new Date().toISOString();
@@ -283,25 +291,5 @@ app.post("/api/getClipBoard", async (ctx) => {
     return ctx.json({ result: false, msg: error.message }, 500);
   }
 });
-
-// app.get("/api/users", async (ctx) => {
-//   let res = null;
-
-//   const jwtPayload = ctx.get("jwtPayload");
-//   const jwtPayloadJson = ctx.json(jwtPayload);
-
-//   console.info("-------jwtPayloadJson", jwtPayloadJson);
-
-//   try {
-//     const ps = ctx.env.DB.prepare("SELECT * from users");
-//     const data = await ps.all();
-//     res = JSON.stringify(data.results);
-//   } catch (error) {
-//     res = JSON.stringify(error);
-//   }
-//   return ctx.text(
-//     `Hello users!!,${res},${ctx.env.DataSecretKey},${ctx.env.PasswordSecret}`
-//   );
-// });
 
 export default app;
