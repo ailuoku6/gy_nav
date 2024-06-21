@@ -62,8 +62,10 @@ app.post("/api/login", async (ctx) => {
       );
     }
 
+    const valiPass = await encrypt(passWord);
+
     // 验证密码
-    const isPasswordValid = encrypt(passWord) === user.passWord;
+    const isPasswordValid = valiPass === user.passWord;
     if (!isPasswordValid) {
       return ctx.json(
         { result: false, msg: "Invalid username or password" },
@@ -99,7 +101,7 @@ app.post("/api/signup", async (ctx) => {
   }
 
   // 加密密码
-  const hashedPassword = encrypt(passWord);
+  const hashedPassword = await encrypt(passWord);
 
   try {
     const db = ctx.env.DB;
@@ -226,7 +228,7 @@ app.post("/api/writeClipBoard", async (ctx) => {
       .bind(
         payloadJson.id,
         JSON.stringify(
-          encryptData(clipboardString, `${dataSecretKey}-${payloadJson.id}`)
+          await encryptData(clipboardString, `${dataSecretKey}-${payloadJson.id}`)
         ),
         expiresAt
       )
@@ -271,7 +273,7 @@ app.post("/api/getClipBoard", async (ctx) => {
       );
     }
 
-    const data = decryptData(
+    const data = await decryptData(
       JSON.parse(content.content as string),
       `${dataSecretKey}-${payloadJson.id}`
     );

@@ -3,7 +3,6 @@ name = "gy-nav"
 pages_build_output_dir = "build"
 compatibility_date = "2024-06-18"
 
-# 启用 nodejs_compat 兼容性标志
 compatibility_flags = ["nodejs_compat"]
 
 [[d1_databases]]
