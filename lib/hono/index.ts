@@ -38,7 +38,9 @@ app.use(errorHandle);
 app.post("/api/login", async (ctx) => {
   const tokenSecret = ctx.env.TokenSecret || "GY";
 
-  const { userName, passWord } = await ctx.req.json();
+  const body = await ctx.req.parseBody();
+  // const { userName, passWord } = await ctx.req.json();
+  const { userName, passWord } = body;
 
   // 检查是否提供了用户名和密码
   if (!userName || !passWord) {
@@ -96,7 +98,9 @@ app.post("/api/login", async (ctx) => {
 app.post("/api/signup", async (ctx) => {
   try {
     const tokenSecret = ctx.env.TokenSecret || "GY";
-    const { userName, passWord, partData } = await ctx.req.json();
+    const body = await ctx.req.parseBody();
+    // const { userName, passWord, partData } = await ctx.req.json();
+    const { userName, passWord, partData } = body;
 
     // 检查是否提供了用户名和密码
     if (!userName || !passWord || !partData) {
@@ -170,7 +174,9 @@ app.post("/api/getPartData", async (ctx) => {
 });
 
 app.post("/api/upPartData", async (ctx) => {
-  const { partData } = await ctx.req.json();
+  // const { partData } = await ctx.req.json();
+  const body = await ctx.req.parseBody();
+  const { partData } = body;
 
   // 检查是否提供了 partData
   if (!partData) {
@@ -214,7 +220,9 @@ app.get("/api/getAllFS", async (ctx) => {
 });
 
 app.post("/api/writeClipBoard", async (ctx) => {
-  const { clipboardString } = await ctx.req.json();
+  // const { clipboardString } = await ctx.req.json();
+  const body = await ctx.req.parseBody();
+  const { clipboardString } = body;
 
   if (!clipboardString) {
     return ctx.json({ result: false, msg: "clipboardString is required" }, 400);
