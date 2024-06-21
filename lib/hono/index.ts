@@ -58,10 +58,7 @@ app.post("/api/login", async (ctx) => {
       .first();
 
     if (!user) {
-      return ctx.json(
-        { result: false, msg: "Invalid username or password" },
-        401
-      );
+      return ctx.json({ result: false, msg: "Invalid username or password" });
     }
 
     const valiPass = await encrypt(passWord);
@@ -69,10 +66,7 @@ app.post("/api/login", async (ctx) => {
     // 验证密码
     const isPasswordValid = valiPass === user.passWord;
     if (!isPasswordValid) {
-      return ctx.json(
-        { result: false, msg: "Invalid username or password" },
-        401
-      );
+      return ctx.json({ result: false, msg: "Invalid username or password" });
     }
 
     const userToken = {
@@ -140,16 +134,13 @@ app.post("/api/signup", async (ctx) => {
         const token = await signToken({ user: userToken }, tokenSecret);
         return ctx.json({ result: true, user, msg: "", token });
       } else {
-        return ctx.json(
-          { result: false, msg: "User registration failed" },
-          500
-        );
+        return ctx.json({ result: false, msg: "User registration failed" });
       }
     } else {
-      return ctx.json({ result: false, msg: "User registration failed" }, 500);
+      return ctx.json({ result: false, msg: "User registration failed" });
     }
   } catch (error: any) {
-    return ctx.json({ result: false, msg: error.message }, 500);
+    return ctx.json({ result: false, msg: error.message });
   }
 });
 
@@ -164,7 +155,7 @@ app.post("/api/getPartData", async (ctx) => {
       .first();
 
     if (!user) {
-      return ctx.json({ result: false, msg: "User not found" }, 404);
+      return ctx.json({ result: false, msg: "User not found" });
     }
 
     return ctx.json({ result: true, partData: user.partData });
@@ -180,7 +171,7 @@ app.post("/api/upPartData", async (ctx) => {
 
   // 检查是否提供了 partData
   if (!partData) {
-    return ctx.json({ result: false, msg: "partData is required" }, 400);
+    return ctx.json({ result: false, msg: "partData is required" });
   }
 
   try {
@@ -198,7 +189,7 @@ app.post("/api/upPartData", async (ctx) => {
     if (result.success) {
       return ctx.json({ result: true, msg: "partData updated successfully" });
     } else {
-      return ctx.json({ result: false, msg: "Failed to update partData" }, 500);
+      return ctx.json({ result: false, msg: "Failed to update partData" });
     }
   } catch (error: any) {
     return ctx.json({ result: false, msg: error.message }, 500);
@@ -260,10 +251,10 @@ app.post("/api/writeClipBoard", async (ctx) => {
         msg: "Clipboard content write successfully",
       });
     } else {
-      return ctx.json(
-        { result: false, msg: "Failed to write clipboard content" },
-        500
-      );
+      return ctx.json({
+        result: false,
+        msg: "Failed to write clipboard content",
+      });
     }
   } catch (error: any) {
     return ctx.json({ result: false, msg: error.message }, 500);
