@@ -114,7 +114,11 @@ app.post("/api/signup", async (ctx) => {
       .prepare(
         "INSERT INTO users (userName, passWord, partData) VALUES (?, ?, ?)"
       )
-      .bind(userName, hashedPassword, partData)
+      .bind(
+        userName,
+        hashedPassword,
+        typeof partData === "string" ? partData : JSON.stringify(partData)
+      )
       .run();
 
     if (result.success) {
