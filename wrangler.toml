@@ -2,7 +2,7 @@
 name = "gy-nav"
 pages_build_output_dir = "build"
 compatibility_date = "2024-06-18"
-compatibility_flags = [ "nodejs_compat" ]
+nodejs_compat = true
 
 [[d1_databases]]
 database_id = "30166e34-c12a-4b94-b298-90b8e99606f3"
@@ -11,7 +11,7 @@ database_name = "DB"
 
 [env.production]
 compatibility_date = "2024-06-18"
-compatibility_flags = [ "nodejs_compat" ]
+nodejs_compat = true
 
   [[env.production.d1_databases]]
   database_id = "468b4939-9622-4192-b867-fc20fb41b456"
