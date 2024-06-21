@@ -94,21 +94,21 @@ app.post("/api/login", async (ctx) => {
 });
 
 app.post("/api/signup", async (ctx) => {
-  const tokenSecret = ctx.env.TokenSecret || "GY";
-  const { userName, passWord, partData } = await ctx.req.json();
-
-  // 检查是否提供了用户名和密码
-  if (!userName || !passWord || !partData) {
-    return ctx.json(
-      { result: false, msg: "Username and passWord are required" },
-      400
-    );
-  }
-
-  // 加密密码
-  const hashedPassword = await encrypt(passWord);
-
   try {
+    const tokenSecret = ctx.env.TokenSecret || "GY";
+    const { userName, passWord, partData } = await ctx.req.json();
+
+    // 检查是否提供了用户名和密码
+    if (!userName || !passWord || !partData) {
+      return ctx.json(
+        { result: false, msg: "Username and passWord are required" },
+        400
+      );
+    }
+
+    // 加密密码
+    const hashedPassword = await encrypt(passWord);
+
     const db = ctx.env.DB;
     const result = await db
       .prepare(
