@@ -287,10 +287,11 @@ app.post("/api/getClipBoard", async (ctx) => {
       .first();
 
     if (!content) {
-      return ctx.json(
-        { result: false, data: "", msg: "No valid clipboard content found" },
-        404
-      );
+      return ctx.json({
+        result: false,
+        data: "",
+        msg: "No valid clipboard content found",
+      });
     }
 
     const data = await decryptData(
