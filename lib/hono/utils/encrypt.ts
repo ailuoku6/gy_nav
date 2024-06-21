@@ -16,12 +16,14 @@ const encrypt = async (str: string) => {
 
 const iv = new Uint8Array([21, 34, 56, 78, 90, 12, 43, 56, 78, 90, 11, 22]);
 
-async function convertKeyToFixedBits(secretKey:string) {
+async function convertKeyToFixedBits(secretKey: string) {
   const encoder = new TextEncoder();
   const encodedKey = encoder.encode(secretKey);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', encodedKey);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", encodedKey);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  const hashHex = hashArray
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
   return hashHex.substring(0, 32);
   // return hashHex;
 }
@@ -74,10 +76,10 @@ export const decryptData = async (
   );
 
   const iv = new Uint8Array(
-    hash.iv.match(/.{1,2}/g).map((byte) => parseInt(byte, 16))
+    (hash.iv.match(/.{1,2}/g) || []).map((byte) => parseInt(byte, 16))
   );
   const encryptedData = new Uint8Array(
-    hash.content.match(/.{1,2}/g).map((byte) => parseInt(byte, 16))
+    (hash.content.match(/.{1,2}/g) || []).map((byte) => parseInt(byte, 16))
   );
 
   const decryptedData = await crypto.subtle.decrypt(
