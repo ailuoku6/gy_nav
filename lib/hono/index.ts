@@ -152,7 +152,7 @@ app.post("/api/getPartData", async (ctx) => {
     const db = ctx.env.DB;
     const user = await db
       .prepare("SELECT partData FROM users WHERE id = ?")
-      .bind(payloadJson.id)
+      .bind(payloadJson.user.id)
       .first();
 
     if (!user) {
@@ -192,7 +192,7 @@ app.post("/api/upPartData", async (ctx) => {
       .prepare(
         "UPDATE users SET partData = ?, partModifyDate = CURRENT_TIMESTAMP WHERE id = ?"
       )
-      .bind(partData, payloadJson.id)
+      .bind(partData, payloadJson.user.id)
       .run();
 
     if (result.success) {
@@ -241,11 +241,11 @@ app.post("/api/writeClipBoard", async (ctx) => {
         "INSERT INTO clipboard (user_id, content, expires_at) VALUES (?, ?, ?)"
       )
       .bind(
-        payloadJson.id,
+        payloadJson.user.id,
         JSON.stringify(
           await encryptData(
             clipboardString,
-            `${dataSecretKey}-${payloadJson.id}`
+            `${dataSecretKey}-${payloadJson.user.id}`
           )
         ),
         expiresAt
@@ -281,7 +281,7 @@ app.post("/api/getClipBoard", async (ctx) => {
       .prepare(
         "SELECT content FROM clipboard WHERE user_id = ? AND expires_at > ? ORDER BY updated_at DESC LIMIT 1"
       )
-      .bind(payloadJson.id, now)
+      .bind(payloadJson.user.id, now)
       .first();
 
     if (!content) {
@@ -293,7 +293,7 @@ app.post("/api/getClipBoard", async (ctx) => {
 
     const data = await decryptData(
       JSON.parse(content.content as string),
-      `${dataSecretKey}-${payloadJson.id}`
+      `${dataSecretKey}-${payloadJson.user.id}`
     );
 
     return ctx.json({ result: true, data, msg: "success" });
