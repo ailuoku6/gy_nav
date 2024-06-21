@@ -80,7 +80,7 @@ app.post("/api/login", async (ctx) => {
     };
 
     // 生成 JWT
-    const token = signToken({ user: userToken }, tokenSecret);
+    const token = await signToken({ user: userToken }, tokenSecret);
 
     return ctx.json({ result: true, user, msg: "Login successful", token });
   } catch (error: any) {
@@ -115,7 +115,7 @@ app.post("/api/signup", async (ctx) => {
     if (result.success) {
       // 获取新注册用户的ID
       const user = await db
-        .prepare("SELECT id FROM users WHERE userName = ?")
+        .prepare("SELECT id, userName, partData FROM users WHERE userName = ?")
         .bind(userName)
         .first();
       if (user) {
@@ -124,7 +124,7 @@ app.post("/api/signup", async (ctx) => {
           userName: user.userName,
           // passWord: user.passWord,
         };
-        const token = signToken({ user: userToken }, tokenSecret);
+        const token = await signToken({ user: userToken }, tokenSecret);
         return ctx.json({ result: true, user, msg: "", token });
       } else {
         return ctx.json(
