@@ -208,7 +208,13 @@ app.get("/api/getAllFS", async (ctx) => {
   try {
     const db = ctx.env.DB;
     const sites = await db.prepare("SELECT * FROM friendSites").all();
-    return ctx.json({ result: true, fsites: sites.results });
+    const fsites = sites.results || [];
+    fsites.push({
+      site_name: "友链申请",
+      url: "http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=zK2loLmjp7n6jL294q_joQ",
+    });
+
+    return ctx.json({ result: true, fsites });
   } catch (error: any) {
     return ctx.json({ result: false, msg: error.message }, 500);
   }
@@ -297,7 +303,7 @@ app.post("/api/getClipBoard", async (ctx) => {
         JSON.parse(content.content as string),
         `${dataSecretKey}-${payloadJson.user.id}`
       ),
-      scheduledDeleteClip(null, ctx.env, ctx)
+      scheduledDeleteClip(null, ctx.env, ctx),
     ]);
 
     return ctx.json({ result: true, data, msg: "success" });
