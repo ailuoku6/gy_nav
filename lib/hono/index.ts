@@ -6,12 +6,14 @@ import { Bindings } from "./types";
 import errorHandle from "./middleware/errorHandle";
 
 import encrypt, { encryptData, decryptData } from "./utils/encrypt";
+import { scheduled as scheduledDeleteClip } from "./clipboard-cleaner";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
 const signToken = (data: any, key: string) => {
   const time = Math.floor(new Date().getTime() / 1000);
-  const expTime = time + 30 * 24 * 60 * 60;
+  // const expTime = time + 30 * 24 * 60 * 60;
+  const expTime = time + 3 * 60;
   return sign({ ...data, exp: expTime, iat: time }, key);
 };
 
@@ -212,7 +214,10 @@ app.get("/api/getAllFS", async (ctx) => {
 
 app.post("/api/writeClipBoard", async (ctx) => {
   // const { clipboardString } = await ctx.req.json();
-  const body = await ctx.req.parseBody();
+  const [body] = await Promise.all([
+    ctx.req.parseBody(),
+    scheduledDeleteClip(null, ctx.env, ctx),
+  ]);
   const { clipboardString } = body as any;
 
   if (!clipboardString) {
@@ -285,10 +290,13 @@ app.post("/api/getClipBoard", async (ctx) => {
       });
     }
 
-    const data = await decryptData(
-      JSON.parse(content.content as string),
-      `${dataSecretKey}-${payloadJson.user.id}`
-    );
+    const [data] = await Promise.all([
+      decryptData(
+        JSON.parse(content.content as string),
+        `${dataSecretKey}-${payloadJson.user.id}`
+      ),
+      scheduledDeleteClip(null, ctx.env, ctx)
+    ]);
 
     return ctx.json({ result: true, data, msg: "success" });
   } catch (error: any) {
