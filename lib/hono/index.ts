@@ -6,7 +6,9 @@ import { Bindings } from "./types";
 import errorHandle from "./middleware/errorHandle";
 
 import encrypt, { encryptData, decryptData } from "./utils/encrypt";
-import { scheduled as scheduledDeleteClip } from "./clipboard-cleaner";
+import scheduled from "./clipboard-cleaner/scheduled";
+
+const scheduledDeleteClip = (scheduled as any).scheduled;
 
 const app = new Hono<{ Bindings: Bindings }>();
 
