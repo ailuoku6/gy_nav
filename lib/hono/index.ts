@@ -31,8 +31,6 @@ app.use("/api/*", (c, next) => {
 app.use(errorHandle);
 
 app.post("/api/login", async (ctx) => {
-  const tokenSecret = ctx.env.TokenSecret || "GY";
-
   const body = await ctx.req.parseBody();
   // const { userName, passWord } = await ctx.req.json();
   const { userName, passWord } = body as any;

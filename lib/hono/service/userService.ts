@@ -9,6 +9,8 @@ export default class UserService {
     ctx: Ctx,
     { userName, passWord }: { userName: string; passWord: string }
   ) => {
+    const tokenSecret = ctx.env.TokenSecret || "GY";
+    
     try {
       const db = ctx.env.DB;
       const user = await db
