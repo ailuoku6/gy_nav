@@ -14,8 +14,7 @@ const app = new Hono<{ Bindings: Bindings }>();
 
 const signToken = (data: any, key: string) => {
   const time = Math.floor(new Date().getTime() / 1000);
-  // const expTime = time + 30 * 24 * 60 * 60;
-  const expTime = time + 3 * 60;
+  const expTime = time + 30 * 24 * 60 * 60;
   return sign({ ...data, exp: expTime, iat: time }, key);
 };
 
