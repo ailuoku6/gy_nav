@@ -1,6 +1,6 @@
 import { Ctx } from "../types";
 
-declare module "scheduled" {
+declare module "index" {
   export async function scheduled(
     event: any,
     env: Ctx["env"],

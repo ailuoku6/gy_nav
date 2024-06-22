@@ -6,7 +6,7 @@ import { Bindings } from "./types";
 import errorHandle from "./middleware/errorHandle";
 
 import encrypt, { encryptData, decryptData } from "./utils/encrypt";
-import scheduled from "./clipboard-cleaner/scheduled";
+import scheduled from "./clipboard-cleaner";
 
 const scheduledDeleteClip = (scheduled as any).scheduled;
 
