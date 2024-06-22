@@ -135,6 +135,7 @@ const FeaturePanel = () => {
             className="panel-item"
             onClick={() => {
               setModalOpen(true);
+              setDisplay(false);
             }}
           >
             <div className="panel-item-icon">
