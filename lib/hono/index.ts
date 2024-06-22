@@ -19,7 +19,6 @@ const signToken = (data: any, key: string) => {
 };
 
 const authFreeSet = new Set([
-  "/api/auth_free",
   "/api/login",
   "/api/signup",
   "/api/getAllFS",
