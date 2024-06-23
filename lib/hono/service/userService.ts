@@ -9,8 +9,8 @@ export default class UserService {
     ctx: Ctx,
     { userName, passWord }: { userName: string; passWord: string }
   ) => {
-    const tokenSecret = ctx.env.TokenSecret || "GY";
-    
+    const tokenSecret = ctx.env.TokenSecret;
+
     try {
       const db = ctx.env.DB;
       const user = await db
@@ -58,7 +58,7 @@ export default class UserService {
     }: { userName: string; passWord: string; partData: string | object }
   ) => {
     try {
-      const tokenSecret = ctx.env.TokenSecret || "GY";
+      const tokenSecret = ctx.env.TokenSecret;
 
       // 加密密码
       const hashedPassword = await encrypt(passWord);

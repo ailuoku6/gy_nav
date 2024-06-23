@@ -16,7 +16,7 @@ export default class ClipboardService {
       // const payloadJson = JSON.parse(payload);
       const db = ctx.env.DB;
 
-      const dataSecretKey = ctx.env.DataSecretKey || "GY";
+      const dataSecretKey = ctx.env.DataSecretKey;
 
       await scheduledDeleteClip(null, ctx.env, ctx);
 
@@ -56,7 +56,7 @@ export default class ClipboardService {
   };
   public static getClipBoard = async (ctx: Ctx) => {
     try {
-      const dataSecretKey = ctx.env.DataSecretKey || "GY";
+      const dataSecretKey = ctx.env.DataSecretKey;
       const payloadJson = ctx.get("jwtPayload");
       // const payloadJson = JSON.parse(payload);
       const db = ctx.env.DB;

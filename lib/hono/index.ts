@@ -20,7 +20,7 @@ app.use("/api/*", (c, next) => {
   }
 
   const jwtMiddleware = jwt({
-    secret: c.env.TokenSecret || "GY",
+    secret: c.env.TokenSecret,
   });
   return jwtMiddleware(c, next);
 });
@@ -29,7 +29,6 @@ app.use(errorHandle);
 
 app.post("/api/login", async (ctx) => {
   const body = await ctx.req.parseBody();
-  // const { userName, passWord } = await ctx.req.json();
   const { userName, passWord } = body as any;
 
   // 检查是否提供了用户名和密码
@@ -45,7 +44,6 @@ app.post("/api/login", async (ctx) => {
 
 app.post("/api/signup", async (ctx) => {
   const body = await ctx.req.parseBody();
-  // const { userName, passWord, partData } = await ctx.req.json();
   const { userName, passWord, partData } = body as any;
 
   // 检查是否提供了用户名和密码
@@ -63,7 +61,6 @@ app.post("/api/getPartData", async (ctx) => {
 });
 
 app.post("/api/upPartData", async (ctx) => {
-  // const { partData } = await ctx.req.json();
   const body = await ctx.req.parseBody();
   const { partData } = body as any;
 
@@ -84,9 +81,7 @@ app.get("/api/getAllFS", async (ctx) => {
 });
 
 app.post("/api/writeClipBoard", async (ctx) => {
-  const [body] = await Promise.all([
-    ctx.req.parseBody(),
-  ]);
+  const [body] = await Promise.all([ctx.req.parseBody()]);
   const { clipboardString } = body as any;
 
   if (!clipboardString) {
