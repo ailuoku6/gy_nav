@@ -17,14 +17,14 @@ class Footer extends React.Component{
         return(
             <footer>
                 <div className={'about'}>
-                    <div className={'beian'}>
+                    {/* <div className={'beian'}>
                         BY
                         <a href="http://weibo.com/ailuoku6" target="_blank">@爱咯酷6</a>
                         | 论坛:
                         <a href="http://bbs.ailuoku6.top" target="_blank">
                             <img alt={''} src={luntan}/>
                         </a>
-                    </div>
+                    </div> */}
                     <div className={'beian'}>
                         网站备案号:
                         <a href="http://www.beian.miit.gov.cn/" target="_blank">
