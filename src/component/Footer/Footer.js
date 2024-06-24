@@ -25,6 +25,9 @@ class Footer extends React.Component{
                             <img alt={''} src={luntan}/>
                         </a>
                     </div> */}
+                    <div className='beian'>
+                        反馈与建议: <a href="mailto:ailuoku6@qq.com">ailuoku6@qq.com</a>
+                    </div>
                     <div className={'beian'}>
                         网站备案号:
                         <a href="http://www.beian.miit.gov.cn/" target="_blank">
