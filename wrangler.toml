@@ -11,6 +11,12 @@ binding = "DB"
 database_name = "DB"
 
 [env.preview]
+compatibility_date = "2024-06-18"
+
+  [[env.preview.d1_databases]]
+  database_id = "30166e34-c12a-4b94-b298-90b8e99606f3"
+  binding = "DB"
+  database_name = "DB"
 
 [env.production]
 compatibility_date = "2024-06-18"
