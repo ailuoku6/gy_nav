@@ -1,5 +1,3 @@
 const homeKeyDown = 'homeKeyDown';
 
-export {
-    homeKeyDown
-}
+export { homeKeyDown };

@@ -1,8 +1,8 @@
-import { Ctx, IUser } from "../types";
+import { Ctx, IUser } from '../types';
 
-import encrypt from "../utils/encrypt";
+import encrypt from '../utils/encrypt';
 
-import { signToken } from "../utils/sign";
+import { signToken } from '../utils/sign';
 
 export default class UserService {
   public static login = async (
@@ -14,12 +14,12 @@ export default class UserService {
     try {
       const db = ctx.env.DB;
       const user = await db
-        .prepare("SELECT * FROM users WHERE userName = ?")
+        .prepare('SELECT * FROM users WHERE userName = ?')
         .bind(userName)
         .first();
 
       if (!user) {
-        return ctx.json({ result: false, msg: "Invalid username or password" });
+        return ctx.json({ result: false, msg: 'Invalid username or password' });
       }
 
       const valiPass = await encrypt(passWord);
@@ -27,7 +27,7 @@ export default class UserService {
       // 验证密码
       const isPasswordValid = valiPass === user.passWord;
       if (!isPasswordValid) {
-        return ctx.json({ result: false, msg: "Invalid username or password" });
+        return ctx.json({ result: false, msg: 'Invalid username or password' });
       }
 
       const userToken = {
@@ -42,7 +42,7 @@ export default class UserService {
       return ctx.json({
         result: true,
         user: { id: user.id, userName: user.userName, partData: user.partData },
-        msg: "Login successful",
+        msg: 'Login successful',
         token,
       });
     } catch (error: any) {
@@ -66,12 +66,12 @@ export default class UserService {
       const db = ctx.env.DB;
       const result = await db
         .prepare(
-          "INSERT INTO users (userName, passWord, partData) VALUES (?, ?, ?)"
+          'INSERT INTO users (userName, passWord, partData) VALUES (?, ?, ?)'
         )
         .bind(
           userName,
           hashedPassword,
-          typeof partData === "string" ? partData : JSON.stringify(partData)
+          typeof partData === 'string' ? partData : JSON.stringify(partData)
         )
         .run();
 
@@ -79,7 +79,7 @@ export default class UserService {
         // 获取新注册用户的ID
         const user = await db
           .prepare(
-            "SELECT id, userName, partData FROM users WHERE userName = ?"
+            'SELECT id, userName, partData FROM users WHERE userName = ?'
           )
           .bind(userName)
           .first();
@@ -89,12 +89,12 @@ export default class UserService {
             userName: user.userName,
           };
           const token = await signToken({ user: userToken }, tokenSecret);
-          return ctx.json({ result: true, user, msg: "", token });
+          return ctx.json({ result: true, user, msg: '', token });
         } else {
-          return ctx.json({ result: false, msg: "User registration failed" });
+          return ctx.json({ result: false, msg: 'User registration failed' });
         }
       } else {
-        return ctx.json({ result: false, msg: "User registration failed" });
+        return ctx.json({ result: false, msg: 'User registration failed' });
       }
     } catch (error: any) {
       return ctx.json({ result: false, msg: error.message });

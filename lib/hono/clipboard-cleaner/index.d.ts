@@ -1,9 +1,9 @@
-import { Ctx } from "../types";
+import { Ctx } from '../types';
 
-declare module "index" {
+declare module 'index' {
   export async function scheduled(
     event: any,
-    env: Ctx["env"],
+    env: Ctx['env'],
     ctx: Ctx
   ): Promise<void>;
 }

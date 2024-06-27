@@ -1,4 +1,4 @@
-import { sign } from "hono/jwt";
+import { sign } from 'hono/jwt';
 
 export const signToken = (data: any, key: string) => {
   const time = Math.floor(new Date().getTime() / 1000);

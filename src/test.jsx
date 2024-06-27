@@ -1,5 +1,5 @@
-import React from "react";
-import "./index.css";
+import React from 'react';
+import './index.css';
 
 class Footer extends React.Component {
   // eslint-disable-next-line no-useless-constructor
@@ -11,7 +11,7 @@ class Footer extends React.Component {
   render() {
     return (
       <footer>
-        <div className={"about"}>
+        <div className={'about'}>
           {/* <div className={'beian'}>
                         BY
                         <a href="http://weibo.com/ailuoku6" target="_blank">@爱咯酷6</a>
@@ -23,7 +23,7 @@ class Footer extends React.Component {
           <div className="beian">
             反馈与建议: <a href="mailto:ailuoku6@qq.com">ailuoku6@qq.com</a>
           </div>
-          <div className={"beian"}>
+          <div className={'beian'}>
             网站备案号:
             <a href="http://www.beian.miit.gov.cn/" target="_blank">
               桂ICP备18003700号

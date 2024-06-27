@@ -1,11 +1,11 @@
 async function sha1Hash(message: string) {
   const encoder = new TextEncoder();
   const data = encoder.encode(message);
-  const hashBuffer = await crypto.subtle.digest("SHA-1", data);
+  const hashBuffer = await crypto.subtle.digest('SHA-1', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer)); // 转换为字节数组
   const hashHex = hashArray
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join(""); // 转换为十六进制字符串
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join(''); // 转换为十六进制字符串
   return hashHex;
 }
 
@@ -19,11 +19,11 @@ const iv = new Uint8Array([21, 34, 56, 78, 90, 12, 43, 56, 78, 90, 11, 22]);
 async function convertKeyToFixedBits(secretKey: string) {
   const encoder = new TextEncoder();
   const encodedKey = encoder.encode(secretKey);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", encodedKey);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', encodedKey);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   const hashHex = hashArray
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
   return hashHex.substring(0, 32);
   // return hashHex;
 }
@@ -33,28 +33,28 @@ export const encryptData = async (text: string, secretKey: string) => {
   const encodedKey = enc.encode(await convertKeyToFixedBits(secretKey));
 
   const key = await crypto.subtle.importKey(
-    "raw",
+    'raw',
     encodedKey,
-    { name: "AES-GCM", length: 256 },
+    { name: 'AES-GCM', length: 256 },
     false,
-    ["encrypt"]
+    ['encrypt']
   );
 
   // const iv = crypto.getRandomValues(new Uint8Array(12));
   const encodedText = enc.encode(text);
   const encryptedData = await crypto.subtle.encrypt(
-    { name: "AES-GCM", iv },
+    { name: 'AES-GCM', iv },
     key,
     encodedText
   );
 
   const buffer = new Uint8Array(encryptedData);
   const hexIv = Array.from(iv)
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
   const hexContent = Array.from(buffer)
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
 
   return { iv: hexIv, content: hexContent };
 };
@@ -68,11 +68,11 @@ export const decryptData = async (
   // const encodedKey = enc.encode(secretKey);
   const encodedKey = enc.encode(await convertKeyToFixedBits(secretKey));
   const key = await crypto.subtle.importKey(
-    "raw",
+    'raw',
     encodedKey,
-    { name: "AES-GCM", length: 256 },
+    { name: 'AES-GCM', length: 256 },
     false,
-    ["decrypt"]
+    ['decrypt']
   );
 
   const iv = new Uint8Array(
@@ -83,7 +83,7 @@ export const decryptData = async (
   );
 
   const decryptedData = await crypto.subtle.decrypt(
-    { name: "AES-GCM", iv },
+    { name: 'AES-GCM', iv },
     key,
     encryptedData
   );

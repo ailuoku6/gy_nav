@@ -1,18 +1,18 @@
-import { Ctx } from "../types";
+import { Ctx } from '../types';
 
 export default class SiteService {
   public static getPartData = async (ctx: Ctx) => {
     try {
-      const payloadJson = ctx.get("jwtPayload");
+      const payloadJson = ctx.get('jwtPayload');
       // const payloadJson = JSON.parse(payload);
       const db = ctx.env.DB;
       const user = await db
-        .prepare("SELECT partData FROM users WHERE id = ?")
+        .prepare('SELECT partData FROM users WHERE id = ?')
         .bind(payloadJson.user.id)
         .first();
 
       if (!user) {
-        return ctx.json({ result: false, msg: "User not found" });
+        return ctx.json({ result: false, msg: 'User not found' });
       }
 
       return ctx.json({ result: true, partData: user.partData });
@@ -25,21 +25,21 @@ export default class SiteService {
     { partData }: { partData: string }
   ) => {
     try {
-      const payloadJson = ctx.get("jwtPayload");
+      const payloadJson = ctx.get('jwtPayload');
       // const payloadJson = JSON.parse(payload);
       const db = ctx.env.DB;
 
       const result = await db
         .prepare(
-          "UPDATE users SET partData = ?, partModifyDate = CURRENT_TIMESTAMP WHERE id = ?"
+          'UPDATE users SET partData = ?, partModifyDate = CURRENT_TIMESTAMP WHERE id = ?'
         )
         .bind(partData, payloadJson.user.id)
         .run();
 
       if (result.success) {
-        return ctx.json({ result: true, msg: "partData updated successfully" });
+        return ctx.json({ result: true, msg: 'partData updated successfully' });
       } else {
-        return ctx.json({ result: false, msg: "Failed to update partData" });
+        return ctx.json({ result: false, msg: 'Failed to update partData' });
       }
     } catch (error: any) {
       return ctx.json({ result: false, msg: error.message }, 500);

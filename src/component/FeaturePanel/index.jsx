@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from 'react';
 
 import {
   Tooltip,
@@ -8,25 +8,25 @@ import {
   DialogContentText,
   Snackbar,
   Button,
-} from "@mui/material";
+} from '@mui/material';
 
-import { post } from "../../utils/http";
+import { post } from '../../utils/http';
 
-import { WriteRemoteClipBoard, GetRemoteClipBoard } from "../../utils/Api";
+import { WriteRemoteClipBoard, GetRemoteClipBoard } from '../../utils/Api';
 
-import { readFromClipboard, writeToClipboard } from "../../utils/clipboard";
+import { readFromClipboard, writeToClipboard } from '../../utils/clipboard';
 
-import copy from "../../assets/copy.png";
-import whatsnew from "../../assets/new.png";
+import copy from '../../assets/copy.png';
+import whatsnew from '../../assets/new.png';
 
-import "./index.css";
-import { isSafari } from "../../utils/device";
+import './index.css';
+import { isSafari } from '../../utils/device';
 
 const FeaturePanel = () => {
   const [display, setDisplay] = useState(false);
   const timer = useRef(null);
 
-  const [msg, setMsg] = useState({ content: "", callback: null });
+  const [msg, setMsg] = useState({ content: '', callback: null });
 
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -35,11 +35,11 @@ const FeaturePanel = () => {
   };
 
   const handleMsgClose = (event, reason) => {
-    if (reason === "clickaway") {
+    if (reason === 'clickaway') {
       return;
     }
 
-    setMsg({ content: "", callback: null });
+    setMsg({ content: '', callback: null });
   };
 
   const handleCopyClick = () => {
@@ -51,21 +51,21 @@ const FeaturePanel = () => {
       const res = await post(GetRemoteClipBoard, {});
 
       if (!res.result) {
-        setMsg({ content: "云端剪切板为空或已过期", callback: null });
+        setMsg({ content: '云端剪切板为空或已过期', callback: null });
         return;
       }
       const remoteClipBoard = res.data;
       if (isSafari()) {
         setMsg({
-          content: "点击复制",
+          content: '点击复制',
           callback: () => {
             writeToClipboard(remoteClipBoard);
-            setMsg({ content: "", callback: null });
+            setMsg({ content: '', callback: null });
           },
         });
       } else {
         await writeToClipboard(remoteClipBoard);
-        setMsg({ content: "拉取云剪切板成功", callback: null });
+        setMsg({ content: '拉取云剪切板成功', callback: null });
       }
     }, 400);
   };
@@ -79,11 +79,11 @@ const FeaturePanel = () => {
     if (clipboardData) {
       await post(WriteRemoteClipBoard, { clipboardString: clipboardData });
       setMsg({
-        content: "成功复制内容到云剪切板，5分钟后失效",
+        content: '成功复制内容到云剪切板，5分钟后失效',
         callback: null,
       });
     } else {
-      setMsg({ content: "剪切板为空", callback: null });
+      setMsg({ content: '剪切板为空', callback: null });
     }
   };
 
@@ -98,8 +98,8 @@ const FeaturePanel = () => {
     <>
       <Snackbar
         anchorOrigin={{
-          vertical: "top",
-          horizontal: "center",
+          vertical: 'top',
+          horizontal: 'center',
         }}
         open={!!msg.content}
         autoHideDuration={2000}
@@ -110,7 +110,7 @@ const FeaturePanel = () => {
       <div
         onBlur={() => setDisplay(false)}
         onMouseLeave={() => setDisplay(false)}
-        class={display ? "panel-container panel-display" : "panel-container"}
+        class={display ? 'panel-container panel-display' : 'panel-container'}
       >
         <div
           class="pull-ring"

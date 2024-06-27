@@ -1,99 +1,106 @@
-.gy-container{
-    width: 96%;
-    max-width: 1080px;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    padding-right: 15px;
-    padding-left: 15px;
-    background-color: #fff;
-    border-radius: 6px;
-    margin: 22px auto;
-    padding-bottom: 8px;
+.gy-container {
+  width: 96%;
+  max-width: 1080px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  padding-right: 15px;
+  padding-left: 15px;
+  background-color: #fff;
+  border-radius: 6px;
+  margin: 22px auto;
+  padding-bottom: 8px;
 }
-.site-container{
-    width: 100%;
-    /*height: 100px;*/
-    /*background-color: rgba(26, 52, 30, 0.47);*/
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    align-items: center;
+.site-container {
+  width: 100%;
+  /*height: 100px;*/
+  /*background-color: rgba(26, 52, 30, 0.47);*/
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
 }
-.site-container div{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 33%;
-    /*background-color: #0d47a1;*/
-    height: 100%;
+.site-container div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 33%;
+  /*background-color: #0d47a1;*/
+  height: 100%;
 }
 .site {
-    width: 75px;
-    display: inline-block;
-    height: 95px;
-    text-align: center;
-    margin: 0 2px;
-    padding: 3px;
-    border-radius: 6px;
-    /* transition: .3s; */
+  width: 75px;
+  display: inline-block;
+  height: 95px;
+  text-align: center;
+  margin: 0 2px;
+  padding: 3px;
+  border-radius: 6px;
+  /* transition: .3s; */
 }
 /* .site:hover{
     transform: translate3d(0,-4px,0);
 } */
 .site img {
-    margin-bottom: -5px;
+  margin-bottom: -5px;
 }
 .site-title {
-    text-align: center;
-    white-space: nowrap;
+  text-align: center;
+  white-space: nowrap;
 }
 .site-icon {
-    width: 70px;
-    height: 70px;
+  width: 70px;
+  height: 70px;
 }
 .gy-hoverable {
-    -webkit-transition: -webkit-box-shadow .25s cubic-bezier(.4,0,.2,1);
-    transition: -webkit-box-shadow .25s cubic-bezier(.4,0,.2,1);
-    transition: box-shadow .25s cubic-bezier(.4,0,.2,1);
-    transition: box-shadow .25s cubic-bezier(.4,0,.2,1),-webkit-box-shadow .25s cubic-bezier(.4,0,.2,1);
-    will-change: box-shadow;
+  -webkit-transition: -webkit-box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: -webkit-box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    -webkit-box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: box-shadow;
 }
 .title {
-    display: inline-block;
-    font-size: 1em;
-    margin-top: 15px;
-    margin-bottom: 10px;
-    color: #0d47a1;
+  display: inline-block;
+  font-size: 1em;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  color: #0d47a1;
 }
 .gy-shadow-2 {
-    -webkit-box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
-    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+  -webkit-box-shadow:
+    0 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
-@media screen and (min-width:600px){
-
-    .gy-container {
-        width: 94%;
-    }
+@media screen and (min-width: 600px) {
+  .gy-container {
+    width: 94%;
+  }
 }
 
 @media screen and (min-width: 960px) {
-    .site-container div{
-        width: 11%;
-    }
+  .site-container div {
+    width: 11%;
+  }
 }
 
-
 @media (prefers-color-scheme: dark) {
-    .gy-container{
-        background-color: #22282d;
-    }
-    .title{
-        color: #adbac7;
-    }
-    a,a:hover{
-        color: #adbac7;
-    }
-    .divider{
-        background-color: #373e47 !important;
-    }
+  .gy-container {
+    background-color: #22282d;
+  }
+  .title {
+    color: #adbac7;
+  }
+  a,
+  a:hover {
+    color: #adbac7;
+  }
+  .divider {
+    background-color: #373e47 !important;
+  }
 }

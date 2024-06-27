@@ -3,55 +3,52 @@ import './index.css';
 //import './dark.css';
 import Divider from '@mui/material/Divider';
 // import Grid from "@mui/material/Grid";
-import {connect} from 'react-redux'
+import { connect } from 'react-redux';
 
-import {setPopularSite} from '../../redux/actions'
+import { setPopularSite } from '../../redux/actions';
 
+class PopularSite extends React.Component {
+  // eslint-disable-next-line no-useless-constructor
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
 
-class PopularSite extends React.Component{
+  render() {
+    let pts = this.props.popularSite.pSite;
 
-    // eslint-disable-next-line no-useless-constructor
-    constructor(props){
-        super(props);
-        this.state = {
-        }
-    }
-
-    render() {
-
-        let pts = this.props.popularSite.pSite;
-
-        return(
-            <div className={'gy-container gy-shadow-2'}>
-                <div className={'title'}>常用站点</div>
-                <Divider className='divider' />
-                <div className={'site-container'}>
-                    {pts.map((item,index)=>{
-                        return (
-                            <div key={index}>
-                                <li className={'gy-hoverable site'}>
-                                    <a style={{textDecoration: 'none'}} href={item.url} target="_blank">
-                                        <img className={'site-icon'} src={item.icon}/>
-                                        <span className={'site-title'}>{item.site_name}</span>
-                                    </a>
-                                </li>
-                            </div>
-                        )
-                    })}
-                </div>
-            </div>
-        )
-    }
+    return (
+      <div className={'gy-container gy-shadow-2'}>
+        <div className={'title'}>常用站点</div>
+        <Divider className="divider" />
+        <div className={'site-container'}>
+          {pts.map((item, index) => {
+            return (
+              <div key={index}>
+                <li className={'gy-hoverable site'}>
+                  <a
+                    style={{ textDecoration: 'none' }}
+                    href={item.url}
+                    target="_blank"
+                  >
+                    <img className={'site-icon'} src={item.icon} />
+                    <span className={'site-title'}>{item.site_name}</span>
+                  </a>
+                </li>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 }
 
-const mapStateToProps = ({PopularSite})=>({
-    popularSite:PopularSite
+const mapStateToProps = ({ PopularSite }) => ({
+  popularSite: PopularSite,
 });
 
-const mapDispatchToProps = {setPopularSite};
+const mapDispatchToProps = { setPopularSite };
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(PopularSite)
+export default connect(mapStateToProps, mapDispatchToProps)(PopularSite);
 //export default PopularSite;

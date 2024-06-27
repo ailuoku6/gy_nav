@@ -8,10 +8,7 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "noEmit": true,
-    "types": [
-      "@cloudflare/workers-types",
-      "vite/client"
-    ]
+    "types": ["@cloudflare/workers-types", "vite/client"]
   },
   "include": ["vite.config.ts"]
 }

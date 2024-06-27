@@ -1,10 +1,10 @@
-import { Ctx } from "../types";
+import { Ctx } from '../types';
 
-import scheduled from "../clipboard-cleaner";
+import scheduled from '../clipboard-cleaner';
 
 const scheduledDeleteClip = (scheduled as any).scheduled;
 
-import { encryptData, decryptData } from "../utils/encrypt";
+import { encryptData, decryptData } from '../utils/encrypt';
 
 export default class ClipboardService {
   public static writeClipBoard = async (
@@ -12,7 +12,7 @@ export default class ClipboardService {
     { clipboardString }: { clipboardString: string }
   ) => {
     try {
-      const payloadJson = ctx.get("jwtPayload");
+      const payloadJson = ctx.get('jwtPayload');
       // const payloadJson = JSON.parse(payload);
       const db = ctx.env.DB;
 
@@ -25,7 +25,7 @@ export default class ClipboardService {
 
       const result = await db
         .prepare(
-          "INSERT INTO clipboard (user_id, content, expires_at) VALUES (?, ?, ?)"
+          'INSERT INTO clipboard (user_id, content, expires_at) VALUES (?, ?, ?)'
         )
         .bind(
           payloadJson.user.id,
@@ -42,12 +42,12 @@ export default class ClipboardService {
       if (result.success) {
         return ctx.json({
           result: true,
-          msg: "Clipboard content write successfully",
+          msg: 'Clipboard content write successfully',
         });
       } else {
         return ctx.json({
           result: false,
-          msg: "Failed to write clipboard content",
+          msg: 'Failed to write clipboard content',
         });
       }
     } catch (error: any) {
@@ -57,14 +57,14 @@ export default class ClipboardService {
   public static getClipBoard = async (ctx: Ctx) => {
     try {
       const dataSecretKey = ctx.env.DataSecretKey;
-      const payloadJson = ctx.get("jwtPayload");
+      const payloadJson = ctx.get('jwtPayload');
       // const payloadJson = JSON.parse(payload);
       const db = ctx.env.DB;
 
       const now = new Date().toISOString();
       const content = await db
         .prepare(
-          "SELECT content FROM clipboard WHERE user_id = ? AND expires_at > ? ORDER BY updated_at DESC LIMIT 1"
+          'SELECT content FROM clipboard WHERE user_id = ? AND expires_at > ? ORDER BY updated_at DESC LIMIT 1'
         )
         .bind(payloadJson.user.id, now)
         .first();
@@ -72,8 +72,8 @@ export default class ClipboardService {
       if (!content) {
         return ctx.json({
           result: false,
-          data: "",
-          msg: "No valid clipboard content found",
+          data: '',
+          msg: 'No valid clipboard content found',
         });
       }
 
@@ -85,7 +85,7 @@ export default class ClipboardService {
         scheduledDeleteClip(null, ctx.env, ctx),
       ]);
 
-      return ctx.json({ result: true, data, msg: "success" });
+      return ctx.json({ result: true, data, msg: 'success' });
     } catch (error: any) {
       return ctx.json({ result: false, msg: error.message }, 500);
     }

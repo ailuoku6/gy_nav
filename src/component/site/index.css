@@ -1,74 +1,88 @@
 .site-noicon {
-    position: relative;
-    display: inline-block;
-    padding: 5px 10px;
-    margin: 5px 5px 0 0;
-    text-align: center;
-    border-radius: 6px;
+  position: relative;
+  display: inline-block;
+  padding: 5px 10px;
+  margin: 5px 5px 0 0;
+  text-align: center;
+  border-radius: 6px;
 }
-a{
-    text-decoration: none;
+a {
+  text-decoration: none;
 }
-a, a:hover {
-    color: inherit;
+a,
+a:hover {
+  color: inherit;
 }
 .gy-hoverable {
-    -webkit-transition: -webkit-box-shadow .25s cubic-bezier(.4,0,.2,1);
-    transition: -webkit-box-shadow .25s cubic-bezier(.4,0,.2,1);
-    transition: box-shadow .25s cubic-bezier(.4,0,.2,1);
-    transition: box-shadow .25s cubic-bezier(.4,0,.2,1),-webkit-box-shadow .25s cubic-bezier(.4,0,.2,1);
-    will-change: box-shadow;
+  -webkit-transition: -webkit-box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: -webkit-box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    -webkit-box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: box-shadow;
 }
 
 .gy-hoverable:hover {
-    -webkit-box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
-    box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
+  -webkit-box-shadow:
+    0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0 3px 14px 2px rgba(0, 0, 0, 0.12);
 }
 /* .site-noicon:hover{
     min-width: 40px;
 } */
 .site-noicon:hover a {
-    color: #e65100;
-    text-decoration: underline;
+  color: #e65100;
+  text-decoration: underline;
 }
 .site-noicon:hover .delMenu {
-    display: flex;
+  display: flex;
 }
-.delMenu{
-    position: absolute;
-    display: none;
-    align-items: center;
-    justify-content: space-around;
-    width: 100%;
+.delMenu {
+  position: absolute;
+  display: none;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  /*background: rgba(214, 230, 236, 0.5);*/
+  overflow: hidden;
+  animation: menutrans 100ms linear;
+  -webkit-animation: menutrans 200ms linear; /*Safari and Chrome*/
+}
+
+@keyframes menutrans {
+  from {
+    height: 0;
+  }
+  to {
     height: 100%;
-    top: 0;
-    left: 0;
-    /*background: rgba(214, 230, 236, 0.5);*/
-    overflow: hidden;
-    animation:menutrans 100ms linear;
-    -webkit-animation:menutrans 200ms linear; /*Safari and Chrome*/
+  }
 }
 
-@keyframes menutrans
-{
-    from {height: 0;}
-    to {height: 100%;}
-}
-
-@-webkit-keyframes menutrans /*Safari and Chrome*/
-{
-    from {height: 0;}
-    to {height: 100%;}
+@-webkit-keyframes menutrans /*Safari and Chrome*/ {
+  from {
+    height: 0;
+  }
+  to {
+    height: 100%;
+  }
 }
 
 .sortable-ghost {
-    opacity: 0.5;
-    background: #c8ebfb;
+  opacity: 0.5;
+  background: #c8ebfb;
 }
 
-@media (prefers-color-scheme: dark) 
-{
-    .site-noicon:hover a {
-        color: #539bf5;
-    }
+@media (prefers-color-scheme: dark) {
+  .site-noicon:hover a {
+    color: #539bf5;
+  }
 }

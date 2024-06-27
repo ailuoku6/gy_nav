@@ -1,12 +1,12 @@
-import React from "react";
-import "./App.css";
+import React from 'react';
+import './App.css';
 //import './dark.css';
-import Router from "./router/router";
-import { setUser } from "./redux/actions";
-import { GetUserStore } from "./utils/localStorageUtil";
+import Router from './router/router';
+import { setUser } from './redux/actions';
+import { GetUserStore } from './utils/localStorageUtil';
 // import {GetPartData,ValidToken} from './utils/Api'
 // import {get,post} from "./utils/http";
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 
 // import useMediaQuery from '@mui/material/useMediaQuery';
 // import { createMuiTheme, ThemeProvider } from '@mui/material/styles';
@@ -27,7 +27,7 @@ class App extends React.Component {
   initUser() {
     let user = GetUserStore();
     if (user !== null && user !== undefined) {
-      console.log("从本地读取到了用户", user.userName);
+      console.log('从本地读取到了用户', user.userName);
       //this.user = user;
       this.props.setUser(user);
     }
