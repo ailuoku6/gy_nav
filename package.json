@@ -8,8 +8,7 @@
     "build": "tsc -b && vite build && cp -r functions build/ && cp -r lib build/",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "preview-api": "wrangler pages dev",
-    "deploy-api": "$npm_execpath run build && wrangler pages deploy"
+    "preview-api": "npm run build && wrangler pages dev"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
