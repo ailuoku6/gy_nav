@@ -1,6 +1,6 @@
 import React from 'react';
 import './index.css';
-import luntan from '../../assets/bbs.png';
+import github from '../../assets/github-light.png';
 
 class Footer extends React.Component {
   // eslint-disable-next-line no-useless-constructor
@@ -23,6 +23,17 @@ class Footer extends React.Component {
                     </div> */}
           <div className="beian">
             反馈与建议: <a href="mailto:ailuoku6@qq.com">ailuoku6@qq.com</a>
+            <a href="https://github.com/ailuoku6/gy_nav" target="_blank">
+              <img
+                style={{
+                  height: 25,
+                  width: 25,
+                  marginLeft: 6,
+                  marginBottom: -6,
+                }}
+                src={github}
+              />
+            </a>
           </div>
           <div className={'beian'}>
             网站备案号:
