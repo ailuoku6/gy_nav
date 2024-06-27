@@ -1,177 +1,47 @@
 {
-  "name": "gy_nav_react",
-  "version": "0.1.0",
+  "name": "my-vite-app",
   "private": true,
-  "dependencies": {
-    "@material-ui/core": "^4.11.0",
-    "@material-ui/icons": "^4.9.1",
-    "axios": "^0.19.0",
-    "axios-jsonp-pro": "^1.1.6",
-    "camelcase": "^5.2.0",
-    "case-sensitive-paths-webpack-plugin": "2.2.0",
-    "crypto-browserify": "^3.12.0",
-    "dotenv": "6.2.0",
-    "dotenv-expand": "5.1.0",
-    "file-loader": "3.0.1",
-    "fs-extra": "7.0.1",
-    "hono": "^4.4.6",
-    "html-webpack-plugin": "4.0.0-beta.5",
-    "identity-obj-proxy": "3.0.0",
-    "is-wsl": "^1.1.0",
-    "jsonp": "^0.2.1",
-    "jssha": "^3.3.1",
-    "mini-css-extract-plugin": "0.8.0",
-    "optimize-css-assets-webpack-plugin": "5.0.3",
-    "pnp-webpack-plugin": "1.5.0",
-    "qs": "^6.9.0",
-    "react": "^16.10.2",
-    "react-app-polyfill": "^1.0.4",
-    "react-css-collapse": "^3.6.1",
-    "react-dev-utils": "^9.1.0",
-    "react-dom": "^16.10.2",
-    "react-mui-login-register": "^0.7.3",
-    "react-redux": "^7.1.1",
-    "react-router-dom": "^5.1.2",
-    "react-sortablejs": "^1.5.1",
-    "react-swipeable-views": "^0.13.3",
-    "redux": "^4.0.4",
-    "semver": "6.3.0",
-    "sortablejs": "^1.6.1",
-    "ts-pnp": "1.1.4",
-    "url-loader": "2.1.0"
-  },
-  "devDependencies": {
-    "jest": "24.9.0",
-    "jest-environment-jsdom-fourteen": "0.1.0",
-    "jest-resolve": "24.9.0",
-    "jest-watch-typeahead": "0.4.0",
-    "postcss-flexbugs-fixes": "4.1.0",
-    "postcss-loader": "3.0.0",
-    "postcss-normalize": "7.0.1",
-    "postcss-preset-env": "6.7.0",
-    "postcss-safe-parser": "4.0.1",
-    "css-loader": "2.1.1",
-    "@cloudflare/workers-types": "^4.20240529.0",
-    "@hono/vite-cloudflare-pages": "^0.4.0",
-    "@hono/vite-dev-server": "^0.12.1",
-    "vite": "^5.2.12",
-    "wrangler": "^3.57.2",
-    "@babel/core": "7.6.0",
-    "@svgr/webpack": "4.3.2",
-    "@types/jest": "^29.5.12",
-    "@types/node": "^20.14.8",
-    "@types/react": "^16.10.2",
-    "@types/react-dom": "^16.9.8",
-    "@typescript-eslint/eslint-plugin": "^2.2.0",
-    "@typescript-eslint/parser": "^2.2.0",
-    "babel-eslint": "10.0.3",
-    "babel-jest": "^24.9.0",
-    "babel-loader": "8.0.6",
-    "babel-plugin-named-asset-import": "^0.3.4",
-    "babel-preset-react-app": "^9.0.2",
-    "eslint": "^6.1.0",
-    "eslint-config-react-app": "^5.0.2",
-    "eslint-loader": "3.0.2",
-    "eslint-plugin-flowtype": "3.13.0",
-    "eslint-plugin-import": "2.18.2",
-    "eslint-plugin-jsx-a11y": "6.2.3",
-    "eslint-plugin-react": "7.14.3",
-    "eslint-plugin-react-hooks": "^1.6.1",
-    "webpack": "4.41.0",
-    "webpack-dev-server": "3.2.1",
-    "webpack-manifest-plugin": "2.1.1",
-    "workbox-webpack-plugin": "4.3.1",
-    "typescript": "^5.5.2",
-    "style-loader": "1.0.0",
-    "terser-webpack-plugin": "1.4.1",
-    "resolve": "1.12.0",
-    "resolve-url-loader": "3.1.0",
-    "sass-loader": "7.2.0"
-  },
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "start": "node --openssl-legacy-provider scripts/start.js",
-    "build": "node --openssl-legacy-provider scripts/build.js && cp -r functions build/ && cp -r lib build/",
-    "test": "node scripts/test.js",
-    "dev-api": "vite",
-    "build-api": "vite build",
+    "dev": "vite",
+    "build": "tsc -b && vite build && cp -r functions build/ && cp -r lib build/",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
     "preview-api": "wrangler pages dev",
     "deploy-api": "$npm_execpath run build && wrangler pages deploy"
   },
-  "eslintConfig": {
-    "extends": "react-app",
-    "rules": {
-      "jsx-a11y/anchor-is-valid": "off",
-      "no-unused-vars": "off",
-      "react/jsx-no-target-blank": "off",
-      "react-hooks/exhaustive-deps": "off",
-      "no-empty-pattern": "off",
-      "jsx-a11y/alt-text": "off",
-      "no-control-regex": "off"
-    }
+  "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/icons-material": "^5.15.20",
+    "@mui/material": "^5.15.20",
+    "axios": "^0.19.0",
+    "axios-jsonp-pro": "^1.1.6",
+    "jsonp": "^0.2.1",
+    "hono": "^4.4.6",
+    "qs": "^6.9.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-redux": "^7.1.1",
+    "react-router-dom": "^5.1.2",
+    "react-sortablejs": "^1.5.1",
+    "redux": "^4.0.4"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "jest": {
-    "roots": [
-      "<rootDir>/src"
-    ],
-    "collectCoverageFrom": [
-      "src/**/*.{js,jsx,ts,tsx}",
-      "!src/**/*.d.ts"
-    ],
-    "setupFiles": [
-      "react-app-polyfill/jsdom"
-    ],
-    "setupFilesAfterEnv": [],
-    "testMatch": [
-      "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
-      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
-    ],
-    "testEnvironment": "jest-environment-jsdom-fourteen",
-    "transform": {
-      "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
-      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
-      "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
-    },
-    "transformIgnorePatterns": [
-      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$",
-      "^.+\\.module\\.(css|sass|scss)$"
-    ],
-    "modulePaths": [],
-    "moduleNameMapper": {
-      "^react-native$": "react-native-web",
-      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
-    },
-    "moduleFileExtensions": [
-      "web.js",
-      "js",
-      "web.ts",
-      "ts",
-      "web.tsx",
-      "tsx",
-      "json",
-      "web.jsx",
-      "jsx",
-      "node"
-    ],
-    "watchPlugins": [
-      "jest-watch-typeahead/filename",
-      "jest-watch-typeahead/testname"
-    ]
-  },
-  "babel": {
-    "presets": [
-      "react-app"
-    ]
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.13.1",
+    "@typescript-eslint/parser": "^7.13.1",
+    "@vitejs/plugin-react": "^4.3.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.7",
+    "typescript": "^5.2.2",
+    "vite": "^5.3.1",
+    "wrangler": "^3.57.2",
+    "@hono/vite-cloudflare-pages": "^0.4.0",
+    "@hono/vite-dev-server": "^0.12.1",
+    "@cloudflare/workers-types": "^4.20240529.0"
   }
 }

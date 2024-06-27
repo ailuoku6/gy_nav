@@ -5,9 +5,12 @@ import axios from 'axios';
 import QS from 'qs';
 import { BaseUrl } from './Api'
 import {GetTokenStore,SetTokenStore} from './localStorageUtil'
-import {history} from '../router/router'
-// import store from '../redux/store'
-// import { createHashHistory,createBrowserHistory } from 'history';
+// import {history} from '../router/router';
+
+const backToLogin = ()=>{
+    // TODO: backto login
+    // history.replace("/login");
+}
 
 
 // const BaseUrl = "http://127.0.0.1:7001/";
@@ -68,30 +71,22 @@ axios.interceptors.response.use(
     // 服务器状态码不是200的情况
     error => {
         // console.log("尝试跳转到登陆");
-        // history.replace("/login");
         if (error.response.status) {
             // console.log("尝试跳转到登陆");
-            // history.replace("/login");
             switch (error.response.status) {
                 // 401: 未登录
                 // 未登录则跳转登录页面，并携带当前页面的路径
                 // 在登录成功后返回当前页面，这一步需要在登录页操作。
                 case 401:
-                    //TODO 清除token,跳转到登陆
-                    history.replace("/login");
+                    backToLogin();
                     SetTokenStore('');
-
-                    // router.replace({
-                    //     path: '/login',
-                    //     query: { redirect: router.currentRoute.fullPath }
-                    // });
                     break;
                 // 403 token过期
                 // 登录过期对用户进行提示
                 // 清除本地token和清空vuex中token对象
                 // 跳转登录页面
                 case 403:
-                    history.replace("/login");
+                    backToLogin();
                     SetTokenStore('');
                     break;
                 // 404请求不存在
