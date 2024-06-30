@@ -1,7 +1,8 @@
-const debounce = (func, wait = 0) => {
-  let timeout = null;
-  let args;
-  function debounced(...arg) {
+// eslint-disable-next-line @typescript-eslint/ban-types
+const debounce = (func: Function, wait = 0) => {
+  let timeout: NodeJS.Timeout | null = null;
+  let args: any[] | undefined;
+  function debounced(...arg: any[]) {
     args = arg;
     if (timeout) {
       clearTimeout(timeout);
@@ -11,6 +12,7 @@ const debounce = (func, wait = 0) => {
     return new Promise((res, rej) => {
       timeout = setTimeout(async () => {
         try {
+          // @ts-ignore
           const result = await func.apply(this, args);
           res(result);
           console.log('啊啊啊啊啊', timeout);
@@ -22,12 +24,16 @@ const debounce = (func, wait = 0) => {
   }
   // 允许取消
   function cancel() {
-    clearTimeout(timeout);
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+
     timeout = null;
   }
   // 允许立即执行
   function flush() {
     cancel();
+    // @ts-ignore
     return func.apply(this, args);
   }
   debounced.cancel = cancel;

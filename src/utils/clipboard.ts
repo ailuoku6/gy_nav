@@ -8,7 +8,7 @@ export async function readFromClipboard() {
   }
 }
 
-export async function writeToClipboard(text) {
+export async function writeToClipboard(text: string) {
   try {
     await navigator.clipboard.writeText(text);
     console.log('Text copied to clipboard');

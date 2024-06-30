@@ -1,4 +1,5 @@
-export default function throttle(fn, delay) {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export default function throttle(fn: Function, delay: number) {
   let valid = true;
   return function () {
     if (!valid) {

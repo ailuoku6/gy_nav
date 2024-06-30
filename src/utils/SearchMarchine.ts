@@ -1,4 +1,12 @@
-const Marchinelist = [
+export interface IMarchine {
+  Marchine_name: string;
+  button_value: string;
+  searApi: string;
+  searApi_weizui: string;
+  color: string;
+}
+
+const Marchinelist: IMarchine[] = [
   {
     Marchine_name: '百度',
     button_value: '百度一下',

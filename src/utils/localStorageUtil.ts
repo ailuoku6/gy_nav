@@ -1,4 +1,4 @@
-const SetlocalStorage = (key, value) => {
+const SetlocalStorage = (key: string, value: any) => {
   console.log('保存至localStorage', key, value);
   if (typeof value !== 'string') {
     value = JSON.stringify(value);
@@ -7,11 +7,11 @@ const SetlocalStorage = (key, value) => {
   window.localStorage.setItem(key, value);
 };
 
-const RemovelocalStorage = (key) => {
+const RemovelocalStorage = (key: string) => {
   window.localStorage.removeItem(key);
 };
 
-const GetlocalStorage = (key) => {
+const GetlocalStorage = (key: string) => {
   let value = window.localStorage.getItem(key);
   console.log('读取localStorage', key, value);
   if (value === null || value === '') return null;
@@ -23,7 +23,7 @@ const GetlocalStorage = (key) => {
   return value;
 };
 
-const SetMarchineIndexStore = (value) => {
+const SetMarchineIndexStore = (value: any) => {
   SetlocalStorage('searchEngine', value);
 };
 
@@ -36,14 +36,14 @@ const GetMarchineIndexStore = () => {
         password:string
     }
 */
-const SetUserStore = (value) => {
+const SetUserStore = (value: any) => {
   SetlocalStorage('userInfo', value);
 };
 
 const GetUserStore = () => {
-  let userinfo = GetlocalStorage('userInfo');
+  const userinfo: any = GetlocalStorage('userInfo');
   if (userinfo !== null) return userinfo;
-  let userpre = GetlocalStorage('userpre'); //兼容旧数据
+  const userpre: any = GetlocalStorage('userpre'); //兼容旧数据
   if (userpre == null || typeof userpre != 'object') return null;
   return {
     userName: userpre.user ? userpre.user : '',
@@ -51,7 +51,7 @@ const GetUserStore = () => {
   };
 };
 
-const SetTokenStore = (token) => {
+const SetTokenStore = (token: string) => {
   SetlocalStorage('token', token);
 };
 
@@ -60,13 +60,13 @@ const GetTokenStore = () => {
 };
 
 const GetPartDataStore = () => {
-  let partData = GetlocalStorage('partData');
+  const partData = GetlocalStorage('partData');
   if (partData !== null) return partData;
-  let siteData1 = GetlocalStorage('siteData1'); //兼容旧数据(什么鬼命名...)
+  const siteData1 = GetlocalStorage('siteData1'); //兼容旧数据(什么鬼命名...)
   return siteData1;
 };
 
-const SetPartDataStore = (value) => {
+const SetPartDataStore = (value: any) => {
   SetlocalStorage('partData', value);
 };
 

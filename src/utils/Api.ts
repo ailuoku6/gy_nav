@@ -1,5 +1,5 @@
 const SUGTIP = 'https://suggestion.baidu.com/su?wd='; //参数wd,GET
-const BaseUrl_dev = 'http://127.0.0.1:7001';
+// const BaseUrl_dev = 'http://127.0.0.1:7001';
 const BaseUrl_prod = '';
 const BaseUrl = BaseUrl_prod;
 
