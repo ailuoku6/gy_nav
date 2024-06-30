@@ -8,7 +8,9 @@ import qqmail from '../assets/qqmail.png';
 import weibo from '../assets/weibo.png';
 import wangyiyun from '../assets/wangyiyun.png';
 
-const data = [
+import { PartSiteData, PopularSite } from '../redux/types';
+
+const data: PartSiteData[] = [
   {
     categoryname: '酷站',
     sitelist: [
@@ -101,7 +103,7 @@ const data = [
   },
 ];
 
-const popularSite = [
+const popularSite: PopularSite[] = [
   { site_name: '百度', url: 'https://www.baidu.com/', icon: baidu },
   { site_name: '淘宝', url: 'https://www.taobao.com', icon: taobao },
   { site_name: '京东', url: 'https://www.jd.com', icon: jd },
