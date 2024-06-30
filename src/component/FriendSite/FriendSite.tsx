@@ -1,23 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Site from '../site/Site';
 import './index.css';
 //import './dark.css';
+// TODO
+// @ts-ignore
 import { get } from '../../utils/http';
 import { GetAllFS } from '../../utils/Api';
+import { ISite } from '../../redux/types';
 
 const FriendSite = () => {
-  const [sites, setSites] = useState([]);
+  const [sites, setSites] = useState<ISite[]>([]);
 
   useEffect(() => {
     get(GetAllFS, {})
-      .then((data) => {
+      .then((data: { result: boolean; fsites: ISite[] }) => {
         if (data.result) {
-          this.setState({
-            sites: data.fsites,
-          });
+          // this.setState({
+          //   sites: data.fsites,
+          // });
+          setSites(data.fsites);
         }
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.log(err);
       });
   }, []);
