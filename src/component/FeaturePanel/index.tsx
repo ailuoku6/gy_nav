@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import {
   Tooltip,
@@ -10,6 +10,7 @@ import {
   Button,
 } from '@mui/material';
 
+// @ts-ignore
 import { post } from '../../utils/http';
 
 import { WriteRemoteClipBoard, GetRemoteClipBoard } from '../../utils/Api';
@@ -24,9 +25,12 @@ import { isSafari } from '../../utils/device';
 
 const FeaturePanel = () => {
   const [display, setDisplay] = useState(false);
-  const timer = useRef(null);
+  const timer = useRef<NodeJS.Timeout | null>(null);
 
-  const [msg, setMsg] = useState({ content: '', callback: null });
+  const [msg, setMsg] = useState<{
+    content: string;
+    callback: (() => void) | null;
+  }>({ content: '', callback: null });
 
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -34,7 +38,7 @@ const FeaturePanel = () => {
     setModalOpen(false);
   };
 
-  const handleMsgClose = (event, reason) => {
+  const handleMsgClose = (_event: any, reason: string) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -110,15 +114,17 @@ const FeaturePanel = () => {
       <div
         onBlur={() => setDisplay(false)}
         onMouseLeave={() => setDisplay(false)}
-        class={display ? 'panel-container panel-display' : 'panel-container'}
+        className={
+          display ? 'panel-container panel-display' : 'panel-container'
+        }
       >
         <div
-          class="pull-ring"
+          className="pull-ring"
           onClick={() => {
             setDisplay(true);
           }}
         ></div>
-        <div class="panel">
+        <div className="panel">
           <Tooltip title="双击上传剪切板内容到云端，单击从云端剪切板复制内容，数据安全相关请看更新日志说明">
             <div
               className="panel-item"
