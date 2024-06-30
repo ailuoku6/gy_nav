@@ -12,6 +12,7 @@ import NotFound from '../pages/NotFound';
 // import { BrowserRouter as Router,Switch, Route,Redirect} from "react-router-dom";
 import { Router, Switch, Route, Redirect } from 'react-router-dom';
 
+// @ts-ignore
 import { createBrowserHistory } from 'history';
 
 const history = createBrowserHistory();
