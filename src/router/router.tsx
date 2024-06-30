@@ -1,7 +1,9 @@
 //引入react jsx写法的必须
-import React from 'react';
+// import React from 'react';
 //引入需要用到的页面组件
+// @ts-ignore
 import Home from '../pages/Home';
+// @ts-ignore
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 // import About from './pages/about';
@@ -30,17 +32,6 @@ const route = (
 
 function router() {
   return route;
-  // return (
-  //     <Router>
-  //         <Switch>
-  //             {/*<Redirect from="/" exact to="/index"/>*/}
-  //             <Route exact path="/login" component={Login}/>
-  //             <Route exact path="/" component={Home} />
-
-  //         </Switch>
-
-  //         {/*<Route path="/about" component={About} />*/}
-  //     </Router>);
 }
 export { history };
 export default router;
