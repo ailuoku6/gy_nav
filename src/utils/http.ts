@@ -49,7 +49,7 @@ axios.interceptors.request.use(
     return config;
   },
   (error) => {
-    return Promise.error(error);
+    return Promise.reject(error);
   }
 );
 
@@ -59,7 +59,7 @@ axios.interceptors.response.use(
     if (response.status === 200) {
       //TODO 在此处自动保存token到本地
       console.log(response);
-      let data = response.data;
+      const data = response.data;
       if (data.token) {
         SetTokenStore(data.token);
       }
@@ -114,7 +114,10 @@ axios.interceptors.response.use(
  * @param {String} url [请求的url地址]
  * @param {Object} params [请求时携带的参数]
  */
-export function get(url, params) {
+export function get(
+  url: string,
+  params: { [key: string]: any }
+): Promise<{ result: boolean } & Record<string, any>> {
   console.log('发起请求');
   return new Promise((resolve, reject) => {
     axios
@@ -136,7 +139,10 @@ export function get(url, params) {
  * @param {String} url [请求的url地址]
  * @param {Object} params [请求时携带的参数]
  */
-export function post(url, params) {
+export function post(
+  url: string,
+  params: { [key: string]: any }
+): Promise<{ result: boolean; [key: string]: any }> {
   return new Promise((resolve, reject) => {
     axios
       .post(BaseUrl + url, QS.stringify(params))

@@ -13,12 +13,12 @@ const FriendSite = () => {
 
   useEffect(() => {
     get(GetAllFS, {})
-      .then((data: { result: boolean; fsites: ISite[] }) => {
+      .then((data) => {
         if (data.result) {
           // this.setState({
           //   sites: data.fsites,
           // });
-          setSites(data.fsites);
+          setSites(data.fsites as ISite[]);
         }
       })
       .catch((err: any) => {

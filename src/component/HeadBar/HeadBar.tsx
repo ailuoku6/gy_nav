@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './index.css';
 //import './dark.css';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -6,7 +6,7 @@ import Collapse from '@mui/material/Collapse';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { SUGTIP } from '../../utils/Api';
 import jsonp from 'jsonp';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   setSugShow,
   setMarchineShow,
@@ -57,7 +57,7 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleHomeKeyDown = (e: KeyboardEvent) => {
+  const handleHomeKeyDown = (e: any) => {
     // console.log('headbar reciver', e.target.tagName);
     const focuEle = e.target.tagName;
     if (focuEle !== 'INPUT') {
