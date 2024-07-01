@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
@@ -10,16 +10,28 @@ import TextField from '@mui/material/TextField';
 // import FormControl from '@mui/material/FormControl';
 // import InputLabel from '@mui/material/InputLabel';
 import { linkPattern } from '../../utils/veriLink';
-import { setGlobalMsg } from '../../redux/actions';
-import { connect } from 'react-redux';
+// import { setGlobalMsg } from '../../redux/actions';
+// import { connect } from 'react-redux';
 
-function AddSiteDialog(props) {
+interface IAddSiteDialogProps {
+  defaultName?: string;
+  defaultAddr?: string;
+  title: string;
+  CancelText?: string;
+  open: boolean;
+  onClose: () => void;
+  onConfirm: (siteName: string, siteAddr: string) => void;
+  onCancel: () => void;
+  ConfirmText?: string;
+}
+
+function AddSiteDialog(props: IAddSiteDialogProps) {
   //console.log(props);
   const [siteName, setSiteName] = useState(
-    props.defaultName ? props.defaultName : ''
+    props.defaultName || ''
   );
   const [siteAddr, setSiteAddr] = useState(
-    props.defaultAddr ? props.defaultAddr : 'http://'
+    props.defaultAddr || 'http://'
   );
   const [isError, setIsError] = useState(false);
   const [helpText, setHelpText] = useState('');
@@ -27,7 +39,7 @@ function AddSiteDialog(props) {
 
   useEffect(() => {
     if (props.open) {
-      setSiteAddr(props.defaultAddr ? props.defaultAddr : 'http://');
+      setSiteAddr(props.defaultAddr || 'http://');
       console.log('设置siteAddr');
     }
     return () => {};
@@ -83,7 +95,7 @@ function AddSiteDialog(props) {
           }}
           color="primary"
         >
-          {props.CancelText ? props.CancelText : '取消'}
+          {props.CancelText || '取消'}
         </Button>
         <Button
           onClick={() => {
@@ -100,19 +112,15 @@ function AddSiteDialog(props) {
           }}
           color="primary"
         >
-          {props.ConfirmText ? props.ConfirmText : '确定'}
+          {props.ConfirmText || '确定'}
         </Button>
       </DialogActions>
     </Dialog>
   );
 }
 
-const mapStateToProps = ({}) => ({});
-
-const mapDispatchToProps = { setGlobalMsg };
-
 // export default App;
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddSiteDialog);
+// export default connect(mapStateToProps, mapDispatchToProps)(AddSiteDialog);
 
-//xport default AddSiteDialog;
+export default AddSiteDialog;

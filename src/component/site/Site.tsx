@@ -29,10 +29,10 @@ const Site = ({
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
-  let edit = Edit && PartIndex !== null;
-  let partIndex =
+  const edit = Edit && PartIndex !== null;
+  const partIndex =
     PartIndex !== undefined && PartIndex !== null ? PartIndex : -1;
-  let key = 'PlaceHolderKey-' + (edit ? 'on' : 'off');
+  const key = 'PlaceHolderKey-' + (edit ? 'on' : 'off');
 
   const { device } = useSelector((state: any) => ({
     device: state.Device.device,

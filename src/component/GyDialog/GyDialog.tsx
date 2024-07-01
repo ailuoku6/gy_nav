@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
@@ -6,7 +6,15 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import TextField from '@mui/material/TextField';
 
-function GyDialog(props) {
+interface IGyDialogProps {
+  open: boolean;
+  title: string;
+  onClose: () => void;
+  onCancel: () => void;
+  onConfirm: (partName: string) => void;
+}
+
+function GyDialog(props: IGyDialogProps) {
   //console.log(props);
   const [partName, setpartName] = useState('');
 

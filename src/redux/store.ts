@@ -6,4 +6,7 @@ import { applyMiddleware } from 'redux';
 
 const store = createStore(reducer, applyMiddleware(handlePart));
 
+
+export type StoreType = ReturnType<typeof reducer>;
+
 export default store;
