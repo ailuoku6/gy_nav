@@ -6,7 +6,7 @@ export interface IUserData {
 
 export enum DeviceTypes {
   pc = 'pc',
-  mobile = 'mobile',
+  phone = 'phone',
 }
 
 export interface ISite {

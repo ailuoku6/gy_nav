@@ -73,7 +73,7 @@ const MarchineIndex = (
 const Partition = (
   state: { data: PartSiteData[] } = { data: data },
   action: IPartitionAction
-) => {
+): { data: PartSiteData[] } => {
   console.log('partData被修改', action, state);
   const data = [...state.data];
   switch (action.type) {
@@ -115,7 +115,7 @@ const Partition = (
       return { ...state, data: data };
     case TYPE.SET_PARTITION:
       //state.data = action.partition;
-      return { ...state, data: action.partition };
+      return { ...state, data: action.partition || [] };
     case TYPE.MOVE_PART:
       const temp = data[action.oldPartIndex];
       data.splice(action.oldPartIndex, 1);
