@@ -17,15 +17,15 @@ export default defineConfig({
   ],
   build: {
     outDir: 'build',
-    rollupOptions: {
-      external: ['react', 'react-dom'],
-      output: {
-        format: 'umd',
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM',
-        },
-      },
-    },
+    // rollupOptions: {
+    //   external: ['react', 'react-dom'],
+    //   output: {
+    //     format: 'umd',
+    //     globals: {
+    //       react: 'React',
+    //       'react-dom': 'ReactDOM',
+    //     },
+    //   },
+    // },
   },
 });
