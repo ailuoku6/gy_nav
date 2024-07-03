@@ -10,5 +10,15 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: 'build',
+    rollupOptions: {
+      external: ['react', 'react-dom'],
+      output: {
+        format: 'umd',
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM',
+        },
+      },
+    },
   },
 });
