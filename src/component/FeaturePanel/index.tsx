@@ -93,7 +93,7 @@ const FeaturePanel = () => {
 
   const snackbarAction =
     msg.content && msg.callback ? (
-      <Button color="secondary" size="small" onClick={msg.callback}>
+      <Button color="primary" size="small" onClick={msg.callback}>
         复制
       </Button>
     ) : null;

@@ -241,6 +241,7 @@ const Login = () => {
               {index === 0 && (
                 <div style={{ padding: 10 }}>
                   <TextField
+                    variant="standard"
                     label="输入用户名"
                     fullWidth
                     value={userName}
@@ -251,6 +252,7 @@ const Login = () => {
                   />
                   <TextField
                     label={'输入密码'}
+                    variant="standard"
                     fullWidth
                     type={'password'}
                     value={passWord}
@@ -263,7 +265,7 @@ const Login = () => {
 
                   <Button
                     variant="contained"
-                    color="secondary"
+                    color="primary"
                     disabled={!userName || !passWord}
                     style={{ width: '100%', marginTop: 10 }}
                     onClick={() => {
@@ -278,6 +280,7 @@ const Login = () => {
                 <div style={{ padding: 10 }}>
                   <TextField
                     label="输入用户名"
+                    variant="standard"
                     fullWidth
                     value={userName}
                     onChange={(event) => {
@@ -287,6 +290,7 @@ const Login = () => {
                   />
                   <TextField
                     label={'输入密码'}
+                    variant="standard"
                     fullWidth
                     type={'password'}
                     value={passWord}
@@ -297,6 +301,7 @@ const Login = () => {
                   />
                   <TextField
                     label={'重新输入密码'}
+                    variant="standard"
                     fullWidth
                     type={'password'}
                     value={passWord1}
@@ -308,7 +313,7 @@ const Login = () => {
                   {tipText && <div style={{ color: '#ff430f' }}>{tipText}</div>}
                   <Button
                     variant="contained"
-                    color="secondary"
+                    color="primary"
                     disabled={!userName || !passWord || !passWord1}
                     style={{ width: '100%', marginTop: 10 }}
                     onClick={() => {

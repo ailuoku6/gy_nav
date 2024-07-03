@@ -32,6 +32,7 @@ function GyDialog(props: IGyDialogProps) {
       <DialogContent>
         <TextField
           label="输入分区名"
+          variant="standard"
           // fullWidth
           value={partName}
           onChange={(event) => {

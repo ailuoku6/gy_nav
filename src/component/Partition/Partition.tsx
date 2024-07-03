@@ -51,11 +51,10 @@ const Partition = (props: IPartitionProps) => {
   const dispatch = useDispatch();
 
   const list = useMemo(() => {
-    let list = [];
     const pts = Array.isArray(Partition) ? Partition : [];
     console.log(pts);
     const edit = props.Edit;
-    list = pts.map((item, index) => {
+    return pts.map((item, index) => {
       return (
         <Grid item xs={12} sm={6} md={4} key={index} data-id={item}>
           <Paper
@@ -77,7 +76,7 @@ const Partition = (props: IPartitionProps) => {
                 />
                 <Button
                   variant="contained"
-                  color="secondary"
+                  color="error"
                   style={{ marginLeft: 10, marginRight: 10 }}
                   onClick={() => {
                     setDelPartIndex(index);
@@ -112,7 +111,6 @@ const Partition = (props: IPartitionProps) => {
       );
     });
 
-    return list;
   }, [Partition, dispatch, props.Edit]);
 
   const edit = props.Edit;
@@ -171,7 +169,7 @@ const Partition = (props: IPartitionProps) => {
         }}
         action={
           <Button
-            color="secondary"
+            color="primary"
             size="small"
             onClick={() => {
               if (delPart) {

@@ -62,6 +62,7 @@ function AddSiteDialog(props: IAddSiteDialogProps) {
         <TextField
           autoFocus
           label="输入网站名"
+          variant="standard"
           // fullWidth
           value={siteName}
           onChange={(event) => {
@@ -75,6 +76,7 @@ function AddSiteDialog(props: IAddSiteDialogProps) {
           error={isError}
           helperText={helpText}
           label="输入网址"
+          variant="standard"
           // fullWidth
           //value={siteAddr?siteAddr:'http://'}
           value={siteAddr}
