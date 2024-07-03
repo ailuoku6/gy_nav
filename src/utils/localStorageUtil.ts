@@ -12,11 +12,12 @@ const RemovelocalStorage = (key: string) => {
 };
 
 const GetlocalStorage = (key: string) => {
-  let value = window.localStorage.getItem(key);
+  const value = window.localStorage.getItem(key);
   console.log('读取localStorage', key, value);
   if (value === null || value === '') return null;
   try {
-    value = JSON.parse(value);
+    const parseValue = JSON.parse(value);
+    return parseValue;
   } catch (e) {
     console.log(e);
   }

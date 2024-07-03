@@ -6,7 +6,7 @@ import {
   PopularSite,
 } from './types';
 
-export const setUser = (user: IUserData, isStore = true) => ({
+export const setUser = (user: IUserData | null, isStore = true) => ({
   type: TYPE.SET_USER,
   user,
   isStore,
