@@ -5,11 +5,10 @@ import axios from 'axios';
 import QS from 'qs';
 import { BaseUrl } from './Api';
 import { GetTokenStore, SetTokenStore } from './localStorageUtil';
-// import {history} from '../router/router';
+import { history } from '../router/router';
 
 const backToLogin = () => {
-  // TODO: backto login
-  // history.replace("/login");
+  history.replace('/login');
 };
 
 // const BaseUrl = "http://127.0.0.1:7001/";
@@ -57,7 +56,6 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   (response) => {
     if (response.status === 200) {
-      //TODO 在此处自动保存token到本地
       console.log(response);
       const data = response.data;
       if (data.token) {

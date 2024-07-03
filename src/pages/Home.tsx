@@ -172,7 +172,6 @@ const Home = () => {
     // 读取搜索引擎数据
     initMarchine();
     initUser();
-    // TODO 发一个验证token的请求
     if (userRef.current) {
       console.log('验证token');
       post(ValidToken, {});
