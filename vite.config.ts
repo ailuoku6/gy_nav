@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // import build from "@hono/vite-cloudflare-pages";
 // import devServer from "@hono/vite-dev-server";
@@ -7,7 +8,13 @@ import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    visualizer({
+      filename: 'dist/bundle-visualizer.html', // 生成报告的文件路径
+      open: true, // 打开生成的报告
+    }),
+  ],
   build: {
     outDir: 'build',
     rollupOptions: {
