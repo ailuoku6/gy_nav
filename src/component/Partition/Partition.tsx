@@ -89,6 +89,7 @@ const Partition = (props: IPartitionProps) => {
                 </Button>
                 <Fab
                   color="secondary"
+                  style={{ zIndex: 10 }}
                   aria-label="add"
                   size={'small'}
                   onClick={() => {
@@ -110,7 +111,6 @@ const Partition = (props: IPartitionProps) => {
         </Grid>
       );
     });
-
   }, [Partition, dispatch, props.Edit]);
 
   const edit = props.Edit;
