@@ -1,11 +1,15 @@
+import React from 'react';
 //引入react jsx写法的必须
 // import React from 'react';
 //引入需要用到的页面组件
 // @ts-ignore
-import Home from '../pages/Home';
-// @ts-ignore
-import Login from '../pages/Login';
-import NotFound from '../pages/NotFound';
+// import Home from '../pages/Home';
+// // @ts-ignore
+// import Login from '../pages/Login';
+// import NotFound from '../pages/NotFound';
+const Home = React.lazy(() => import('../pages/Home'));
+const Login = React.lazy(() => import('../pages/Login'));
+const NotFound = React.lazy(() => import('../pages/NotFound'));
 // import About from './pages/about';
 //引入一些模块
 //Router
