@@ -22,7 +22,7 @@ const User = (
   switch (action.type) {
     case TYPE.SET_USER:
       //if(action.user===state.user) return state;
-      const user = action.user || state.user;
+      const user = action.user !== undefined ? action.user : state.user;
       console.log('下一个user', action, user);
       return { ...state, user: user };
     default:
