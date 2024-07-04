@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 //引入react jsx写法的必须
 // import React from 'react';
 //引入需要用到的页面组件
@@ -25,9 +25,31 @@ const route = (
   <Router history={history}>
     <Switch>
       {/*<Redirect from="/" exact to="/index"/>*/}
-      <Route path="/login" component={Login} />
-      <Route path="/not-found" component={NotFound} />
-      <Route exact path="/" component={Home} />
+      <Route
+        path="/login"
+        component={() => (
+          <Suspense>
+            <Login />
+          </Suspense>
+        )}
+      />
+      <Route
+        path="/not-found"
+        component={() => (
+          <Suspense>
+            <NotFound />
+          </Suspense>
+        )}
+      />
+      <Route
+        exact
+        path="/"
+        component={() => (
+          <Suspense>
+            <Home />
+          </Suspense>
+        )}
+      />
       <Redirect to="/not-found" />
     </Switch>
 
