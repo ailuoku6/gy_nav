@@ -68,10 +68,11 @@ axios.interceptors.response.use(
   },
   // 服务器状态码不是200的情况
   (error) => {
+    const status = (error.response && error.response.status) || null;
     // console.log("尝试跳转到登陆");
-    if (error.response.status) {
+    if (status) {
       // console.log("尝试跳转到登陆");
-      switch (error.response.status) {
+      switch (status) {
         // 401: 未登录
         // 未登录则跳转登录页面，并携带当前页面的路径
         // 在登录成功后返回当前页面，这一步需要在登录页操作。
