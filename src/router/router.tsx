@@ -1,4 +1,5 @@
 import React, { Suspense } from 'react';
+import { CircularProgress } from '@mui/material';
 //引入react jsx写法的必须
 // import React from 'react';
 //引入需要用到的页面组件
@@ -21,6 +22,22 @@ import { createBrowserHistory } from 'history';
 
 const history = createBrowserHistory();
 
+const Loading = () => {
+  return (
+    <div
+      style={{
+        height: '100vh',
+        width: '100vw',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <CircularProgress />
+    </div>
+  );
+};
+
 const route = (
   <Router history={history}>
     <Switch>
@@ -28,7 +45,7 @@ const route = (
       <Route
         path="/login"
         component={() => (
-          <Suspense>
+          <Suspense fallback={<Loading />}>
             <Login />
           </Suspense>
         )}
@@ -36,7 +53,7 @@ const route = (
       <Route
         path="/not-found"
         component={() => (
-          <Suspense>
+          <Suspense fallback={<Loading />}>
             <NotFound />
           </Suspense>
         )}
@@ -45,7 +62,7 @@ const route = (
         exact
         path="/"
         component={() => (
-          <Suspense>
+          <Suspense fallback={<Loading />}>
             <Home />
           </Suspense>
         )}
