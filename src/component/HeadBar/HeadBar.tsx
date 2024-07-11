@@ -72,20 +72,21 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
     };
   }, []);
 
-  const Search = () => {
+  const Search = (keyword?: string) => {
+    const keyword_ = keyword ?? keyWord;
     // let device = this.props.device;
     // let marchine = this.state.Marchinelist[this.state.Marchineselect_index];
-    if (linkPattern.test(keyWord)) {
+    if (linkPattern.test(keyword_)) {
       if (device === 'phone') {
-        window.location.href = keyWord;
+        window.location.href = keyword_;
       } else {
-        window.open(keyWord);
+        window.open(keyword_);
       }
     }
     const marchine = Marchinelist[selectMcIndex];
 
     const url =
-      marchine.searApi + encodeURIComponent(keyWord) + marchine.searApi_weizui;
+      marchine.searApi + encodeURIComponent(keyword_) + marchine.searApi_weizui;
     if (device === 'phone') {
       window.location.href = url;
     } else {
@@ -236,7 +237,7 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
                 setKeyword(sug[selectIndex]);
               } else if (e.keyCode === 13) {
                 if (keyWord === '') return;
-                Search();
+                Search(keywordRef.current);
               }
             }}
             value={keyWord}
@@ -286,7 +287,7 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
                   onClick={() => {
                     setKeyword(item);
                     setTimeout(() => {
-                      Search();
+                      Search(item);
                     }, 0);
                   }}
                 >
