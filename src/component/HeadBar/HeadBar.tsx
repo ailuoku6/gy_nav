@@ -310,7 +310,7 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
           ref={searchBtnRef}
           className={'gy-button'}
           style={{ backgroundColor: color }}
-          onClick={Search}
+          onClick={() => Search()}
         >
           {name}
         </div>
