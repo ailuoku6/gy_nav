@@ -169,11 +169,10 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
   const color = Marchinelist[selectMcIndex].color;
   const name = Marchinelist[selectMcIndex].button_value;
 
-  const sugWidth = useMemo(() => {
-    return wrapRef.current && searchBtnRef.current
+  const sugWidth =
+    wrapRef.current && searchBtnRef.current
       ? wrapRef.current.clientWidth - searchBtnRef.current.clientWidth
       : 0;
-  }, [random]);
 
   const headBase =
     device !== DeviceTypes.phone ? 'headBar headBarHoverbel' : 'headBar';
