@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './index.css';
 //import './dark.css';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -38,6 +38,8 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
   // const [Marchineselect_index, setMarchineselect_index] = useState(0);
   const [sugSelectIndex, setSugSelectIndex] = useState(0);
 
+  const [random, setRandom] = useState(0);
+
   const { device, marchine, showSug, selectMcIndex } = useSelector<
     StoreType,
     {
@@ -69,6 +71,18 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
     eventBus.on(homeKeyDown, handleHomeKeyDown);
     return () => {
       eventBus.off(homeKeyDown, handleHomeKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setRandom(Math.random());
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
@@ -155,10 +169,11 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
   const color = Marchinelist[selectMcIndex].color;
   const name = Marchinelist[selectMcIndex].button_value;
 
-  const sugWidth =
-    wrapRef.current && searchBtnRef.current
+  const sugWidth = useMemo(() => {
+    return wrapRef.current && searchBtnRef.current
       ? wrapRef.current.clientWidth - searchBtnRef.current.clientWidth
       : 0;
+  }, [random]);
 
   const headBase =
     device !== DeviceTypes.phone ? 'headBar headBarHoverbel' : 'headBar';
