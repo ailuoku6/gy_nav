@@ -38,7 +38,8 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
   // const [Marchineselect_index, setMarchineselect_index] = useState(0);
   const [sugSelectIndex, setSugSelectIndex] = useState(0);
 
-  const [random, setRandom] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_random, setRandom] = useState(0);
 
   const { device, marchine, showSug, selectMcIndex } = useSelector<
     StoreType,
