@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import './index.css';
 //import './dark.css';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { SUGTIP } from '../../utils/Api';
-import jsonp from 'jsonp';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setSugShow,
@@ -21,10 +20,7 @@ import eventBus from '../../utils/EventEmitter';
 import { homeKeyDown } from '../../utils/Events';
 import { StoreType } from '../../redux/store';
 import { DeviceTypes } from '../../redux/types';
-// import dbClick from '../../utils/DoubleClick'
-// import http from '../../utils/http';
-
-// const get = http.get;
+import { sugObservable, sugSubject } from './utils';
 
 interface IHeadBarProps {
   Scrolled: boolean;
@@ -113,48 +109,31 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
 
   keywordRef.current = keyWord;
 
-  const GetSug = () => {
-    if (keywordRef.current === '') {
-      setSug([]);
-      dispatch(setSugShow(false));
-      return;
-    }
-
-    jsonp(
-      SUGTIP + keywordRef.current,
-      {
-        param: 'cb',
-      },
-      (_err: any, data: any) => {
-        // console.log("gyghvh",data.s)
-        let fetchSug;
-        try {
-          fetchSug = data.s;
-        } catch (e) {
-          fetchSug = [];
-        }
-
-        fetchSug.splice(0, 0, keywordRef.current);
-        console.log(fetchSug);
-        if (keywordRef.current === '') {
-          setSug([]);
-          dispatch(setSugShow(false));
-        } else {
-          setSug(fetchSug);
-          dispatch(setSugShow(true));
-        }
+  useEffect(() => {
+    const sub = sugObservable.subscribe((sugs: string[]) => {
+      if (sugs?.length) {
+        sugs.splice(0, 0, keywordRef.current);
       }
-    );
-    setSugSelectIndex(0);
-  };
+
+      setSug(sugs as any);
+      dispatch(setSugShow(!!sugs.length));
+
+      setSugSelectIndex(0);
+    });
+
+    return () => sub.unsubscribe();
+  }, []);
+
+  const getSug = useCallback(() => {
+    sugSubject.next(keywordRef.current);
+  }, []);
 
   const switchSug = () => {
     console.log('switch');
     const newshowSug = !showSug;
     dispatch(setMarchineShow(false));
     if (newshowSug === true) {
-      console.log('judge');
-      GetSug();
+      getSug();
       return;
     }
     dispatch(setSugShow(newshowSug));
@@ -164,8 +143,6 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
   const barRef = useRef<HTMLDivElement>(null);
 
   const searchBtnRef = useRef<HTMLDivElement>(null);
-
-  const debounceGetSugRef = useRef(debounce(GetSug, 200));
 
   const color = Marchinelist[selectMcIndex].color;
   const name = Marchinelist[selectMcIndex].button_value;
@@ -264,7 +241,7 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
                   dispatch(setSugShow(false));
                   return;
                 }
-                debounceGetSugRef.current();
+                getSug();
               }, 0);
             }}
             ref={inputRef}
