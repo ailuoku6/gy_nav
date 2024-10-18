@@ -17,6 +17,7 @@ import {
 
 // @ts-ignore
 import AddSiteDialog from '../GyDialog/AddSiteDialog';
+import { execInject } from '../../utils/windowInject';
 
 const Site = ({
   Sites: sites = [],
@@ -65,7 +66,32 @@ const Site = ({
               {edit && device === 'phone' ? (
                 <div>{item.site_name ? item.site_name : '网站名缺失'}</div>
               ) : (
-                <a href={item.url ? item.url : ''} target={'_blank'}>
+                <a
+                  href={item.url || ''}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const newWindow = window.open(item.url || '', '_blank');
+                    if(!newWindow){
+                      return;
+                    }
+
+                    execInject(newWindow);
+                    // const originPushState = newWindow?.history.pushState;
+                    // const originReplaceState = newWindow?.history.replaceState;
+                    // newWindow.history.pushState = function (...args) {
+                    //   console.log('-----pushState', args);
+                    //   originPushState?.apply(this, args);
+                    // };
+
+                    // newWindow.history.replaceState = function (...args) {
+                    //   console.log('-----replaceState', args);
+                    //   originReplaceState?.apply(this, args);
+                    // };
+
+                    // window.proxyWindow = newWindow;
+                  }}
+                  target={'_blank'}
+                >
                   {item.site_name ? item.site_name : '网站名缺失'}
                 </a>
               )}
