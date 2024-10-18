@@ -232,14 +232,8 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
             value={keyWord}
             onChange={(e) => {
               setKeyword(e.target.value);
-              setTimeout(() => {
-                if (e.target.value === '') {
-                  setSug([]);
-                  dispatch(setSugShow(false));
-                  return;
-                }
-                getSug();
-              }, 0);
+              keywordRef.current = e.target.value;
+              getSug();
             }}
             ref={inputRef}
           />
@@ -249,9 +243,9 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
               style={{ display: 'flex', alignItems: 'center' }}
               onClick={() => {
                 setKeyword('');
-                setSug([]);
+                keywordRef.current = '';
+                getSug();
                 inputRef.current?.focus();
-                // console.log(this.refs.wrap.clientWidth-this.refs.searchBtn.clientWidth)
               }}
             >
               <CancelIcon fontSize={'inherit'} style={{ fontSize: 15 }} />
