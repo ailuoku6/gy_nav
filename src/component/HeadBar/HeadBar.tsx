@@ -4,7 +4,6 @@ import './index.css';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { SUGTIP } from '../../utils/Api';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setSugShow,
@@ -12,8 +11,6 @@ import {
   setMarchineIndex,
 } from '../../redux/actions';
 import Marchinelist from '../../utils/SearchMarchine';
-//import { debounce } from 'throttle-debounce';
-import debounce from '../../utils/debounce';
 import { linkPattern } from '../../utils/veriLink';
 // @ts-ignore
 import eventBus from '../../utils/EventEmitter';
