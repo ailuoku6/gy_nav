@@ -43,6 +43,14 @@ const Marchinelist: IMarchine[] = [
     color: '#1688b1',
   },
   {
+    Marchine_name: '必应CN',
+    button_value: '必应CN',
+    searApi:
+      'https://cn.bing.com/search?form=QBLH&sp=-1&lq=0&pq=123&sc=12-3&qs=n&sk=&cvid=4EE766F92F614AC8B04A56414D3B40A0&ghsh=0&ghacc=0&ghpl=&q=',
+    searApi_weizui: '',
+    color: '#1688b1',
+  },
+  {
     Marchine_name: 'Github',
     button_value: 'Github',
     searApi: 'https://github.com/search?q=',
