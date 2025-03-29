@@ -7,7 +7,12 @@ const NotFound = React.lazy(() => import('../pages/NotFound'));
 // import About from './pages/about';
 //引入一些模块
 //Router
-// import { BrowserRouter as Router,Switch, Route,Redirect} from "react-router-dom";
+// import {
+//   BrowserRouter as Router,
+//   Switch,
+//   Route,
+//   Redirect,
+// } from 'react-router-dom';
 import { Router, Switch, Route, Redirect } from 'react-router-dom';
 
 // @ts-ignore
