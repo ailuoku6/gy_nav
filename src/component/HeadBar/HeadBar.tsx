@@ -76,7 +76,7 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
         dispatch(setMarchineShow(false));
       }
     },
-    { enableOnFormTags: ['INPUT'] }
+    { enableOnFormTags: ['INPUT'], preventDefault: true }
   );
 
   const handleHomeKeyDown = (e: any) => {

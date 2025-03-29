@@ -11,6 +11,14 @@ const hotkeyPrefix = 'ctrl';
 
 const Marchinelist: IMarchine[] = [
   {
+    Marchine_name: 'AI搜',
+    button_value: 'AI搜',
+    searApi: 'https://metaso.cn/?q=',
+    searApi_weizui: '&s=hzda0&referrer_s=hzda0',
+    color: '#175CD3',
+    hotkey: `${hotkeyPrefix}+a`,
+  },
+  {
     Marchine_name: '百度',
     button_value: '百度一下',
     searApi: 'https://www.baidu.com/s?wd=',
