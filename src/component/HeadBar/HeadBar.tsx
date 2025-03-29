@@ -18,10 +18,24 @@ import { homeKeyDown } from '../../utils/Events';
 import { StoreType } from '../../redux/store';
 import { DeviceTypes } from '../../redux/types';
 import { sugObservable, sugSubject } from './utils';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 interface IHeadBarProps {
   Scrolled: boolean;
 }
+
+const hotkeyMap = Marchinelist.reduce(
+  (prev, curv, index) => {
+    const { hotkey } = curv;
+    if (hotkey) {
+      prev[hotkey] = index;
+    }
+    return prev;
+  },
+  {} as Record<string, number>
+);
+
+const hotkeys = Object.keys(hotkeyMap);
 
 const HeadBar = ({ Scrolled }: IHeadBarProps) => {
   // const [showMarchine, setShowMarchine] = useState(false);
@@ -53,8 +67,19 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
+  useHotkeys(
+    hotkeys,
+    (_arg, arg1) => {
+      const index = hotkeyMap[arg1.hotkey];
+      if (index !== undefined && index !== null) {
+        dispatch(setMarchineIndex(index));
+        dispatch(setMarchineShow(false));
+      }
+    },
+    { enableOnFormTags: ['INPUT'] }
+  );
+
   const handleHomeKeyDown = (e: any) => {
-    // console.log('headbar reciver', e.target.tagName);
     const focuEle = e.target.tagName;
     if (focuEle !== 'INPUT') {
       inputRef.current?.focus();
@@ -183,6 +208,7 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
                 <a
                   key={JSON.stringify(item)}
                   className={selectMcIndex === index ? 'selected' : ''}
+                  title={item.hotkey ? `快捷键: ${item.hotkey}` : ''}
                   onClick={() => {
                     dispatch(setMarchineIndex(index));
                     dispatch(setMarchineShow(false));

@@ -4,7 +4,10 @@ export interface IMarchine {
   searApi: string;
   searApi_weizui: string;
   color: string;
+  hotkey?: string;
 }
+
+const hotkeyPrefix = 'ctrl';
 
 const Marchinelist: IMarchine[] = [
   {
@@ -13,6 +16,7 @@ const Marchinelist: IMarchine[] = [
     searApi: 'https://www.baidu.com/s?wd=',
     searApi_weizui: '',
     color: '#38F',
+    hotkey: `${hotkeyPrefix}+b`,
   },
   {
     Marchine_name: '谷歌',
@@ -20,6 +24,7 @@ const Marchinelist: IMarchine[] = [
     searApi: 'https://www.google.com/search?q=',
     searApi_weizui: '',
     color: '#3b78e7',
+    hotkey: `${hotkeyPrefix}+g`,
   },
   {
     Marchine_name: '搜狗',
@@ -27,6 +32,7 @@ const Marchinelist: IMarchine[] = [
     searApi: 'https://www.sogou.com/web?query=',
     searApi_weizui: '',
     color: '#ff5943',
+    hotkey: `${hotkeyPrefix}+s+g`,
   },
   {
     Marchine_name: '360搜索',
@@ -34,6 +40,7 @@ const Marchinelist: IMarchine[] = [
     searApi: 'https://www.so.com/s?ie=utf-8&fr=none&src=360sou_newhome&q=',
     searApi_weizui: '',
     color: '#19b955',
+    hotkey: `${hotkeyPrefix}+3`,
   },
   {
     Marchine_name: '必应搜索',
@@ -41,6 +48,7 @@ const Marchinelist: IMarchine[] = [
     searApi: 'https://www.bing.com/search?q=',
     searApi_weizui: '',
     color: '#1688b1',
+    hotkey: `${hotkeyPrefix}+b+y`,
   },
   {
     Marchine_name: '必应CN',
@@ -49,6 +57,7 @@ const Marchinelist: IMarchine[] = [
       'https://cn.bing.com/search?form=QBLH&sp=-1&lq=0&pq=123&sc=12-3&qs=n&sk=&cvid=4EE766F92F614AC8B04A56414D3B40A0&ghsh=0&ghacc=0&ghpl=&q=',
     searApi_weizui: '',
     color: '#1688b1',
+    hotkey: `${hotkeyPrefix}+b+c`,
   },
   {
     Marchine_name: 'Github',
@@ -56,6 +65,7 @@ const Marchinelist: IMarchine[] = [
     searApi: 'https://github.com/search?q=',
     searApi_weizui: '',
     color: '#00302e',
+    hotkey: `${hotkeyPrefix}+g+h`,
   },
   {
     Marchine_name: '知乎搜索',

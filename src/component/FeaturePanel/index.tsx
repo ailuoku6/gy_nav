@@ -166,6 +166,10 @@ const FeaturePanel = () => {
             </div>
             <div>但即便如此，仍不建议将密码等敏感信息存储到云剪切板</div>
           </DialogContent>
+          <DialogContent>
+            <DialogContentText>搜索引擎切换快捷键</DialogContentText>
+            <div>使用快捷键切换搜索引擎，快捷键位悬停在搜索引擎上可查看</div>
+          </DialogContent>
         </Dialog>
       </div>
     </>

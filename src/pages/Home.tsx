@@ -166,8 +166,6 @@ const Home = () => {
     // window.addEventListener('scroll', this.handleScroll);
     window.addEventListener('scroll', throttleHandleScroll);
     window.addEventListener('keydown', handleKeyDown);
-    //this.appRef.current.addEventListener('keypress',this.handleKeyDown);
-    //React.addEventListener('keypress',this.handleKeyDown);
     judgeDevice();
     // 读取搜索引擎数据
     initMarchine();
