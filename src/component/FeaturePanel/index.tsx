@@ -25,7 +25,8 @@ import { isSafari } from '../../utils/device';
 
 const FeaturePanel = () => {
   const [display, setDisplay] = useState(false);
-  const timer = useRef<NodeJS.Timeout | null>(null);
+
+  const timer = useRef<number | null>(null);
 
   const [msg, setMsg] = useState<{
     content: string;
