@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS popularSites (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    userId INTEGER NOT NULL UNIQUE,
+    popularSites TEXT,
+    modifyDate DATETIME,
+    FOREIGN KEY (userId) REFERENCES users(id)
+);

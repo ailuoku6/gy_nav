@@ -39,9 +39,21 @@ export default class UserService {
       // 生成 JWT
       const token = await signToken({ user: userToken }, tokenSecret);
 
+      // 获取用户的 popularSites
+      const popularSitesRow = await db
+        .prepare('SELECT popularSites FROM popularSites WHERE userId = ?')
+        .bind(user.id)
+        .first();
+      const popularSites = popularSitesRow?.popularSites ?? '[]';
+
       return ctx.json({
         result: true,
-        user: { id: user.id, userName: user.userName, partData: user.partData },
+        user: {
+          id: user.id,
+          userName: user.userName,
+          partData: user.partData,
+          popularSites,
+        },
         msg: 'Login successful',
         token,
       });
@@ -89,7 +101,12 @@ export default class UserService {
             userName: user.userName,
           };
           const token = await signToken({ user: userToken }, tokenSecret);
-          return ctx.json({ result: true, user, msg: '', token });
+          return ctx.json({
+            result: true,
+            user: { ...user, popularSites: '[]' },
+            msg: '',
+            token,
+          });
         } else {
           return ctx.json({ result: false, msg: 'User registration failed' });
         }

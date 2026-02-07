@@ -71,6 +71,14 @@ const SetPartDataStore = (value: any) => {
   SetlocalStorage('partData', value);
 };
 
+const GetPopularSiteStore = () => {
+  return GetlocalStorage('popularSites');
+};
+
+const SetPopularSiteStore = (value: any) => {
+  SetlocalStorage('popularSites', value);
+};
+
 export {
   SetlocalStorage,
   RemovelocalStorage,
@@ -83,4 +91,6 @@ export {
   GetTokenStore,
   GetPartDataStore,
   SetPartDataStore,
+  GetPopularSiteStore,
+  SetPopularSiteStore,
 };

@@ -116,7 +116,48 @@ export const setGlobalMsg = (msg: string, show: boolean) => ({
   show,
 });
 
-export const setPopularSite = (pSite: PopularSite[]) => ({
+export const setPopularSite = (
+  pSite: PopularSite[],
+  isStore = true,
+  isUp = true
+) => ({
   type: TYPE.SET_POPULARSITE,
   pSite,
+  isStore,
+  isUp,
+});
+
+export const addPopularSite = (
+  siteName: string,
+  url: string,
+  icon?: string
+) => ({
+  type: TYPE.ADD_POPULARSITE,
+  siteName,
+  url,
+  icon,
+});
+
+export const delPopularSite = (index: number) => ({
+  type: TYPE.DEL_POPULARSITE,
+  index,
+});
+
+export const modifyPopularSite = (
+  index: number,
+  siteName: string,
+  url: string,
+  icon?: string
+) => ({
+  type: TYPE.MODIFY_POPULARSITE,
+  index,
+  siteName,
+  url,
+  icon,
+});
+
+export const movePopularSite = (oldIndex: number, curIndex: number) => ({
+  type: TYPE.MOVE_POPULARSITE,
+  oldIndex,
+  curIndex,
 });

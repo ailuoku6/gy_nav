@@ -35,6 +35,9 @@ importers:
       jsonp:
         specifier: ^0.2.1
         version: 0.2.1
+      kisstate:
+        specifier: ^1.1.1
+        version: 1.1.1(react@18.3.1)
       qs:
         specifier: ^6.9.0
         version: 6.14.0
@@ -1630,6 +1633,11 @@ packages:
 
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
+
+  kisstate@1.1.1:
+    resolution: {integrity: sha512-GR280miSBZaGIFaRzENhrMLxTPEQdcASx5eDsUf7DwybkACUnhs79KLgHbS9QZBySSVhGPcdlqG0t5RAgXF3mg==}
+    peerDependencies:
+      react: ^16.8.0 || ^17 || ^18 || ^19
 
   levn@0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
@@ -3615,6 +3623,10 @@ snapshots:
   keyv@4.5.4:
     dependencies:
       json-buffer: 3.0.1
+
+  kisstate@1.1.1(react@18.3.1):
+    dependencies:
+      react: 18.3.1
 
   levn@0.4.1:
     dependencies:

@@ -7,6 +7,7 @@ import errorHandle from './middleware/errorHandle';
 
 import UserService from './service/userService';
 import SiteService from './service/siteService';
+import PopularSiteService from './service/popularSiteService';
 import FriendSiteService from './service/friendSiteService';
 import ClipboardService from './service/clipboardService';
 
@@ -70,6 +71,21 @@ app.post('/api/upPartData', async (ctx) => {
   }
 
   return await SiteService.updatePartData(ctx, { partData });
+});
+
+app.post('/api/getPopularSites', async (ctx) => {
+  return await PopularSiteService.getPopularSites(ctx);
+});
+
+app.post('/api/upPopularSites', async (ctx) => {
+  const body = await ctx.req.parseBody();
+  const { popularSites } = body as any;
+
+  if (!popularSites) {
+    return ctx.json({ result: false, msg: 'popularSites is required' });
+  }
+
+  return await PopularSiteService.updatePopularSites(ctx, { popularSites });
 });
 
 app.post('/api/veriToken', async (ctx) => {

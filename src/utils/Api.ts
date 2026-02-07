@@ -7,6 +7,8 @@ const Signin = '/api/login';
 const SignUp = '/api/signup';
 const GetPartData = '/api/getPartData';
 const UpPartData = '/api/upPartData';
+const GetPopularSites = '/api/getPopularSites';
+const UpPopularSites = '/api/upPopularSites';
 const ValidToken = 'api/veriToken';
 const GetAllFS = '/api/getAllFS';
 const WriteRemoteClipBoard = '/api/writeClipBoard';
@@ -23,6 +25,8 @@ export {
   ValidToken,
   GetPartData,
   UpPartData,
+  GetPopularSites,
+  UpPopularSites,
   GetAllFS,
   WriteRemoteClipBoard,
   GetRemoteClipBoard,

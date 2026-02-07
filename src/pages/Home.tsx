@@ -24,6 +24,7 @@ import {
   addPart2Rear,
   setPartition,
   setGlobalMsg,
+  setPopularSite,
 } from '../redux/actions';
 import Marchinelist from '../utils/SearchMarchine';
 import GyDialog from '../component/GyDialog/GyDialog';
@@ -43,6 +44,7 @@ import {
   // SetUserStore,
   GetUserStore,
   GetPartDataStore,
+  GetPopularSiteStore,
 } from '../utils/localStorageUtil';
 
 import throttle from '../utils/throttle';
@@ -181,6 +183,10 @@ const Home = () => {
       if (partData) {
         dispatch(setPartition(partData, false, false));
       }
+      const popularSites = GetPopularSiteStore();
+      if (popularSites && Array.isArray(popularSites)) {
+        dispatch(setPopularSite(popularSites, false, false));
+      }
     } else {
       //优先读取网络partData,不成功则读取本地partData
       console.log('读取服务器数据...');
@@ -190,11 +196,31 @@ const Home = () => {
           if (data.result) {
             console.log('使用服务器的数据');
             dispatch(setPartition(JSON.parse(data.partData), true, false));
+            let popularSitesData: unknown = null;
+            if (data.popularSites) {
+              popularSitesData =
+                typeof data.popularSites === 'string'
+                  ? JSON.parse(data.popularSites)
+                  : data.popularSites;
+            }
+            if (Array.isArray(popularSitesData)) {
+              dispatch(setPopularSite(popularSitesData, true, false));
+            } else {
+              const localPopularSites = GetPopularSiteStore();
+              if (localPopularSites && Array.isArray(localPopularSites)) {
+                dispatch(setPopularSite(localPopularSites, true, false));
+              }
+            }
+            // 接口和本地都没有时，不 dispatch，保留 Redux 中的默认值
           } else {
             console.log('使用本地的数据');
             const partData = GetPartDataStore();
             if (partData) {
-              dispatch(setPartition(partData, false, false)); //从本地读取，所以没必要再存回本地
+              dispatch(setPartition(partData, false, false));
+            }
+            const popularSites = GetPopularSiteStore();
+            if (popularSites && Array.isArray(popularSites)) {
+              dispatch(setPopularSite(popularSites, false, false));
             }
           }
         })
@@ -202,9 +228,12 @@ const Home = () => {
           console.log('使用本地的数据');
           const partData = GetPartDataStore();
           if (partData) {
-            dispatch(setPartition(partData, false, false)); //从本地读取，所以没必要再存回本地
+            dispatch(setPartition(partData, false, false));
           }
-
+          const popularSites = GetPopularSiteStore();
+          if (popularSites && Array.isArray(popularSites)) {
+            dispatch(setPopularSite(popularSites, false, false));
+          }
           console.log(err);
         });
     }
@@ -232,7 +261,7 @@ const Home = () => {
       <FeaturePanel />
       <HeadBar Scrolled={scrolled} />
       <MarginHead />
-      <PopularSite />
+      <PopularSite Edit={edit} />
       <Partition
         // Pts={this.props.Partition}
         Edit={edit}

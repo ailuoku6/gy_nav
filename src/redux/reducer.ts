@@ -148,13 +148,58 @@ const GlobalMsg = (
   }
 };
 
+const getFaviconUrl = (url: string) => {
+  try {
+    const u = new URL(url);
+    return `${u.origin}/favicon.ico`;
+  } catch {
+    return '';
+  }
+};
+
 const PopularSite = (
   state: { pSite: IPopularSite[] } = { pSite: popularSite },
-  action: { type: string; pSite: IPopularSite[] }
+  action: any
 ) => {
   switch (action.type) {
     case TYPE.SET_POPULARSITE:
       return { ...state, pSite: action.pSite };
+    case TYPE.ADD_POPULARSITE: {
+      const icon =
+        action.icon && String(action.icon).trim()
+          ? action.icon
+          : getFaviconUrl(action.url || '');
+      const newSite: IPopularSite = {
+        site_name: action.siteName || '',
+        url: action.url || '',
+        icon,
+      };
+      return { ...state, pSite: [...state.pSite, newSite] };
+    }
+    case TYPE.DEL_POPULARSITE: {
+      const list = [...state.pSite];
+      list.splice(action.index, 1);
+      return { ...state, pSite: list };
+    }
+    case TYPE.MODIFY_POPULARSITE: {
+      const list = [...state.pSite];
+      const icon =
+        action.icon && String(action.icon).trim()
+          ? action.icon
+          : getFaviconUrl(action.url || list[action.index]?.url || '');
+      list[action.index] = {
+        site_name: action.siteName || '',
+        url: action.url || '',
+        icon,
+      };
+      return { ...state, pSite: list };
+    }
+    case TYPE.MOVE_POPULARSITE: {
+      const list = [...state.pSite];
+      const [item] = list.splice(action.oldIndex, 1);
+      list.splice(action.curIndex, 0, item);
+      return { ...state, pSite: list };
+    }
     default:
       return { ...state };
   }

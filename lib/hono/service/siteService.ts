@@ -4,7 +4,6 @@ export default class SiteService {
   public static getPartData = async (ctx: Ctx) => {
     try {
       const payloadJson = ctx.get('jwtPayload');
-      // const payloadJson = JSON.parse(payload);
       const db = ctx.env.DB;
       const user = await db
         .prepare('SELECT partData FROM users WHERE id = ?')
@@ -15,7 +14,17 @@ export default class SiteService {
         return ctx.json({ result: false, msg: 'User not found' });
       }
 
-      return ctx.json({ result: true, partData: user.partData });
+      const popularSitesRow = await db
+        .prepare('SELECT popularSites FROM popularSites WHERE userId = ?')
+        .bind(payloadJson.user.id)
+        .first();
+      const popularSites = popularSitesRow?.popularSites ?? '[]';
+
+      return ctx.json({
+        result: true,
+        partData: user.partData,
+        popularSites,
+      });
     } catch (error: any) {
       return ctx.json({ result: false, msg: error.message }, 500);
     }

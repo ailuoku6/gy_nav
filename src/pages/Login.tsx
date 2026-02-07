@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 // import LoginRegister from 'react-mui-login-register';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser, setPartition } from '../redux/actions';
+import { setUser, setPartition, setPopularSite } from '../redux/actions';
 import {
   AppBar,
   Toolbar,
@@ -113,10 +113,20 @@ const Login = () => {
 
         const user = data.user;
         const partData = user.partData;
+        const popularSites = user.popularSites;
         delete user.partData;
+        delete user.popularSites;
         user.passWord = passWord;
 
         dispatch(setPartition(JSON.parse(partData), true, false));
+        if (popularSites) {
+          const parsed = typeof popularSites === 'string'
+            ? JSON.parse(popularSites)
+            : popularSites;
+          if (Array.isArray(parsed)) {
+            dispatch(setPopularSite(parsed, true, false));
+          }
+        }
         dispatch(setUser(user));
 
         history.replace('/');
@@ -149,14 +159,23 @@ const Login = () => {
           return;
         }
 
-        //TODO 剔除partData属性
-
         const user = data.user;
         const partData = user.partData;
+        const popularSites = user.popularSites;
         delete user.partData;
+        delete user.popularSites;
         user.passWord = passWord;
 
         dispatch(setPartition(JSON.parse(partData), true, false));
+        if (popularSites) {
+          const parsed = typeof popularSites === 'string'
+            ? JSON.parse(popularSites)
+            : popularSites;
+          if (Array.isArray(parsed)) {
+            dispatch(setPopularSite(parsed, true, false));
+          }
+        }
+        // 接口未返回 popularSites 时不 dispatch，保留 Redux 中的默认值
         dispatch(setUser(user));
 
         history.replace('/');
