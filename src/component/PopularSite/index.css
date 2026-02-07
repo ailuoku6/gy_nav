@@ -42,6 +42,8 @@
   margin: 0 2px;
   padding: 3px;
   border-radius: 6px;
+  display: inline-flex;
+  justify-content: center;
   /* transition: .3s; */
 }
 .popular-site-item:hover .popular-site-del-menu {
