@@ -14,17 +14,7 @@ import DoneIcon from '@mui/icons-material/Done';
 //import Grid from '@mui/material/Grid';
 import MarginHead from '../component/MarginHead/MarginHead';
 import PopularSite from '../component/PopularSite/PopularSite';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  setDevice,
-  setSugShow,
-  setMarchineShow,
-  setMarchineIndex,
-  // setUser,
-  addPart2Rear,
-  setPartition,
-  setGlobalMsg,
-} from '../redux/actions';
+import { appStore } from '../store/AppStore';
 import Marchinelist from '../utils/SearchMarchine';
 import GyDialog from '../component/GyDialog/GyDialog';
 import Snackbar from '@mui/material/Snackbar';
@@ -43,14 +33,15 @@ import {
   // SetUserStore,
   GetUserStore,
   GetPartDataStore,
+  GetPopularSiteStore,
 } from '../utils/localStorageUtil';
 
 import throttle from '../utils/throttle';
 import eventBus from '../utils/EventEmitter';
 import { homeKeyDown } from '../utils/Events';
 import { KeyboardEvent } from 'hono/jsx';
-import { DeviceTypes } from '../redux/types';
-import { StoreType } from '../redux/store';
+import { DeviceTypes } from '../types';
+import { observer } from 'kisstate';
 
 const Home = () => {
   const appRef = useRef<HTMLDivElement>(null);
@@ -60,24 +51,8 @@ const Home = () => {
   // const [datas, setDatas] = useState([]);
   const userRef = useRef(null);
 
-  const { selectMcIndex, user, globalMsg, Show } = useSelector<
-    StoreType,
-    {
-      device: StoreType['Device']['device'];
-      selectMcIndex: StoreType['MarchineIndex']['index'];
-      user: StoreType['User']['user'];
-      globalMsg: StoreType['GlobalMsg'];
-      Show: StoreType['Show'];
-    }
-  >(({ Device, MarchineIndex, User, GlobalMsg, Show }) => ({
-    device: Device.device,
-    selectMcIndex: MarchineIndex.index,
-    user: User.user,
-    globalMsg: GlobalMsg,
-    Show,
-  }));
-
-  const dispatch = useDispatch();
+  const { marchineIndex: selectMcIndex, user, globalMsg, marchine: marchineShow, sug: sugShow } = appStore;
+  const Show = { marchine: marchineShow, sug: sugShow };
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     console.log('home监听', e);
@@ -126,7 +101,7 @@ const Home = () => {
     const marchineIndex = GetMarchineIndexStore();
     console.log('启动时读取搜索引擎选择', marchineIndex);
     if (marchineIndex !== null && marchineIndex !== undefined) {
-      dispatch(setMarchineIndex(Number.parseInt(marchineIndex), false));
+      appStore.setMarchineIndex(Number.parseInt(marchineIndex), false);
     }
   };
 
@@ -155,7 +130,7 @@ const Home = () => {
     ];
     for (let i = 0; i < mobileAgents.length; i++) {
       if (sUserAgent.indexOf(mobileAgents[i]) > -1) {
-        dispatch(setDevice(DeviceTypes.phone));
+        appStore.setDevice(DeviceTypes.phone);
         break;
       }
     }
@@ -179,7 +154,11 @@ const Home = () => {
 
       const partData = GetPartDataStore();
       if (partData) {
-        dispatch(setPartition(partData, false, false));
+        appStore.setPartition(partData, false, false);
+      }
+      const popularSites = GetPopularSiteStore();
+      if (popularSites && Array.isArray(popularSites)) {
+        appStore.setPopularSite(popularSites, false, false);
       }
     } else {
       //优先读取网络partData,不成功则读取本地partData
@@ -189,12 +168,31 @@ const Home = () => {
           console.log('服务器返回的数据', data);
           if (data.result) {
             console.log('使用服务器的数据');
-            dispatch(setPartition(JSON.parse(data.partData), true, false));
+            appStore.setPartition(JSON.parse(data.partData), true, false);
+            let popularSitesData: unknown = null;
+            if (data.popularSites) {
+              popularSitesData =
+                typeof data.popularSites === 'string'
+                  ? JSON.parse(data.popularSites)
+                  : data.popularSites;
+            }
+            if (Array.isArray(popularSitesData)) {
+              appStore.setPopularSite(popularSitesData, true, false);
+            } else {
+              const localPopularSites = GetPopularSiteStore();
+              if (localPopularSites && Array.isArray(localPopularSites)) {
+                appStore.setPopularSite(localPopularSites, true, false);
+              }
+            }
           } else {
             console.log('使用本地的数据');
             const partData = GetPartDataStore();
             if (partData) {
-              dispatch(setPartition(partData, false, false)); //从本地读取，所以没必要再存回本地
+              appStore.setPartition(partData, false, false);
+            }
+            const popularSites = GetPopularSiteStore();
+            if (popularSites && Array.isArray(popularSites)) {
+              appStore.setPopularSite(popularSites, false, false);
             }
           }
         })
@@ -202,9 +200,12 @@ const Home = () => {
           console.log('使用本地的数据');
           const partData = GetPartDataStore();
           if (partData) {
-            dispatch(setPartition(partData, false, false)); //从本地读取，所以没必要再存回本地
+            appStore.setPartition(partData, false, false);
           }
-
+          const popularSites = GetPopularSiteStore();
+          if (popularSites && Array.isArray(popularSites)) {
+            appStore.setPopularSite(popularSites, false, false);
+          }
           console.log(err);
         });
     }
@@ -222,17 +223,17 @@ const Home = () => {
       ref={appRef}
       onClick={() => {
         if (Show.marchine) {
-          dispatch(setMarchineShow(false));
+          appStore.setMarchineShow(false);
         }
         if (Show.sug) {
-          dispatch(setSugShow(false));
+          appStore.setSugShow(false);
         }
       }}
     >
       <FeaturePanel />
       <HeadBar Scrolled={scrolled} />
       <MarginHead />
-      <PopularSite />
+      <PopularSite Edit={edit} />
       <Partition
         // Pts={this.props.Partition}
         Edit={edit}
@@ -297,7 +298,7 @@ const Home = () => {
               height: 36,
               width: 36,
             }}
-            onClick={() => {}}
+            onClick={() => { }}
           >
             {user?.userName[0] || '未'}
           </Fab>
@@ -315,7 +316,7 @@ const Home = () => {
         }}
         onConfirm={(partName) => {
           if (partName) {
-            dispatch(addPart2Rear(partName));
+            appStore.addPart2Rear(partName);
           } else {
             console.log('给点东西吧');
           }
@@ -328,7 +329,7 @@ const Home = () => {
         open={globalMsg.show}
         autoHideDuration={3000}
         onClose={() => {
-          dispatch(setGlobalMsg('', false));
+          appStore.setGlobalMsg('', false);
         }}
         message={globalMsg.msg}
         key={'globalMsg'}
@@ -337,4 +338,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default observer(Home);

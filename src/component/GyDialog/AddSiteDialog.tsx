@@ -10,9 +10,6 @@ import TextField from '@mui/material/TextField';
 // import FormControl from '@mui/material/FormControl';
 // import InputLabel from '@mui/material/InputLabel';
 import { linkPattern } from '../../utils/veriLink';
-// import { setGlobalMsg } from '../../redux/actions';
-// import { connect } from 'react-redux';
-
 interface IAddSiteDialogProps {
   defaultName?: string;
   defaultAddr?: string;

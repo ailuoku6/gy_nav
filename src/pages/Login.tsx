@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 // import LoginRegister from 'react-mui-login-register';
-import { useDispatch, useSelector } from 'react-redux';
-import { setUser, setPartition } from '../redux/actions';
+import { appStore } from '../store/AppStore';
 import {
   AppBar,
   Toolbar,
@@ -26,7 +25,7 @@ import {
   GetUserStore,
 } from '../utils/localStorageUtil';
 import { history } from '../router/router';
-import { StoreType } from '../redux/store';
+import { observer } from 'kisstate';
 
 function a11yProps(index: number) {
   return {
@@ -44,20 +43,7 @@ const Login = () => {
   const [validToken, setValidToken] = useState(false);
   const userRef = useRef<any>(null);
 
-  const { user, Partition } = useSelector<
-    StoreType,
-    {
-      // device: StoreType['Device']['device'];
-      user: StoreType['User']['user'];
-      Partition: StoreType['Partition']['data'];
-    }
-  >(({ User, Partition }) => ({
-    // device: Device.device,
-    user: User.user,
-    Partition: Partition.data,
-  }));
-
-  const dispatch = useDispatch();
+  const { user, partitionData: Partition } = appStore;
 
   const initUser = () => {
     const user = GetUserStore();
@@ -113,11 +99,21 @@ const Login = () => {
 
         const user = data.user;
         const partData = user.partData;
+        const popularSites = user.popularSites;
         delete user.partData;
+        delete user.popularSites;
         user.passWord = passWord;
 
-        dispatch(setPartition(JSON.parse(partData), true, false));
-        dispatch(setUser(user));
+        appStore.setPartition(JSON.parse(partData), true, false);
+        if (popularSites) {
+          const parsed = typeof popularSites === 'string'
+            ? JSON.parse(popularSites)
+            : popularSites;
+          if (Array.isArray(parsed)) {
+            appStore.setPopularSite(parsed, true, false);
+          }
+        }
+        appStore.setUser(user);
 
         history.replace('/');
       })
@@ -149,15 +145,23 @@ const Login = () => {
           return;
         }
 
-        //TODO 剔除partData属性
-
         const user = data.user;
         const partData = user.partData;
+        const popularSites = user.popularSites;
         delete user.partData;
+        delete user.popularSites;
         user.passWord = passWord;
 
-        dispatch(setPartition(JSON.parse(partData), true, false));
-        dispatch(setUser(user));
+        appStore.setPartition(JSON.parse(partData), true, false);
+        if (popularSites) {
+          const parsed = typeof popularSites === 'string'
+            ? JSON.parse(popularSites)
+            : popularSites;
+          if (Array.isArray(parsed)) {
+            appStore.setPopularSite(parsed, true, false);
+          }
+        }
+        appStore.setUser(user);
 
         history.replace('/');
       })
@@ -210,7 +214,7 @@ const Login = () => {
                     //RemovelocalStorage('userInfo');
                     SetTokenStore('');
                     SetUserStore('');
-                    dispatch(setUser(null));
+                    appStore.setUser(null);
                   }}
                 >
                   登出
@@ -332,4 +336,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default observer(Login);

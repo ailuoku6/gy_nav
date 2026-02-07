@@ -27,7 +27,14 @@
   /*background-color: #0d47a1;*/
   height: 100%;
 }
+.popular-site-item {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .site {
+  position: relative;
   width: 75px;
   display: inline-block;
   height: 95px;
@@ -35,7 +42,59 @@
   margin: 0 2px;
   padding: 3px;
   border-radius: 6px;
+  display: inline-flex;
+  justify-content: center;
   /* transition: .3s; */
+}
+.popular-site-item:hover .popular-site-del-menu {
+  display: flex;
+}
+.popular-site-del-menu {
+  position: absolute;
+  display: none;
+  align-items: stretch;
+  justify-content: stretch;
+  width: 100% !important;
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  animation: menutrans 100ms linear;
+  -webkit-animation: menutrans 200ms linear;
+  border-radius: 6px;
+}
+.popular-site-edit-btn {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border-radius: 5px;
+  background-color: #2525b1a1;
+}
+.popular-site-del-btn {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border-radius: 5px;
+  background-color: #ff0000b8;
+}
+.popular-site-add-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+}
+@keyframes menutrans {
+  from {
+    height: 0;
+  }
+  to {
+    height: 100%;
+  }
 }
 /* .site:hover{
     transform: translate3d(0,-4px,0);
@@ -48,8 +107,8 @@
   white-space: nowrap;
 }
 .site-icon {
-  width: 70px;
-  height: 70px;
+  width: 65px;
+  height: 65px;
 }
 .gy-hoverable {
   -webkit-transition: -webkit-box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);

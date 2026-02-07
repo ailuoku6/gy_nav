@@ -4,19 +4,14 @@ import './index.css';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  setSugShow,
-  setMarchineShow,
-  setMarchineIndex,
-} from '../../redux/actions';
+import { appStore } from '../../store/AppStore';
 import Marchinelist from '../../utils/SearchMarchine';
 import { linkPattern } from '../../utils/veriLink';
 // @ts-ignore
 import eventBus from '../../utils/EventEmitter';
 import { homeKeyDown } from '../../utils/Events';
-import { StoreType } from '../../redux/store';
-import { DeviceTypes } from '../../redux/types';
+import { DeviceTypes } from '../../types';
+import { observer } from 'kisstate';
 import { sugObservable, sugSubject } from './utils';
 import { useHotkeys } from 'react-hotkeys-hook';
 
@@ -48,22 +43,7 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_random, setRandom] = useState(0);
 
-  const { device, marchine, showSug, selectMcIndex } = useSelector<
-    StoreType,
-    {
-      device: DeviceTypes;
-      marchine: boolean;
-      showSug: boolean;
-      selectMcIndex: number;
-    }
-  >(({ Device, Show, MarchineIndex }) => ({
-    device: Device.device,
-    marchine: Show.marchine,
-    showSug: Show.sug,
-    selectMcIndex: MarchineIndex.index,
-  }));
-
-  const dispatch = useDispatch();
+  const { device, marchine, sug: showSug, marchineIndex: selectMcIndex } = appStore;
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -72,8 +52,8 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
     (_arg, arg1) => {
       const index = hotkeyMap[arg1.hotkey];
       if (index !== undefined && index !== null) {
-        dispatch(setMarchineIndex(index));
-        dispatch(setMarchineShow(false));
+        appStore.setMarchineIndex(index);
+        appStore.setMarchineShow(false);
       }
     },
     { enableOnFormTags: ['INPUT'], preventDefault: true }
@@ -138,7 +118,7 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
       }
 
       setSug(sugs as any);
-      dispatch(setSugShow(!!sugs.length));
+      appStore.setSugShow(!!sugs.length);
 
       setSugSelectIndex(0);
     });
@@ -153,12 +133,12 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
   const switchSug = () => {
     console.log('switch');
     const newshowSug = !showSug;
-    dispatch(setMarchineShow(false));
+    appStore.setMarchineShow(false);
     if (newshowSug === true) {
       getSug();
       return;
     }
-    dispatch(setSugShow(newshowSug));
+    appStore.setSugShow(newshowSug);
   };
 
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -181,8 +161,8 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
     <div
       className={Scrolled ? headBase + ' gy-shadow-2' : headBase}
       onClick={() => {
-        dispatch(setMarchineShow(false));
-        dispatch(setSugShow(false));
+        appStore.setMarchineShow(false);
+        appStore.setSugShow(false);
       }}
     >
       <div className={'sear_wrap'} ref={wrapRef} style={{ borderColor: color }}>
@@ -191,8 +171,8 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
             fontSize={'inherit'}
             style={{ fontSize: 15 }}
             onClick={(e) => {
-              dispatch(setMarchineShow(!marchine));
-              dispatch(setSugShow(false));
+              appStore.setMarchineShow(!marchine);
+              appStore.setSugShow(false);
               e.stopPropagation();
             }}
           />
@@ -210,8 +190,8 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
                   className={selectMcIndex === index ? 'selected' : ''}
                   title={item.hotkey ? `快捷键: ${item.hotkey}` : ''}
                   onClick={() => {
-                    dispatch(setMarchineIndex(index));
-                    dispatch(setMarchineShow(false));
+                    appStore.setMarchineIndex(index);
+                    appStore.setMarchineShow(false);
                   }}
                   style={{
                     textDecoration: 'none',
@@ -328,4 +308,4 @@ const HeadBar = ({ Scrolled }: IHeadBarProps) => {
   );
 };
 
-export default HeadBar;
+export default observer(HeadBar);
