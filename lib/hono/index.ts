@@ -7,7 +7,7 @@ import errorHandle from './middleware/errorHandle';
 
 import UserService from './service/userService';
 import SiteService from './service/siteService';
-// import PopularSiteService from './service/popularSiteService';
+import PopularSiteService from './service/popularSiteService';
 import FriendSiteService from './service/friendSiteService';
 import ClipboardService from './service/clipboardService';
 

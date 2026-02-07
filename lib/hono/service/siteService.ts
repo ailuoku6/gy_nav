@@ -14,16 +14,16 @@ export default class SiteService {
         return ctx.json({ result: false, msg: 'User not found' });
       }
 
-      // const popularSitesRow = await db
-      //   .prepare('SELECT popularSites FROM popularSites WHERE userId = ?')
-      //   .bind(payloadJson.user.id)
-      //   .first();
-      // const popularSites = popularSitesRow?.popularSites ?? '[]';
+      const popularSitesRow = await db
+        .prepare('SELECT popularSites FROM popularSites WHERE userId = ?')
+        .bind(payloadJson.user.id)
+        .first();
+      const popularSites = popularSitesRow?.popularSites ?? '[]';
 
       return ctx.json({
         result: true,
         partData: user.partData,
-        popularSites: '[]',
+        popularSites,
       });
     } catch (error: any) {
       return ctx.json({ result: false, msg: error.message }, 500);
