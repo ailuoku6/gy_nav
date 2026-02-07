@@ -298,7 +298,7 @@ const Home = () => {
               height: 36,
               width: 36,
             }}
-            onClick={() => {}}
+            onClick={() => { }}
           >
             {user?.userName[0] || '未'}
           </Fab>

@@ -10,10 +10,7 @@ import {
 } from '../types';
 import debounce from '../utils/debounce';
 import { post } from '../utils/http';
-import {
-  UpPartData,
-  UpPopularSites,
-} from '../utils/Api';
+import { UpPartData, UpPopularSites } from '../utils/Api';
 import {
   SetMarchineIndexStore,
   SetUserStore,
@@ -123,8 +120,16 @@ class AppStore {
     }
   }
 
-  setPartition(partition: PartSiteData[], persistToLocal = true, syncToServer = true) {
-    this._partitionUpdateSource = persistToLocal ? (syncToServer ? 'user' : 'server') : 'local';
+  setPartition(
+    partition: PartSiteData[],
+    persistToLocal = true,
+    syncToServer = true
+  ) {
+    this._partitionUpdateSource = persistToLocal
+      ? syncToServer
+        ? 'user'
+        : 'server'
+      : 'local';
     this.partitionData = [...partition];
     this.persistPartition();
   }
@@ -142,7 +147,10 @@ class AppStore {
   addSite2Part(partIndex: number, siteName: string, siteAddr: string) {
     this._partitionUpdateSource = 'user';
     const newData = [...this.partitionData];
-    const sitelist = [...newData[partIndex].sitelist, { site_name: siteName, url: siteAddr }];
+    const sitelist = [
+      ...newData[partIndex].sitelist,
+      { site_name: siteName, url: siteAddr },
+    ];
     newData[partIndex] = { ...newData[partIndex], sitelist };
     this.partitionData = newData;
     this.persistPartition();
@@ -174,7 +182,12 @@ class AppStore {
     this.persistPartition();
   }
 
-  modifySite(partIndex: number, siteIndex: number, siteName: string, siteAddr: string) {
+  modifySite(
+    partIndex: number,
+    siteIndex: number,
+    siteName: string,
+    siteAddr: string
+  ) {
     this._partitionUpdateSource = 'user';
     const newData = [...this.partitionData];
     const sitelist = [...newData[partIndex].sitelist];
@@ -222,8 +235,16 @@ class AppStore {
     }
   }
 
-  setPopularSite(pSite: IPopularSite[], persistToLocal = true, syncToServer = true) {
-    this._popularSiteUpdateSource = persistToLocal ? (syncToServer ? 'user' : 'server') : 'local';
+  setPopularSite(
+    pSite: IPopularSite[],
+    persistToLocal = true,
+    syncToServer = true
+  ) {
+    this._popularSiteUpdateSource = persistToLocal
+      ? syncToServer
+        ? 'user'
+        : 'server'
+      : 'local';
     this.pSite = [...pSite];
     this.persistPopularSite();
   }
@@ -249,7 +270,12 @@ class AppStore {
     this.persistPopularSite();
   }
 
-  modifyPopularSite(index: number, siteName: string, url: string, icon?: string) {
+  modifyPopularSite(
+    index: number,
+    siteName: string,
+    url: string,
+    icon?: string
+  ) {
     this._popularSiteUpdateSource = 'user';
     const list = [...this.pSite];
     const iconUrl =
