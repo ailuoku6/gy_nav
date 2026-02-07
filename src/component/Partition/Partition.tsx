@@ -9,26 +9,13 @@ import Fab from '@mui/material/Fab';
 import ReactSortable from 'react-sortablejs';
 import AddIcon from '@mui/icons-material/Add';
 import Site from '../site/Site';
-import { useDispatch, useSelector } from 'react-redux';
-
+import { appStore } from '../../store/AppStore';
+import { observer } from 'kisstate';
 import AddSiteDialog from '../GyDialog/AddSiteDialog';
 import Snackbar from '@mui/material/Snackbar';
 
-import {
-  // addPart2Rear,
-  addSite2Part,
-  delPart as delPartAction,
-  // delSite,
-  modifyPart,
-  // modifySite,
-  // setPartition,
-  insertPart,
-  movePart,
-} from '../../redux/actions';
-
 import './index.css';
-import { StoreType } from '../../redux/store';
-import { DeviceTypes, PartSiteData } from '../../redux/types';
+import { DeviceTypes, PartSiteData } from '../../types';
 //import './dark.css';
 
 interface IPartitionProps {
@@ -40,15 +27,7 @@ const Partition = (props: IPartitionProps) => {
   const [delPartIndex, setDelPartIndex] = useState(-1);
   const [delPart, setDelPart] = useState<PartSiteData | null>(null);
 
-  const { Partition, device } = useSelector<
-    StoreType,
-    { Partition: PartSiteData[]; device: DeviceTypes }
-  >((state) => ({
-    Partition: state.Partition.data,
-    device: state.Device.device,
-  }));
-
-  const dispatch = useDispatch();
+  const { partitionData: Partition, device } = appStore;
 
   const list = useMemo(() => {
     const pts = Array.isArray(Partition) ? Partition : [];
@@ -68,10 +47,8 @@ const Partition = (props: IPartitionProps) => {
                   value={item.categoryname}
                   className={'flexInput'}
                   onChange={(e) => {
-                    // this.props.modifyPart(index, e.target.value);
-                    dispatch(modifyPart(index, e.target.value));
+                    appStore.modifyPart(index, e.target.value);
                     e.stopPropagation();
-                    // console.log(e.target.value)
                   }}
                 />
                 <Button
@@ -81,7 +58,7 @@ const Partition = (props: IPartitionProps) => {
                   onClick={() => {
                     setDelPartIndex(index);
                     setDelPart(pts[index]);
-                    dispatch(delPartAction(index));
+                    appStore.delPart(index);
                     console.log('delPart', index);
                   }}
                 >
@@ -111,7 +88,7 @@ const Partition = (props: IPartitionProps) => {
         </Grid>
       );
     });
-  }, [Partition, dispatch, props.Edit]);
+  }, [Partition, props.Edit]);
 
   const edit = props.Edit;
   const key = 'PlaceHolderKey-' + (edit ? 'on' : 'off');
@@ -125,7 +102,7 @@ const Partition = (props: IPartitionProps) => {
         spacing={2}
         justify={'center'}
         onChange={(_order: any, _sortable: any, evt: any) => {
-          dispatch(movePart(evt.oldIndex, evt.newIndex));
+          appStore.movePart(evt.oldIndex, evt.newIndex);
         }}
         options={{
           animation: 150,
@@ -149,9 +126,7 @@ const Partition = (props: IPartitionProps) => {
         }}
         onConfirm={(siteName, siteAddr) => {
           if (siteName && siteAddr) {
-            //这里应该加验证
-
-            dispatch(addSite2Part(selectedIndex, siteName, siteAddr));
+            appStore.addSite2Part(selectedIndex, siteName, siteAddr);
           } else {
             console.log('给点东西吧');
           }
@@ -173,7 +148,7 @@ const Partition = (props: IPartitionProps) => {
             size="small"
             onClick={() => {
               if (delPart) {
-                dispatch(insertPart(delPartIndex, delPart));
+                appStore.insertPart(delPartIndex, delPart);
                 setDelPart(null);
                 setDelPartIndex(-1);
               }
@@ -189,4 +164,4 @@ const Partition = (props: IPartitionProps) => {
   );
 };
 
-export default Partition;
+export default observer(Partition);

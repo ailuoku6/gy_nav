@@ -8,7 +8,7 @@ import qqmail from '../assets/qqmail.png';
 import weibo from '../assets/weibo.png';
 import wangyiyun from '../assets/wangyiyun.png';
 
-import { PartSiteData, PopularSite } from '../redux/types';
+import { PartSiteData, PopularSite } from '../types';
 
 const data: PartSiteData[] = [
   {

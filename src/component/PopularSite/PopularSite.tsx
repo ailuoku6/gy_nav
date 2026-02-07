@@ -7,17 +7,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 // @ts-ignore
 import ReactSortable from 'react-sortablejs';
-import { useSelector, useDispatch } from 'react-redux';
-import { StoreType } from '../../redux/store';
-import {
-  addPopularSite,
-  delPopularSite,
-  modifyPopularSite,
-  movePopularSite,
-} from '../../redux/actions';
+import { appStore } from '../../store/AppStore';
+import { observer } from 'kisstate';
 import AddPopularSiteDialog from '../GyDialog/AddPopularSiteDialog';
 import SiteIcon from './SiteIcon';
-import { PopularSite as IPopularSite } from '../../redux/types';
+import { PopularSite as IPopularSite } from '../../types';
 
 const getFaviconUrl = (url: string) => {
   try {
@@ -33,18 +27,10 @@ interface PopularSiteProps {
 }
 
 const PopularSite = (props: PopularSiteProps) => {
-  const { popularSite } = useSelector<
-    StoreType,
-    { popularSite: StoreType['PopularSite'] }
-  >((state) => ({
-    popularSite: state.PopularSite,
-  }));
-
   const [selectedIndex, setSelectedIndex] = useState<-1 | number>(-1);
   const [isAddMode, setIsAddMode] = useState(false);
 
-  const dispatch = useDispatch();
-  const pts = popularSite.pSite;
+  const pts = appStore.pSite;
   const edit = props.Edit ?? false;
   const key = 'PopularSite-' + (edit ? 'on' : 'off');
 
@@ -58,7 +44,7 @@ const PopularSite = (props: PopularSiteProps) => {
           className="site-container"
           onChange={(_order: any, _sortable: any, evt: any) => {
             if (!edit) return;
-            dispatch(movePopularSite(evt.oldIndex, evt.newIndex));
+            appStore.movePopularSite(evt.oldIndex, evt.newIndex);
           }}
           options={{
             animation: 150,
@@ -100,7 +86,7 @@ const PopularSite = (props: PopularSiteProps) => {
                       </div>
                       <div
                         className={'popular-site-del-btn'}
-                        onClick={() => dispatch(delPopularSite(index))}
+                        onClick={() => appStore.delPopularSite(index)}
                       >
                         <DeleteIcon
                           fontSize={'small'}
@@ -136,7 +122,7 @@ const PopularSite = (props: PopularSiteProps) => {
         onCancel={() => setIsAddMode(false)}
         onConfirm={(siteName, siteAddr, icon) => {
           if (siteName && siteAddr) {
-            dispatch(addPopularSite(siteName, siteAddr, icon));
+            appStore.addPopularSite(siteName, siteAddr, icon);
           }
           setIsAddMode(false);
         }}
@@ -154,9 +140,7 @@ const PopularSite = (props: PopularSiteProps) => {
           onCancel={() => setSelectedIndex(-1)}
           onConfirm={(siteName, siteAddr, icon) => {
             if (siteName && siteAddr) {
-              dispatch(
-                modifyPopularSite(selectedIndex, siteName, siteAddr, icon)
-              );
+              appStore.modifyPopularSite(selectedIndex, siteName, siteAddr, icon);
             }
             setSelectedIndex(-1);
           }}
@@ -166,4 +150,4 @@ const PopularSite = (props: PopularSiteProps) => {
   );
 };
 
-export default PopularSite;
+export default observer(PopularSite);

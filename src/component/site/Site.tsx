@@ -6,14 +6,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 // @ts-ignore
 import ReactSortable from 'react-sortablejs';
 
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  // addSite2Part,
-  delSite,
-  modifySite,
-  moveSite,
-  // @ts-ignore
-} from '../../redux/actions';
+import { appStore } from '../../store/AppStore';
+import { observer } from 'kisstate';
 
 // @ts-ignore
 import AddSiteDialog from '../GyDialog/AddSiteDialog';
@@ -34,11 +28,7 @@ const Site = ({
     PartIndex !== undefined && PartIndex !== null ? PartIndex : -1;
   const key = 'PlaceHolderKey-' + (edit ? 'on' : 'off');
 
-  const { device } = useSelector((state: any) => ({
-    device: state.Device.device,
-  }));
-
-  const dispatch = useDispatch();
+  const { device } = appStore;
 
   return (
     <div>
@@ -46,7 +36,7 @@ const Site = ({
         key={key}
         onChange={(_order: any, _sortable: any, evt: any) => {
           if (partIndex < 0) return;
-          dispatch(moveSite(partIndex, evt.oldIndex, evt.newIndex));
+          appStore.moveSite(partIndex, evt.oldIndex, evt.newIndex);
         }}
         options={{
           animation: 150,
@@ -105,7 +95,7 @@ const Site = ({
                       backgroundColor: '#ff0000b8',
                     }}
                     onClick={() => {
-                      dispatch(delSite(partIndex, index));
+                      appStore.delSite(partIndex, index);
                     }}
                   >
                     <DeleteIcon
@@ -135,9 +125,7 @@ const Site = ({
           }}
           onConfirm={(siteName: string, siteAddr: string) => {
             if (siteName && siteAddr) {
-              dispatch(
-                modifySite(partIndex, selectedIndex, siteName, siteAddr)
-              );
+              appStore.modifySite(partIndex, selectedIndex, siteName, siteAddr);
             } else {
               console.log('给点东西吧');
             }
@@ -149,4 +137,4 @@ const Site = ({
   );
 };
 
-export default Site;
+export default observer(Site);

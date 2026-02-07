@@ -6,7 +6,7 @@ import './index.css';
 // @ts-ignore
 import { get } from '../../utils/http';
 import { GetAllFS } from '../../utils/Api';
-import { ISite } from '../../redux/types';
+import { ISite } from '../../types';
 
 const FriendSite = () => {
   const [sites, setSites] = useState<ISite[]>([]);
