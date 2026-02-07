@@ -15,9 +15,9 @@ const SiteIcon = ({ src, alt = '', className }: SiteIconProps) => {
   const displaySrc = error || !src ? DEFAULT_ICON : src;
 
   return (
-    <div className={className} style={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }}>
+    <div style={{ alignItems: 'center', justifyContent: 'center', display: 'flex', height: 70, width: 70 }}>
       <img
-        // className={className}
+        className={className}
         src={displaySrc}
         alt={alt}
         onError={() => setError(true)}
