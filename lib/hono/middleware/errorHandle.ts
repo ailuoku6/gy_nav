@@ -17,7 +17,12 @@ const errorHandle = async (ctx: Ctx, next: Next) => {
       //   type: 'error',
       // }
     } else {
-      throw err;
+      // throw err;
+      ctx.status(500);
+      ctx.json({
+        msg: err.message,
+        stack: err.stack,
+      });
     }
   });
 };
