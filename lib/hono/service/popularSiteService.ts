@@ -12,7 +12,7 @@ export default class PopularSiteService {
 
       return ctx.json({
         result: true,
-        popularSites: row?.popularSites ?? '[]',
+        popularSites: row?.popularSites ?? '',
       });
     } catch (error: any) {
       return ctx.json({ result: false, msg: error.message }, 500);
@@ -44,7 +44,10 @@ export default class PopularSiteService {
           msg: 'popularSites updated successfully',
         });
       } else {
-        return ctx.json({ result: false, msg: 'Failed to update popularSites' });
+        return ctx.json({
+          result: false,
+          msg: 'Failed to update popularSites',
+        });
       }
     } catch (error: any) {
       return ctx.json({ result: false, msg: error.message }, 500);

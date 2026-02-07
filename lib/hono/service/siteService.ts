@@ -18,7 +18,7 @@ export default class SiteService {
         .prepare('SELECT popularSites FROM popularSites WHERE userId = ?')
         .bind(payloadJson.user.id)
         .first();
-      const popularSites = popularSitesRow?.popularSites ?? '[]';
+      const popularSites = popularSitesRow?.popularSites ?? '';
 
       return ctx.json({
         result: true,

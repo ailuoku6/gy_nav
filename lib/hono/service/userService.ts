@@ -44,7 +44,7 @@ export default class UserService {
         .prepare('SELECT popularSites FROM popularSites WHERE userId = ?')
         .bind(user.id)
         .first();
-      const popularSites = popularSitesRow?.popularSites ?? '[]';
+      const popularSites = popularSitesRow?.popularSites ?? '';
 
       return ctx.json({
         result: true,
@@ -103,7 +103,7 @@ export default class UserService {
           const token = await signToken({ user: userToken }, tokenSecret);
           return ctx.json({
             result: true,
-            user: { ...user, popularSites: '[]' },
+            user: { ...user, popularSites: '' },
             msg: '',
             token,
           });
