@@ -176,7 +176,7 @@ const Home = () => {
                   ? JSON.parse(data.popularSites)
                   : data.popularSites;
             }
-            if (Array.isArray(popularSitesData)) {
+            if (Array.isArray(popularSitesData) && popularSitesData.length > 0) {
               appStore.setPopularSite(popularSitesData, true, false);
             } else {
               const localPopularSites = GetPopularSiteStore();
@@ -191,7 +191,7 @@ const Home = () => {
               appStore.setPartition(partData, false, false);
             }
             const popularSites = GetPopularSiteStore();
-            if (popularSites && Array.isArray(popularSites)) {
+            if (popularSites && Array.isArray(popularSites) && popularSites.length > 0) {
               appStore.setPopularSite(popularSites, false, false);
             }
           }
@@ -203,7 +203,7 @@ const Home = () => {
             appStore.setPartition(partData, false, false);
           }
           const popularSites = GetPopularSiteStore();
-          if (popularSites && Array.isArray(popularSites)) {
+          if (popularSites && Array.isArray(popularSites) && popularSites.length > 0) {
             appStore.setPopularSite(popularSites, false, false);
           }
           console.log(err);
