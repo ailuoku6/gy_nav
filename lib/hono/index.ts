@@ -73,20 +73,20 @@ app.post('/api/upPartData', async (ctx) => {
   return await SiteService.updatePartData(ctx, { partData });
 });
 
-// app.post('/api/getPopularSites', async (ctx) => {
-//   return await PopularSiteService.getPopularSites(ctx);
-// });
+app.post('/api/getPopularSites', async (ctx) => {
+  return await PopularSiteService.getPopularSites(ctx);
+});
 
-// app.post('/api/upPopularSites', async (ctx) => {
-//   const body = await ctx.req.parseBody();
-//   const { popularSites } = body as any;
+app.post('/api/upPopularSites', async (ctx) => {
+  const body = await ctx.req.parseBody();
+  const { popularSites } = body as any;
 
-//   if (!popularSites) {
-//     return ctx.json({ result: false, msg: 'popularSites is required' });
-//   }
+  if (!popularSites) {
+    return ctx.json({ result: false, msg: 'popularSites is required' });
+  }
 
-//   return await PopularSiteService.updatePopularSites(ctx, { popularSites });
-// });
+  return await PopularSiteService.updatePopularSites(ctx, { popularSites });
+});
 
 app.post('/api/veriToken', async (ctx) => {
   return ctx.json({ result: true });
