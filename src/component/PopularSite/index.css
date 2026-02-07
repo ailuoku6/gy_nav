@@ -105,8 +105,8 @@
   white-space: nowrap;
 }
 .site-icon {
-  width: 70px;
-  height: 70px;
+  width: 65px;
+  height: 65px;
 }
 .gy-hoverable {
   -webkit-transition: -webkit-box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
