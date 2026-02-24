@@ -1,7 +1,7 @@
 import { Ctx } from '../types';
 
 const MAX_URLS = 200;
-const TIMEOUT_MS = 6500;
+const TIMEOUT_MS = 9000;
 const CONCURRENCY = 6;
 
 const normalizeUrl = (input: string): string => {
@@ -23,9 +23,9 @@ const isHttpProtocol = (protocol: string) =>
   protocol === 'http:' || protocol === 'https:';
 
 const isReachableStatus = (status: number) => {
-  if (status >= 200 && status < 400) return true;
-  if (status === 401 || status === 403 || status === 429) return true;
-  return false;
+  if (status === 404) return false;
+  if (status >= 500) return false;
+  return true;
 };
 
 const fetchWithTimeout = async (url: string, timeoutMs: number) => {
