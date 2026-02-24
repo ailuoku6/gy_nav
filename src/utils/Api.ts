@@ -13,6 +13,7 @@ const ValidToken = 'api/veriToken';
 const GetAllFS = '/api/getAllFS';
 const WriteRemoteClipBoard = '/api/writeClipBoard';
 const GetRemoteClipBoard = '/api/getClipBoard';
+const CheckSiteHealth = '/api/checkSiteHealth';
 
 const GetInitData = 'getInitData';
 
@@ -30,4 +31,5 @@ export {
   GetAllFS,
   WriteRemoteClipBoard,
   GetRemoteClipBoard,
+  CheckSiteHealth,
 };

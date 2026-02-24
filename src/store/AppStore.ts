@@ -8,14 +8,10 @@ import {
   PartSiteData,
   ISite,
 } from '../types';
-import {
-  checkSiteReachable,
-  normalizeSiteUrl,
-  SiteHealthStatus,
-} from '../utils/siteHealth';
+import { normalizeSiteUrl, SiteHealthStatus } from '../utils/siteHealth';
 import debounce from '../utils/debounce';
 import { post } from '../utils/http';
-import { UpPartData, UpPopularSites } from '../utils/Api';
+import { UpPartData, UpPopularSites, CheckSiteHealth } from '../utils/Api';
 import {
   SetMarchineIndexStore,
   SetUserStore,
@@ -347,39 +343,52 @@ class AppStore {
         .filter((url) => !!url);
       const uniqueUrls = Array.from(new Set(normalizedUrls));
 
+      if (!uniqueUrls.length) {
+        this.siteHealth = {};
+        return { total: 0, ok: 0, fail: 0, running: false };
+      }
+
       const initialMap: Record<string, SiteHealthStatus> = {};
       uniqueUrls.forEach((url) => {
         initialMap[url] = 'unknown';
       });
       this.siteHealth = initialMap;
 
-      let ok = 0;
-      let fail = 0;
-      let cursor = 0;
-      const limit = Math.min(6, Math.max(1, uniqueUrls.length));
+      try {
+        const res = await post(CheckSiteHealth, {
+          urls: JSON.stringify(uniqueUrls),
+        });
 
-      const worker = async () => {
-        while (cursor < uniqueUrls.length) {
-          const current = uniqueUrls[cursor];
-          cursor += 1;
-          const reachable = await checkSiteReachable(current);
-          this.siteHealth = {
-            ...this.siteHealth,
-            [current]: reachable ? 'ok' : 'fail',
+        if (!res?.result || !res?.data) {
+          return {
+            total: uniqueUrls.length,
+            ok: 0,
+            fail: 0,
+            running: false,
+            error: true,
           };
-          if (reachable) {
-            ok += 1;
-          } else {
-            fail += 1;
-          }
         }
-      };
 
-      await Promise.all(
-        Array.from({ length: limit }, () => worker())
-      );
+        const data = res.data as Record<string, SiteHealthStatus>;
+        this.siteHealth = {
+          ...this.siteHealth,
+          ...data,
+        };
 
-      return { total: uniqueUrls.length, ok, fail, running: false };
+        const statuses = Object.values(data);
+        const ok = statuses.filter((s) => s === 'ok').length;
+        const fail = statuses.filter((s) => s === 'fail').length;
+
+        return { total: uniqueUrls.length, ok, fail, running: false };
+      } catch {
+        return {
+          total: uniqueUrls.length,
+          ok: 0,
+          fail: 0,
+          running: false,
+          error: true,
+        };
+      }
     } finally {
       this.siteCheckRunning = false;
     }

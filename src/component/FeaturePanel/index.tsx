@@ -105,6 +105,10 @@ const FeaturePanel = () => {
     setMsg({ content: '开始检测收藏网站...', callback: null });
 
     const res = await appStore.checkFavoriteSites();
+    if ((res as any).error) {
+      setMsg({ content: '检测失败，请登录后重试', callback: null });
+      return;
+    }
     if (!res.total) {
       setMsg({ content: '暂无可检测的网站', callback: null });
       return;

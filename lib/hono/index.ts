@@ -10,6 +10,7 @@ import SiteService from './service/siteService';
 import PopularSiteService from './service/popularSiteService';
 import FriendSiteService from './service/friendSiteService';
 import ClipboardService from './service/clipboardService';
+import SiteHealthService from './service/siteHealthService';
 
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -109,6 +110,10 @@ app.post('/api/writeClipBoard', async (ctx) => {
 
 app.post('/api/getClipBoard', async (ctx) => {
   return await ClipboardService.getClipBoard(ctx);
+});
+
+app.post('/api/checkSiteHealth', async (ctx) => {
+  return await SiteHealthService.checkSiteHealth(ctx);
 });
 
 export default app;
