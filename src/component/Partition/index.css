@@ -45,4 +45,14 @@
   .divider {
     background-color: #373e47;
   }
+  .partition .flexInput {
+    color: #adbac7;
+  }
+  .partition .flexInput input {
+    color: #adbac7;
+    caret-color: #adbac7;
+  }
+  .partition .flexInput input::placeholder {
+    color: #8c9aa5;
+  }
 }

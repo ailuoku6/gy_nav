@@ -106,6 +106,10 @@ a:hover {
 }
 
 @media (prefers-color-scheme: dark) {
+  .site-noicon {
+    color: #adbac7;
+  }
+
   .site-noicon:hover a {
     color: #539bf5;
   }
