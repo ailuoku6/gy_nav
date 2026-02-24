@@ -46,12 +46,22 @@ const Site = ({
         }}
       >
         {sites.map((item, index) => {
+          const siteStatus = appStore.getSiteHealth(item.url);
+          const isUnreachable = siteStatus === 'fail';
           return (
             <div
-              className={'site-noicon gy-hoverable'}
+              className={
+                isUnreachable
+                  ? 'site-noicon gy-hoverable site-unreachable'
+                  : 'site-noicon gy-hoverable'
+              }
               key={index}
               style={edit ? { minWidth: 40 } : undefined}
+              title={isUnreachable ? '无法访问' : undefined}
             >
+              {isUnreachable && (
+                <span className="site-status-badge">不可用</span>
+              )}
               {edit && device === 'phone' ? (
                 <div>{item.site_name ? item.site_name : '网站名缺失'}</div>
               ) : (

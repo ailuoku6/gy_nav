@@ -6,6 +6,30 @@
   text-align: center;
   border-radius: 6px;
 }
+
+.site-unreachable {
+  border: 1px dashed #ff7875;
+  background-color: #fff1f0;
+  color: #a8071a;
+}
+
+.site-unreachable a {
+  color: inherit;
+}
+
+.site-status-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  font-size: 10px;
+  line-height: 12px;
+  padding: 2px 4px;
+  border-radius: 6px;
+  background-color: #ff4d4f;
+  color: #fff;
+  transform: scale(0.95);
+  pointer-events: none;
+}
 a {
   text-decoration: none;
 }
@@ -84,5 +108,11 @@ a:hover {
 @media (prefers-color-scheme: dark) {
   .site-noicon:hover a {
     color: #539bf5;
+  }
+
+  .site-unreachable {
+    background-color: #3b1d1d;
+    border-color: #ff7875;
+    color: #ffb3b3;
   }
 }

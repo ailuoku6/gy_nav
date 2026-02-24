@@ -56,9 +56,21 @@ const PopularSite = (props: PopularSiteProps) => {
           {pts.map((item: IPopularSite, index: number) => {
             const iconSrc =
               item.icon || getFaviconUrl(item.url || '') || '';
+            const siteStatus = appStore.getSiteHealth(item.url);
+            const isUnreachable = siteStatus === 'fail';
             return (
               <div key={index} className={'popular-site-item'}>
-                <li className={'gy-hoverable site'}>
+                <li
+                  className={
+                    isUnreachable
+                      ? 'gy-hoverable site site-unreachable'
+                      : 'gy-hoverable site'
+                  }
+                  title={isUnreachable ? '无法访问' : undefined}
+                >
+                  {isUnreachable && (
+                    <span className="site-status-badge">不可用</span>
+                  )}
                   <a
                     style={{ textDecoration: 'none' }}
                     href={edit ? undefined : item.url}

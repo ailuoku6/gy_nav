@@ -8,6 +8,11 @@ import {
   PartSiteData,
   ISite,
 } from '../types';
+import {
+  checkSiteReachable,
+  normalizeSiteUrl,
+  SiteHealthStatus,
+} from '../utils/siteHealth';
 import debounce from '../utils/debounce';
 import { post } from '../utils/http';
 import { UpPartData, UpPopularSites } from '../utils/Api';
@@ -68,6 +73,10 @@ class AppStore {
 
   // PopularSite
   pSite: IPopularSite[] = [...popularSite];
+
+  // Site health check (runtime only)
+  siteHealth: Record<string, SiteHealthStatus> = {};
+  siteCheckRunning = false;
 
   // 用于区分数据更新来源，避免循环持久化（初始为 local 避免首次加载时持久化默认数据）
   _partitionUpdateSource: UpdateSource = 'local';
@@ -298,6 +307,82 @@ class AppStore {
     list.splice(curIndex, 0, item);
     this.pSite = list;
     this.persistPopularSite();
+  }
+
+  // ========== Site Health ==========
+  getSiteHealth(url: string): SiteHealthStatus {
+    const key = normalizeSiteUrl(url);
+    if (!key) return 'unknown';
+    return this.siteHealth[key] ?? 'unknown';
+  }
+
+  clearSiteHealth() {
+    this.siteHealth = {};
+  }
+
+  private collectFavoriteUrls() {
+    const urls: string[] = [];
+    this.partitionData.forEach((part) => {
+      part.sitelist.forEach((site) => {
+        if (site?.url) urls.push(site.url);
+      });
+    });
+    this.pSite.forEach((site) => {
+      if (site?.url) urls.push(site.url);
+    });
+    return urls;
+  }
+
+  async checkFavoriteSites() {
+    if (this.siteCheckRunning) {
+      return { total: 0, ok: 0, fail: 0, running: true };
+    }
+
+    this.siteCheckRunning = true;
+
+    try {
+      const rawUrls = this.collectFavoriteUrls();
+      const normalizedUrls = rawUrls
+        .map((url) => normalizeSiteUrl(url))
+        .filter((url) => !!url);
+      const uniqueUrls = Array.from(new Set(normalizedUrls));
+
+      const initialMap: Record<string, SiteHealthStatus> = {};
+      uniqueUrls.forEach((url) => {
+        initialMap[url] = 'unknown';
+      });
+      this.siteHealth = initialMap;
+
+      let ok = 0;
+      let fail = 0;
+      let cursor = 0;
+      const limit = Math.min(6, Math.max(1, uniqueUrls.length));
+
+      const worker = async () => {
+        while (cursor < uniqueUrls.length) {
+          const current = uniqueUrls[cursor];
+          cursor += 1;
+          const reachable = await checkSiteReachable(current);
+          this.siteHealth = {
+            ...this.siteHealth,
+            [current]: reachable ? 'ok' : 'fail',
+          };
+          if (reachable) {
+            ok += 1;
+          } else {
+            fail += 1;
+          }
+        }
+      };
+
+      await Promise.all(
+        Array.from({ length: limit }, () => worker())
+      );
+
+      return { total: uniqueUrls.length, ok, fail, running: false };
+    } finally {
+      this.siteCheckRunning = false;
+    }
   }
 }
 

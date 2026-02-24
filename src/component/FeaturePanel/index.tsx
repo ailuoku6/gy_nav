@@ -19,9 +19,12 @@ import { readFromClipboard, writeToClipboard } from '../../utils/clipboard';
 
 import copy from '../../assets/copy.png';
 import whatsnew from '../../assets/new.png';
+import siteCheck from '../../assets/site-check.svg';
 
 import './index.css';
 import { isSafari } from '../../utils/device';
+import { appStore } from '../../store/AppStore';
+import { observer } from 'kisstate';
 
 const FeaturePanel = () => {
   const [display, setDisplay] = useState(false);
@@ -92,6 +95,31 @@ const FeaturePanel = () => {
     }
   };
 
+  const handleCheckSites = async () => {
+    if (appStore.siteCheckRunning) {
+      setMsg({ content: '正在检测中...', callback: null });
+      return;
+    }
+
+    setDisplay(false);
+    setMsg({ content: '开始检测收藏网站...', callback: null });
+
+    const res = await appStore.checkFavoriteSites();
+    if (!res.total) {
+      setMsg({ content: '暂无可检测的网站', callback: null });
+      return;
+    }
+
+    if (res.fail) {
+      setMsg({
+        content: `检测完成，${res.fail}/${res.total} 无法访问`,
+        callback: null,
+      });
+    } else {
+      setMsg({ content: '检测完成，全部可访问', callback: null });
+    }
+  };
+
   const snackbarAction =
     msg.content && msg.callback ? (
       <Button color="primary" size="small" onClick={msg.callback}>
@@ -138,6 +166,23 @@ const FeaturePanel = () => {
               <div className="panel-item-name">云剪切板</div>
             </div>
           </Tooltip>
+          <Tooltip title="一键检测收藏网站是否可访问">
+            <div
+              className={
+                appStore.siteCheckRunning
+                  ? 'panel-item panel-item-disabled'
+                  : 'panel-item'
+              }
+              onClick={handleCheckSites}
+            >
+              <div className="panel-item-icon">
+                <img src={siteCheck} alt="site-check" />
+              </div>
+              <div className="panel-item-name">
+                {appStore.siteCheckRunning ? '检测中' : '检测网站'}
+              </div>
+            </div>
+          </Tooltip>
           <div
             className="panel-item"
             onClick={() => {
@@ -177,4 +222,4 @@ const FeaturePanel = () => {
   );
 };
 
-export default FeaturePanel;
+export default observer(FeaturePanel);
