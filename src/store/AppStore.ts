@@ -81,7 +81,7 @@ class AppStore {
     if (Number.isFinite(parsed) && parsed > 0) {
       return parsed;
     }
-    return 12;
+    return 5;
   })();
 
   // 用于区分数据更新来源，避免循环持久化（初始为 local 避免首次加载时持久化默认数据）
@@ -372,39 +372,58 @@ class AppStore {
 
       const batchSize = Math.min(
         50,
-        Math.max(3, Math.floor(this.siteCheckBatchSize || 12))
+        Math.max(3, Math.floor(this.siteCheckBatchSize || 5))
       );
+
+      const batches: string[][] = [];
+      for (let i = 0; i < uniqueUrls.length; i += batchSize) {
+        batches.push(uniqueUrls.slice(i, i + batchSize));
+      }
 
       let ok = 0;
       let fail = 0;
+      const merged: Record<string, SiteHealthStatus> = {};
 
       try {
-        for (let i = 0; i < uniqueUrls.length; i += batchSize) {
-          const batch = uniqueUrls.slice(i, i + batchSize);
-          const res = await post(CheckSiteHealth, {
-            urls: JSON.stringify(batch),
-          });
+        const results = await Promise.allSettled(
+          batches.map((batch) =>
+            post(CheckSiteHealth, {
+              urls: JSON.stringify(batch),
+            })
+          )
+        );
 
-          if (!res?.result || !res?.data) {
-            return {
-              total: uniqueUrls.length,
-              ok,
-              fail,
-              running: false,
-              error: true,
-            };
-          }
+        let hasData = false;
 
-          const data = res.data as Record<string, SiteHealthStatus>;
-          this.siteHealth = {
-            ...this.siteHealth,
-            ...data,
-          };
+        results.forEach((res) => {
+          if (res.status !== 'fulfilled') return;
+          const value = res.value;
+          if (!value?.result || !value?.data) return;
 
+          const data = value.data as Record<string, SiteHealthStatus>;
+          Object.assign(merged, data);
           const statuses = Object.values(data);
           ok += statuses.filter((s) => s === 'ok').length;
           fail += statuses.filter((s) => s === 'fail').length;
+          if (statuses.length) {
+            hasData = true;
+          }
+        });
+
+        if (!hasData) {
+          return {
+            total: uniqueUrls.length,
+            ok,
+            fail,
+            running: false,
+            error: true,
+          };
         }
+
+        this.siteHealth = {
+          ...this.siteHealth,
+          ...merged,
+        };
 
         return { total: uniqueUrls.length, ok, fail, running: false };
       } catch {
