@@ -17,6 +17,8 @@ import {
   SetUserStore,
   SetPartDataStore,
   SetPopularSiteStore,
+  GetSiteCheckBatchSize,
+  SetSiteCheckBatchSize,
 } from '../utils/localStorageUtil';
 
 type UpdateSource = 'user' | 'server' | 'local';
@@ -73,6 +75,14 @@ class AppStore {
   // Site health check (runtime only)
   siteHealth: Record<string, SiteHealthStatus> = {};
   siteCheckRunning = false;
+  siteCheckBatchSize = (() => {
+    const raw = GetSiteCheckBatchSize();
+    const parsed = Number(raw);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return parsed;
+    }
+    return 12;
+  })();
 
   // 用于区分数据更新来源，避免循环持久化（初始为 local 避免首次加载时持久化默认数据）
   _partitionUpdateSource: UpdateSource = 'local';
@@ -316,6 +326,12 @@ class AppStore {
     this.siteHealth = {};
   }
 
+  setSiteCheckBatchSize(size: number) {
+    const next = Math.max(1, Math.floor(size));
+    this.siteCheckBatchSize = next;
+    SetSiteCheckBatchSize(next);
+  }
+
   private collectFavoriteUrls() {
     const urls: string[] = [];
     this.partitionData.forEach((part) => {
@@ -354,37 +370,48 @@ class AppStore {
       });
       this.siteHealth = initialMap;
 
+      const batchSize = Math.min(
+        50,
+        Math.max(3, Math.floor(this.siteCheckBatchSize || 12))
+      );
+
+      let ok = 0;
+      let fail = 0;
+
       try {
-        const res = await post(CheckSiteHealth, {
-          urls: JSON.stringify(uniqueUrls),
-        });
+        for (let i = 0; i < uniqueUrls.length; i += batchSize) {
+          const batch = uniqueUrls.slice(i, i + batchSize);
+          const res = await post(CheckSiteHealth, {
+            urls: JSON.stringify(batch),
+          });
 
-        if (!res?.result || !res?.data) {
-          return {
-            total: uniqueUrls.length,
-            ok: 0,
-            fail: 0,
-            running: false,
-            error: true,
+          if (!res?.result || !res?.data) {
+            return {
+              total: uniqueUrls.length,
+              ok,
+              fail,
+              running: false,
+              error: true,
+            };
+          }
+
+          const data = res.data as Record<string, SiteHealthStatus>;
+          this.siteHealth = {
+            ...this.siteHealth,
+            ...data,
           };
+
+          const statuses = Object.values(data);
+          ok += statuses.filter((s) => s === 'ok').length;
+          fail += statuses.filter((s) => s === 'fail').length;
         }
-
-        const data = res.data as Record<string, SiteHealthStatus>;
-        this.siteHealth = {
-          ...this.siteHealth,
-          ...data,
-        };
-
-        const statuses = Object.values(data);
-        const ok = statuses.filter((s) => s === 'ok').length;
-        const fail = statuses.filter((s) => s === 'fail').length;
 
         return { total: uniqueUrls.length, ok, fail, running: false };
       } catch {
         return {
           total: uniqueUrls.length,
-          ok: 0,
-          fail: 0,
+          ok,
+          fail,
           running: false,
           error: true,
         };

@@ -79,6 +79,14 @@ const SetPopularSiteStore = (value: any) => {
   SetlocalStorage('popularSites', value);
 };
 
+const SetSiteCheckBatchSize = (value: number) => {
+  SetlocalStorage('siteCheckBatchSize', value);
+};
+
+const GetSiteCheckBatchSize = () => {
+  return GetlocalStorage('siteCheckBatchSize');
+};
+
 export {
   SetlocalStorage,
   RemovelocalStorage,
@@ -93,4 +101,6 @@ export {
   SetPartDataStore,
   GetPopularSiteStore,
   SetPopularSiteStore,
+  SetSiteCheckBatchSize,
+  GetSiteCheckBatchSize,
 };
