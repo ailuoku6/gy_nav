@@ -16,6 +16,7 @@ const SiteIcon = ({ src, alt = '', className }: SiteIconProps) => {
 
   return (
     <img
+      key={src}
       className={className}
       style={{ margin: 2.5 }}
       src={displaySrc}
