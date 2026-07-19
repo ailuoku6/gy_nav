@@ -12,11 +12,12 @@ Current state:
 - 验证通过：`npm test` 13/13，`npm run build`，后端独立 `tsc --noEmit ... lib/hono/index.ts`。
 - 本地浏览器验证：`http://127.0.0.1:5173/login` 可打开，存在“使用 Passkey 登录”按钮，app 控制台无本地页面错误。
 - 用户执行迁移时遇到 `no such table: main.passkey_challenges`；已将 D1 迁移拆分为 `passkeys.sql`（可重复 Passkey 表/索引）和 `passkeys_user_column.sql`（一次性 `users.passkeyUserId` 字段/索引），并新增 `README_passkeys.md`。
+- 用户生产 register verify 返回 `Passkey verification failed`；已修复默认 `rpID`/`origin` 从请求 URL 推导，并补 `[passkey] verification failed` 服务端日志。验证通过：`npm test` 15/15、后端 `tsc --noEmit ... lib/hono/index.ts`、`npm run build`。
 
 Most relevant files:
 - `docs/superpowers/plans/2026-07-19-passkey-login.md`: 继续实现的施工图。
 - `lib/hono/service/passkeyService.ts`: 下一步扩展注册/登录 options 与 verify。
-- `lib/hono/service/passkeyService.test.ts`: 继续按 TDD 添加注册/登录/凭证管理测试。
+- `lib/hono/service/passkeyService.test.ts`: 覆盖注册/登录/凭证管理、生产域名配置推导。
 - `lib/hono/index.ts`: 已注册所有 Passkey API 路由。
 - `src/pages/Login.tsx`: 登录/注册页面，后续增加 Passkey 入口。
 - `src/utils/http.ts`: 当前请求封装，WebAuthn 建议新增 JSON POST helper。
@@ -27,11 +28,12 @@ Most relevant files:
 
 Need next:
 - 应用 `lib/hono/SQL/passkeys.sql` 到 D1 preview/production；确认 `users.passkeyUserId`，不存在再执行 `passkeys_user_column.sql`。
-- 配置 `PASSKEY_RP_ID`、`PASSKEY_RP_NAME`、`PASSKEY_ORIGIN`。
+- 部署最新代码；可选显式配置 `PASSKEY_RP_ID=nav.ailuoku6.top`、`PASSKEY_RP_NAME=GY Nav`、`PASSKEY_ORIGIN=https://nav.ailuoku6.top`，否则代码会从请求 URL 推导。
 - 在真实 Safari/Chrome/iPhone 上手测绑定、登录、取消 prompt、删除凭证。
 
 Watch out:
 - 生产 RP ID/origin 必须和实际 HTTPS 域名一致。
+- register verify 失败后要重新从 register/options 发起绑定 ceremony，不要复用旧 credential 响应。
 - `ALTER TABLE users ADD COLUMN passkeyUserId` 不能重复执行；重复时会报 duplicate column。
 - `pnpm test` 当前被 pnpm deps-status/confirmModulesPurge 拦截；使用 `npm test -- lib/hono/service/passkeyService.test.ts` 可跑通。
 - `npm run lint` 仍有既有 lint 债；不要把它误判为本轮 Passkey 功能构建失败。

@@ -36,3 +36,9 @@
 - Verification: 用临时 SQLite 数据库验证 `passkeys.sql` 可创建 `passkey_credentials`/`passkey_challenges`，`passkeys_user_column.sql` 可给 `users` 补充 `passkeyUserId`。
 - Known issues: 如果某个 D1 已执行过旧版 `ALTER TABLE users ADD COLUMN passkeyUserId`，再次执行 `passkeys_user_column.sql` 会报 duplicate column，可忽略并继续确认 Passkey 表存在。
 - Next: 先执行 `passkeys.sql`，再按数据库状态执行或跳过 `passkeys_user_column.sql`。
+
+- Changed: 针对生产 `https://nav.ailuoku6.top/api/passkey/register/verify` 返回 `Passkey verification failed`，修复 `PasskeyService.getConfig`：未设置 env 时从请求 URL 自动推导 `rpID` 和 `origin`，避免生产默认继续使用 `localhost`。
+- Changed: `verifyRegistration` / `verifyLogin` 失败时记录 `[passkey] verification failed` 日志，包含 flow、错误 message、expectedOrigin、expectedRPID、requestOrigin；challenge 改为验证通过后再删除。
+- Verification: `npm test` 通过 15/15；后端独立 `tsc --noEmit --target ES2020 --module ESNext --moduleResolution bundler --strict --skipLibCheck --types @cloudflare/workers-types,vite/client lib/hono/index.ts` 通过；`npm run build` 通过。
+- Known issues: 需要部署最新代码后重新发起一次 Passkey 绑定；旧 ceremony 不能复用。若仍失败，查看 Cloudflare Pages Functions 日志中的 `[passkey] verification failed` 具体 message。
+- Next: 部署并在 `https://nav.ailuoku6.top/login` 重新执行“登录 -> 绑定 Passkey -> 登出 -> Passkey 登录”。

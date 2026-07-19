@@ -311,7 +311,8 @@ class PasskeyDbStub {
 
 function createPasskeyCtx(
   db: PasskeyDbStub,
-  env: Partial<Ctx['env']> = {}
+  env: Partial<Ctx['env']> = {},
+  requestUrl = 'http://localhost:5173/api/passkey/register/options'
 ): Ctx {
   return {
     env: {
@@ -320,6 +321,9 @@ function createPasskeyCtx(
       PasswordSecret: 'password-secret',
       DB: db as unknown as D1Database,
       ...env,
+    },
+    req: {
+      url: requestUrl,
     },
     get: (key: string) => {
       if (key === 'jwtPayload') {
@@ -340,10 +344,40 @@ beforeEach(() => {
 });
 
 describe('PasskeyService config and challenges', () => {
-  it('uses local Passkey config defaults when env values are absent', () => {
+  it('uses the request origin for Passkey config defaults when env values are absent', () => {
     const db = new PasskeyDbStub();
 
     expect(PasskeyService.getConfig(createPasskeyCtx(db))).toEqual({
+      rpID: 'localhost',
+      rpName: 'GY Nav',
+      origin: 'http://localhost:5173',
+    });
+  });
+
+  it('derives production Passkey defaults from the current request URL', () => {
+    const db = new PasskeyDbStub();
+
+    expect(
+      PasskeyService.getConfig(
+        createPasskeyCtx(
+          db,
+          {},
+          'https://nav.ailuoku6.top/api/passkey/register/options'
+        )
+      )
+    ).toEqual({
+      rpID: 'nav.ailuoku6.top',
+      rpName: 'GY Nav',
+      origin: 'https://nav.ailuoku6.top',
+    });
+  });
+
+  it('falls back to local Passkey config defaults when request URL is unavailable', () => {
+    const db = new PasskeyDbStub();
+    const ctx = createPasskeyCtx(db);
+    delete (ctx as { req?: unknown }).req;
+
+    expect(PasskeyService.getConfig(ctx)).toEqual({
       rpID: 'localhost',
       rpName: 'GY Nav',
       origin: 'http://localhost:5173',

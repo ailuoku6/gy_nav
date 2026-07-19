@@ -62,10 +62,15 @@ type LoginVerifyBody = {
 
 export default class PasskeyService {
   public static getConfig = (ctx: Ctx) => {
+    const requestOrigin = PasskeyService.getRequestOrigin(ctx);
+    const requestHostname = requestOrigin
+      ? new URL(requestOrigin).hostname
+      : undefined;
+
     return {
-      rpID: ctx.env.PASSKEY_RP_ID || 'localhost',
+      rpID: ctx.env.PASSKEY_RP_ID || requestHostname || 'localhost',
       rpName: ctx.env.PASSKEY_RP_NAME || 'GY Nav',
-      origin: ctx.env.PASSKEY_ORIGIN || 'http://localhost:5173',
+      origin: ctx.env.PASSKEY_ORIGIN || requestOrigin || 'http://localhost:5173',
     };
   };
 
@@ -83,6 +88,24 @@ export default class PasskeyService {
   };
 
   public static consumeChallenge = async (
+    ctx: Ctx,
+    { userId = null, challenge, type }: ConsumeChallengeInput
+  ): Promise<PasskeyChallengeRow | null> => {
+    const row = await PasskeyService.findChallenge(ctx, {
+      userId,
+      challenge,
+      type,
+    });
+
+    if (!row) {
+      return null;
+    }
+
+    await PasskeyService.deleteChallenge(ctx, row.id);
+    return row;
+  };
+
+  public static findChallenge = async (
     ctx: Ctx,
     { userId = null, challenge, type }: ConsumeChallengeInput
   ): Promise<PasskeyChallengeRow | null> => {
@@ -115,7 +138,6 @@ export default class PasskeyService {
       return null;
     }
 
-    await PasskeyService.deleteChallenge(ctx, row.id);
     return row;
   };
 
@@ -178,17 +200,18 @@ export default class PasskeyService {
         return ctx.json({ result: false, msg: 'User not found' }, 404);
       }
 
-      let consumedChallenge: PasskeyChallengeRow | null = null;
+      let consumedChallengeId: number | null = null;
       const { origin, rpID } = PasskeyService.getConfig(ctx);
       const verification = await verifyRegistrationResponse({
         response: credential,
         expectedChallenge: async (challenge) => {
-          consumedChallenge = await PasskeyService.consumeChallenge(ctx, {
+          const matchedChallenge = await PasskeyService.findChallenge(ctx, {
             userId: user.id,
             challenge,
             type: 'registration',
           });
-          return consumedChallenge !== null;
+          consumedChallengeId = matchedChallenge?.id ?? null;
+          return matchedChallenge !== null;
         },
         expectedOrigin: origin,
         expectedRPID: rpID,
@@ -196,6 +219,11 @@ export default class PasskeyService {
       });
 
       if (!verification.verified || !verification.registrationInfo) {
+        PasskeyService.logVerificationFailure(
+          ctx,
+          'registration',
+          new Error('Registration response was not verified')
+        );
         return ctx.json({
           result: false,
           msg: 'Passkey verification failed',
@@ -223,11 +251,16 @@ export default class PasskeyService {
         )
         .run();
 
+      if (consumedChallengeId !== null) {
+        await PasskeyService.deleteChallenge(ctx, consumedChallengeId);
+      }
+
       return ctx.json({
         result: true,
         msg: 'Passkey binding successful',
       });
-    } catch {
+    } catch (error) {
+      PasskeyService.logVerificationFailure(ctx, 'registration', error);
       return ctx.json({
         result: false,
         msg: 'Passkey verification failed',
@@ -308,17 +341,18 @@ export default class PasskeyService {
         });
       }
 
-      let consumedChallenge: PasskeyChallengeRow | null = null;
+      let consumedChallengeId: number | null = null;
       const { origin, rpID } = PasskeyService.getConfig(ctx);
       const verification = await verifyAuthenticationResponse({
         response: credential,
         expectedChallenge: async (challenge) => {
-          consumedChallenge = await PasskeyService.consumeChallenge(ctx, {
+          const matchedChallenge = await PasskeyService.findChallenge(ctx, {
             userId: credentialRow.userId,
             challenge,
             type: 'authentication',
           });
-          return consumedChallenge !== null;
+          consumedChallengeId = matchedChallenge?.id ?? null;
+          return matchedChallenge !== null;
         },
         expectedOrigin: origin,
         expectedRPID: rpID,
@@ -327,10 +361,19 @@ export default class PasskeyService {
       });
 
       if (!verification.verified) {
+        PasskeyService.logVerificationFailure(
+          ctx,
+          'authentication',
+          new Error('Authentication response was not verified')
+        );
         return ctx.json({
           result: false,
           msg: 'Passkey verification failed',
         });
+      }
+
+      if (consumedChallengeId !== null) {
+        await PasskeyService.deleteChallenge(ctx, consumedChallengeId);
       }
 
       await ctx.env.DB.prepare(
@@ -351,7 +394,8 @@ export default class PasskeyService {
       }
 
       return ctx.json(await UserService.buildLoginSuccessPayload(ctx, user));
-    } catch {
+    } catch (error) {
+      PasskeyService.logVerificationFailure(ctx, 'authentication', error);
       return ctx.json({
         result: false,
         msg: 'Passkey verification failed',
@@ -422,6 +466,30 @@ export default class PasskeyService {
     await ctx.env.DB.prepare('DELETE FROM passkey_challenges WHERE id = ?')
       .bind(id)
       .run();
+  };
+
+  private static getRequestOrigin = (ctx: Ctx) => {
+    try {
+      return new URL(ctx.req.url).origin;
+    } catch {
+      return undefined;
+    }
+  };
+
+  private static logVerificationFailure = (
+    ctx: Ctx,
+    flow: 'registration' | 'authentication',
+    error: unknown
+  ) => {
+    const { origin, rpID } = PasskeyService.getConfig(ctx);
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('[passkey] verification failed', {
+      flow,
+      message,
+      expectedOrigin: origin,
+      expectedRPID: rpID,
+      requestOrigin: PasskeyService.getRequestOrigin(ctx),
+    });
   };
 
   private static getCurrentUserId = (ctx: Ctx) => {

@@ -8,8 +8,8 @@
 | `docs/superpowers/plans/2026-07-19-passkey-login.md` | Passkey 登录具体实施计划，按任务拆分依赖、SQL、后端、前端和验证。 | added |
 | `package.json` / `pnpm-lock.yaml` | 新增 SimpleWebAuthn 和 Vitest 依赖，添加 `test`/`test:watch` 脚本。 | modified |
 | `vitest.config.ts` | 后端服务单测配置，匹配 `lib/**/*.test.ts`。 | added |
-| `lib/hono/service/passkeyService.test.ts` | Passkey 基础服务和登录成功 helper 的 TDD 测试。 | added |
-| `lib/hono/service/passkeyService.ts` | Passkey 配置读取、challenge 保存与一次性消费基础服务。 | added |
+| `lib/hono/service/passkeyService.test.ts` | Passkey 基础服务、生产域名配置推导和登录成功 helper 的 TDD 测试。 | added |
+| `lib/hono/service/passkeyService.ts` | Passkey 配置读取、生产 origin/rpID 推导、challenge 保存/查找/消费与 verify 日志。 | added |
 | `lib/hono/service/userService.ts` | 抽出共享登录成功 payload helper，供密码登录和后续 Passkey 登录复用。 | modified |
 | `lib/hono/types/index.ts` | 新增 Passkey env binding、challenge 类型和用户 id 类型补充。 | modified |
 | `lib/hono/SQL/passkeys.sql` | 新增 D1 Passkey credential/challenge 表与索引，可重复执行。 | added |

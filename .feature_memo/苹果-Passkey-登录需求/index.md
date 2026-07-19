@@ -2,7 +2,7 @@
 
 - Status: active
 - Last updated: 2026-07-19
-- Current focus: Passkey 后端 API 与前端登录/绑定/凭证管理入口已实现；D1 迁移已拆成可重复表结构 SQL 和一次性 users 字段 SQL，等待真实 D1 执行和浏览器 ceremony 手测。
+- Current focus: Passkey 后端 API 与前端登录/绑定/凭证管理入口已实现；生产 register verify 失败已针对 origin/rpID 默认配置做修复，等待部署后真实浏览器复测。
 - Workspace: `GY_nav_react`
 
 ## Document Map
@@ -28,12 +28,14 @@
 - 前端登录页已接入“使用 Passkey 登录”“绑定 Passkey”和凭证列表删除；新增 JSON HTTP helper 和 WebAuthn browser helper。
 - 验证通过：`npm test` 13/13，`npm run build`，后端 `tsc --noEmit ... lib/hono/index.ts`。
 - D1 迁移已拆分：`lib/hono/SQL/passkeys.sql` 可重复创建 Passkey 表，`lib/hono/SQL/passkeys_user_column.sql` 只为每个 D1 数据库执行一次。
+- `PasskeyService.getConfig` 现在会在未配置 `PASSKEY_RP_ID`/`PASSKEY_ORIGIN` 时从当前请求 URL 推导生产 rpID/origin，例如 `https://nav.ailuoku6.top` -> `nav.ailuoku6.top`/`https://nav.ailuoku6.top`。
 
 ## Next Actions
 
+- 部署最新代码后重新发起一次 Passkey 绑定；旧的失败 verify 对应 challenge/credential ceremony 不要复用。
 - 将 `lib/hono/SQL/passkeys.sql` 应用到 D1 preview/production 数据库。
 - 确认 `users.passkeyUserId` 是否存在；不存在时执行一次 `lib/hono/SQL/passkeys_user_column.sql`，已存在时跳过。
-- 配置真实 `PASSKEY_RP_ID`、`PASSKEY_RP_NAME`、`PASSKEY_ORIGIN`，生产 origin 必须是 HTTPS 完整域名。
+- 可选显式配置真实 `PASSKEY_RP_ID`、`PASSKEY_RP_NAME`、`PASSKEY_ORIGIN`；生产 origin 必须是 HTTPS 完整域名。
 - 在 macOS Safari/Chrome 和 iPhone Safari 上手测绑定、登录、取消 prompt、删除凭证。
 - 整仓 `npm run lint` 仍有既有 lint 债，后续可单独清理。
 
