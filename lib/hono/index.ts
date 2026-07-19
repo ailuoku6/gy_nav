@@ -11,10 +11,17 @@ import PopularSiteService from './service/popularSiteService';
 import FriendSiteService from './service/friendSiteService';
 import ClipboardService from './service/clipboardService';
 import SiteHealthService from './service/siteHealthService';
+import PasskeyService from './service/passkeyService';
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-const authFreeSet = new Set(['/api/login', '/api/signup', '/api/getAllFS']);
+const authFreeSet = new Set([
+  '/api/login',
+  '/api/signup',
+  '/api/getAllFS',
+  '/api/passkey/login/options',
+  '/api/passkey/login/verify',
+]);
 
 app.use('/api/*', (c, next) => {
   if (authFreeSet.has(c.req.path)) {
@@ -91,6 +98,34 @@ app.post('/api/upPopularSites', async (ctx) => {
 
 app.post('/api/veriToken', async (ctx) => {
   return ctx.json({ result: true });
+});
+
+app.post('/api/passkey/register/options', async (ctx) => {
+  return await PasskeyService.createRegistrationOptions(ctx);
+});
+
+app.post('/api/passkey/register/verify', async (ctx) => {
+  const body = await ctx.req.json();
+  return await PasskeyService.verifyRegistration(ctx, body);
+});
+
+app.post('/api/passkey/login/options', async (ctx) => {
+  const body = await ctx.req.json().catch(() => ({}));
+  return await PasskeyService.createLoginOptions(ctx, body);
+});
+
+app.post('/api/passkey/login/verify', async (ctx) => {
+  const body = await ctx.req.json();
+  return await PasskeyService.verifyLogin(ctx, body);
+});
+
+app.get('/api/passkey/credentials', async (ctx) => {
+  return await PasskeyService.listCredentials(ctx);
+});
+
+app.post('/api/passkey/credentials/delete', async (ctx) => {
+  const body = await ctx.req.json();
+  return await PasskeyService.deleteCredential(ctx, body);
 });
 
 app.get('/api/getAllFS', async (ctx) => {

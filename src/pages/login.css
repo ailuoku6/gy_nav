@@ -10,8 +10,54 @@ a:hover {
   background-color: rgb(3, 169, 244);
 }
 
+.passkey-list {
+  margin-top: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.passkey-item {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.passkey-item-main {
+  min-width: 0;
+}
+
+.passkey-item-name {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.passkey-item-time {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 12px;
+  line-height: 18px;
+}
+
 @media (prefers-color-scheme: dark) {
   .login-wrap {
     background-color: #22272e;
+  }
+
+  .passkey-list {
+    border-top-color: rgba(255, 255, 255, 0.16);
+  }
+
+  .passkey-item {
+    border-bottom-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .passkey-item-time {
+    color: rgba(255, 255, 255, 0.55);
   }
 }

@@ -115,7 +115,7 @@ axios.interceptors.response.use(
  */
 export function get(
   url: string,
-  params: { [key: string]: any }
+  params: { [key: string]: unknown }
 ): Promise<{ result: boolean } & Record<string, any>> {
   console.log('发起请求');
   return new Promise((resolve, reject) => {
@@ -140,7 +140,7 @@ export function get(
  */
 export function post(
   url: string,
-  params: { [key: string]: any }
+  params: { [key: string]: unknown }
 ): Promise<{ result: boolean; [key: string]: any }> {
   return new Promise((resolve, reject) => {
     axios
@@ -150,6 +150,24 @@ export function post(
       })
       .catch((err) => {
         reject(err?.data);
+      });
+  });
+}
+
+export function postJson(
+  url: string,
+  params: { [key: string]: unknown }
+): Promise<{ result: boolean; [key: string]: any }> {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(BaseUrl + url, params, {
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      })
+      .then((res) => {
+        resolve(res?.data);
+      })
+      .catch((err) => {
+        reject(err?.data ?? err?.response?.data ?? err);
       });
   });
 }

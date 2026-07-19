@@ -14,6 +14,12 @@ const GetAllFS = '/api/getAllFS';
 const WriteRemoteClipBoard = '/api/writeClipBoard';
 const GetRemoteClipBoard = '/api/getClipBoard';
 const CheckSiteHealth = '/api/checkSiteHealth';
+const PasskeyRegisterOptions = '/api/passkey/register/options';
+const PasskeyRegisterVerify = '/api/passkey/register/verify';
+const PasskeyLoginOptions = '/api/passkey/login/options';
+const PasskeyLoginVerify = '/api/passkey/login/verify';
+const PasskeyCredentials = '/api/passkey/credentials';
+const PasskeyCredentialsDelete = '/api/passkey/credentials/delete';
 
 const GetInitData = 'getInitData';
 
@@ -32,4 +38,10 @@ export {
   WriteRemoteClipBoard,
   GetRemoteClipBoard,
   CheckSiteHealth,
+  PasskeyRegisterOptions,
+  PasskeyRegisterVerify,
+  PasskeyLoginOptions,
+  PasskeyLoginVerify,
+  PasskeyCredentials,
+  PasskeyCredentialsDelete,
 };

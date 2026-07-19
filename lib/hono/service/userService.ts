@@ -5,12 +5,40 @@ import encrypt from '../utils/encrypt';
 import { signToken } from '../utils/sign';
 
 export default class UserService {
+  public static buildLoginSuccessPayload = async (
+    ctx: Ctx,
+    user: { id: number; userName: string; partData: string }
+  ) => {
+    const tokenSecret = ctx.env.TokenSecret;
+    const userToken = {
+      id: user.id,
+      userName: user.userName,
+    };
+
+    const token = await signToken({ user: userToken }, tokenSecret);
+    const popularSitesRow = await ctx.env.DB
+      .prepare('SELECT popularSites FROM popularSites WHERE userId = ?')
+      .bind(user.id)
+      .first();
+    const popularSites = popularSitesRow?.popularSites ?? '';
+
+    return {
+      result: true,
+      user: {
+        id: user.id,
+        userName: user.userName,
+        partData: user.partData,
+        popularSites,
+      },
+      msg: 'Login successful',
+      token,
+    };
+  };
+
   public static login = async (
     ctx: Ctx,
     { userName, passWord }: { userName: string; passWord: string }
   ) => {
-    const tokenSecret = ctx.env.TokenSecret;
-
     try {
       const db = ctx.env.DB;
       const user = await db
@@ -30,33 +58,7 @@ export default class UserService {
         return ctx.json({ result: false, msg: 'Invalid username or password' });
       }
 
-      const userToken = {
-        id: user.id,
-        userName: user.userName,
-        // passWord: user.passWord,
-      };
-
-      // 生成 JWT
-      const token = await signToken({ user: userToken }, tokenSecret);
-
-      // 获取用户的 popularSites
-      const popularSitesRow = await db
-        .prepare('SELECT popularSites FROM popularSites WHERE userId = ?')
-        .bind(user.id)
-        .first();
-      const popularSites = popularSitesRow?.popularSites ?? '';
-
-      return ctx.json({
-        result: true,
-        user: {
-          id: user.id,
-          userName: user.userName,
-          partData: user.partData,
-          popularSites,
-        },
-        msg: 'Login successful',
-        token,
-      });
+      return ctx.json(await UserService.buildLoginSuccessPayload(ctx, user as any));
     } catch (error: any) {
       return ctx.json({ result: false, msg: error.message }, 500);
     }

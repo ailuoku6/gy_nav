@@ -343,6 +343,8 @@ CREATE UNIQUE INDEX idx_users_passkeyUserId
 
 `passkeyUserId` 是随机生成的稳定 user handle。已有用户在首次绑定 Passkey 时补齐该字段。
 
+迁移执行时将 Passkey credential/challenge 表与 `users.passkeyUserId` 字段拆成两个 SQL 文件：表结构文件可重复执行，`users` 字段文件每个 D1 数据库只执行一次。
+
 ## 配置
 
 新增环境变量：
