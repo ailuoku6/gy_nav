@@ -42,3 +42,14 @@
 - Verification: `npm test` 通过 15/15；后端独立 `tsc --noEmit --target ES2020 --module ESNext --moduleResolution bundler --strict --skipLibCheck --types @cloudflare/workers-types,vite/client lib/hono/index.ts` 通过；`npm run build` 通过。
 - Known issues: 需要部署最新代码后重新发起一次 Passkey 绑定；旧 ceremony 不能复用。若仍失败，查看 Cloudflare Pages Functions 日志中的 `[passkey] verification failed` 具体 message。
 - Next: 部署并在 `https://nav.ailuoku6.top/login` 重新执行“登录 -> 绑定 Passkey -> 登出 -> Passkey 登录”。
+
+- Changed: 用户重新提供生产 `register/verify` curl，解码 credential 后确认 `origin=https://nav.ailuoku6.top`、rpID hash 匹配 `nav.ailuoku6.top`、UV 标记存在；本地用 `@simplewebauthn/server` 按对应 challenge/origin/rpID 校验为 `verified: true`。
+- Changed: 生产免登录 `POST /api/passkey/login/options` 返回 `rpId:"nav.ailuoku6.top"`，说明线上 rpID 推导已生效；继续失败时重点转向 challenge 查找或 D1 credential 保存。
+- Changed: `register/verify` 不再把所有错误都返回 `Passkey verification failed`：challenge 查不到返回“Passkey challenge 已失效或不存在，请重新点击绑定 Passkey”；D1/SQLite 保存错误返回“Passkey 保存失败：...”；origin/rpID 错误返回对应校验失败。
+- Verification: `npm test` 通过 17/17；后端独立 `tsc --noEmit --target ES2020 --module ESNext --moduleResolution bundler --strict --skipLibCheck --types @cloudflare/workers-types,vite/client lib/hono/index.ts` 通过；`npm run build` 通过。
+- Known issues: 当前执行环境无法直接查远程 D1，`wrangler d1 execute --remote` 需要 `CLOUDFLARE_API_TOKEN`。用户粘贴过 bearer token，应重新登录或轮换 token。
+- Next: 部署最新错误拆分版本后重新绑定；根据新返回消息决定查 `passkey_challenges` 还是修 `passkey_credentials` schema。
+
+- Changed: Cloudflare Pages Functions tail 日志确认生产 register verify 根因：`expectedOrigin` 为 `https://nav.ailuoku6.com`，但实际 request/credential origin 为 `https://nav.ailuoku6.top`；`expectedRPID` 已是 `nav.ailuoku6.top`。
+- Verification: 日志显示 `Unexpected registration response origin "https://nav.ailuoku6.top", expected "https://nav.ailuoku6.com"`，确认需要修生产环境变量 `PASSKEY_ORIGIN`，不是代码校验逻辑问题。
+- Next: 将 Cloudflare Pages production 的 `PASSKEY_ORIGIN` 改为 `https://nav.ailuoku6.top`，或删除该变量让代码从请求 URL 自动推导；然后重新部署/重新发起绑定。

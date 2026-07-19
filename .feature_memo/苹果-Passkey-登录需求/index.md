@@ -29,10 +29,13 @@
 - 验证通过：`npm test` 13/13，`npm run build`，后端 `tsc --noEmit ... lib/hono/index.ts`。
 - D1 迁移已拆分：`lib/hono/SQL/passkeys.sql` 可重复创建 Passkey 表，`lib/hono/SQL/passkeys_user_column.sql` 只为每个 D1 数据库执行一次。
 - `PasskeyService.getConfig` 现在会在未配置 `PASSKEY_RP_ID`/`PASSKEY_ORIGIN` 时从当前请求 URL 推导生产 rpID/origin，例如 `https://nav.ailuoku6.top` -> `nav.ailuoku6.top`/`https://nav.ailuoku6.top`。
+- 已确认用户提供的生产 registration credential 本地 SimpleWebAuthn 校验可通过；线上继续失败更可能是 challenge 查找失败或 D1 credential 保存失败。
 
 ## Next Actions
 
 - 部署最新代码后重新发起一次 Passkey 绑定；旧的失败 verify 对应 challenge/credential ceremony 不要复用。
+- 如果部署后返回“Passkey challenge 已失效或不存在”，检查 `passkey_challenges` 是否有对应 challenge、userId 和未过期 expiresAt。
+- 如果部署后返回“Passkey 保存失败”，按错误修复 `passkey_credentials` 远程 schema。
 - 将 `lib/hono/SQL/passkeys.sql` 应用到 D1 preview/production 数据库。
 - 确认 `users.passkeyUserId` 是否存在；不存在时执行一次 `lib/hono/SQL/passkeys_user_column.sql`，已存在时跳过。
 - 可选显式配置真实 `PASSKEY_RP_ID`、`PASSKEY_RP_NAME`、`PASSKEY_ORIGIN`；生产 origin 必须是 HTTPS 完整域名。

@@ -21,6 +21,8 @@ import UserService from './userService';
 
 const CHALLENGE_TTL_MS = 5 * 60 * 1000;
 const DEFAULT_PASSKEY_NAME = '我的 Passkey';
+const REGISTRATION_CHALLENGE_FAILURE_MESSAGE =
+  'Passkey challenge 已失效或不存在，请重新点击绑定 Passkey';
 
 type SaveChallengeInput = {
   userId?: number | null;
@@ -201,6 +203,7 @@ export default class PasskeyService {
       }
 
       let consumedChallengeId: number | null = null;
+      let challengeMatched = false;
       const { origin, rpID } = PasskeyService.getConfig(ctx);
       const verification = await verifyRegistrationResponse({
         response: credential,
@@ -211,7 +214,8 @@ export default class PasskeyService {
             type: 'registration',
           });
           consumedChallengeId = matchedChallenge?.id ?? null;
-          return matchedChallenge !== null;
+          challengeMatched = matchedChallenge !== null;
+          return challengeMatched;
         },
         expectedOrigin: origin,
         expectedRPID: rpID,
@@ -226,7 +230,9 @@ export default class PasskeyService {
         );
         return ctx.json({
           result: false,
-          msg: 'Passkey verification failed',
+          msg: challengeMatched
+            ? 'Passkey verification failed'
+            : REGISTRATION_CHALLENGE_FAILURE_MESSAGE,
         });
       }
 
@@ -263,7 +269,7 @@ export default class PasskeyService {
       PasskeyService.logVerificationFailure(ctx, 'registration', error);
       return ctx.json({
         result: false,
-        msg: 'Passkey verification failed',
+        msg: PasskeyService.getRegistrationFailureMessage(error),
       });
     }
   };
@@ -599,5 +605,33 @@ export default class PasskeyService {
 
   private static getErrorMessage = (error: unknown) => {
     return error instanceof Error ? error.message : 'Unexpected error';
+  };
+
+  private static getRegistrationFailureMessage = (error: unknown) => {
+    const message = PasskeyService.getErrorMessage(error);
+
+    if (message.includes('Custom challenge verifier returned false')) {
+      return REGISTRATION_CHALLENGE_FAILURE_MESSAGE;
+    }
+
+    if (message.includes('Unexpected registration response origin')) {
+      return `Passkey origin 校验失败：${message}`;
+    }
+
+    if (message.includes('Unexpected registration response RP ID')) {
+      return `Passkey RP ID 校验失败：${message}`;
+    }
+
+    if (
+      message.includes('D1_') ||
+      message.includes('SQLITE_') ||
+      message.includes('no such table') ||
+      message.includes('no such column') ||
+      message.includes('UNIQUE constraint failed')
+    ) {
+      return `Passkey 保存失败：${message}`;
+    }
+
+    return `Passkey verification failed: ${message}`;
   };
 }

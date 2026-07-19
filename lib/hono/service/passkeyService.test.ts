@@ -140,6 +140,7 @@ type CredentialRow = {
 class PasskeyDbStub {
   public challenges: ChallengeRow[] = [];
   public credentials: CredentialRow[] = [];
+  public failCredentialInsertMessage = '';
   public users: UserRow[] = [
     {
       id: 7,
@@ -255,6 +256,9 @@ class PasskeyDbStub {
             });
           }
           if (sql.startsWith('INSERT INTO passkey_credentials')) {
+            if (this.failCredentialInsertMessage) {
+              throw new Error(this.failCredentialInsertMessage);
+            }
             const [
               userId,
               credentialId,
@@ -548,6 +552,47 @@ describe('PasskeyService registration', () => {
       name: 'My Passkey',
     });
     expect(db.deletedIds).toEqual([1]);
+  });
+
+  it('returns a clear registration failure when the challenge is missing', async () => {
+    const db = new PasskeyDbStub();
+    db.users[0].passkeyUserId = 'alice-handle';
+
+    const response = await PasskeyService.verifyRegistration(createPasskeyCtx(db), {
+      credential: { response: { clientDataJSON: 'client-data' } },
+      name: 'My Passkey',
+    });
+    const body = await response.json();
+
+    expect(body).toEqual({
+      result: false,
+      msg: 'Passkey challenge 已失效或不存在，请重新点击绑定 Passkey',
+    });
+  });
+
+  it('returns a clear registration failure when saving the credential fails', async () => {
+    const db = new PasskeyDbStub();
+    db.failCredentialInsertMessage = 'SQLITE_ERROR: no such column: publicKey';
+    db.users[0].passkeyUserId = 'alice-handle';
+    db.challenges.push({
+      id: 1,
+      userId: 7,
+      challenge: 'registration-challenge',
+      type: 'registration',
+      expiresAt: new Date(Date.now() + 1000).toISOString(),
+      createdAt: new Date().toISOString(),
+    });
+
+    const response = await PasskeyService.verifyRegistration(createPasskeyCtx(db), {
+      credential: { response: { clientDataJSON: 'client-data' } },
+      name: 'My Passkey',
+    });
+    const body = await response.json();
+
+    expect(body).toEqual({
+      result: false,
+      msg: 'Passkey 保存失败：SQLITE_ERROR: no such column: publicKey',
+    });
   });
 });
 

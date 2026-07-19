@@ -13,6 +13,7 @@ Current state:
 - 本地浏览器验证：`http://127.0.0.1:5173/login` 可打开，存在“使用 Passkey 登录”按钮，app 控制台无本地页面错误。
 - 用户执行迁移时遇到 `no such table: main.passkey_challenges`；已将 D1 迁移拆分为 `passkeys.sql`（可重复 Passkey 表/索引）和 `passkeys_user_column.sql`（一次性 `users.passkeyUserId` 字段/索引），并新增 `README_passkeys.md`。
 - 用户生产 register verify 返回 `Passkey verification failed`；已修复默认 `rpID`/`origin` 从请求 URL 推导，并补 `[passkey] verification failed` 服务端日志。验证通过：`npm test` 15/15、后端 `tsc --noEmit ... lib/hono/index.ts`、`npm run build`。
+- 用户第二次提供生产 register verify curl；解码后 origin/rpID/UV 都正确，本地 SimpleWebAuthn 校验通过。生产 `login/options` 已返回 `rpId:"nav.ailuoku6.top"`。已继续拆分 `register/verify` 错误消息，下一版会区分 challenge 缺失/过期、origin/rpID、D1 保存错误。验证通过：`npm test` 17/17、后端 `tsc`、`npm run build`。
 
 Most relevant files:
 - `docs/superpowers/plans/2026-07-19-passkey-login.md`: 继续实现的施工图。
@@ -29,6 +30,7 @@ Most relevant files:
 Need next:
 - 应用 `lib/hono/SQL/passkeys.sql` 到 D1 preview/production；确认 `users.passkeyUserId`，不存在再执行 `passkeys_user_column.sql`。
 - 部署最新代码；可选显式配置 `PASSKEY_RP_ID=nav.ailuoku6.top`、`PASSKEY_RP_NAME=GY Nav`、`PASSKEY_ORIGIN=https://nav.ailuoku6.top`，否则代码会从请求 URL 推导。
+- 若部署后返回“Passkey challenge 已失效或不存在”，查远程 D1 `passkey_challenges` 中对应 challenge/userId/expiresAt；若返回“Passkey 保存失败”，按消息修 `passkey_credentials` 远程 schema。
 - 在真实 Safari/Chrome/iPhone 上手测绑定、登录、取消 prompt、删除凭证。
 
 Watch out:
