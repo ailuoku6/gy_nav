@@ -32,6 +32,7 @@ import {
   getPasskeyErrorMessage,
   isPasskeySupported,
 } from '../utils/passkey';
+import { confirmDeletePasskey } from '../utils/passkeyConfirm';
 
 import {
   SetUserStore,
@@ -278,6 +279,10 @@ const Login = () => {
   };
 
   const handleDeletePasskey = async (id: number) => {
+    if (!confirmDeletePasskey()) {
+      return;
+    }
+
     setPasskeyBusy(true);
     setTipText('');
     try {

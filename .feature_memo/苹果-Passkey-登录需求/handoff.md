@@ -14,6 +14,8 @@ Current state:
 - 用户执行迁移时遇到 `no such table: main.passkey_challenges`；已将 D1 迁移拆分为 `passkeys.sql`（可重复 Passkey 表/索引）和 `passkeys_user_column.sql`（一次性 `users.passkeyUserId` 字段/索引），并新增 `README_passkeys.md`。
 - 用户生产 register verify 返回 `Passkey verification failed`；已修复默认 `rpID`/`origin` 从请求 URL 推导，并补 `[passkey] verification failed` 服务端日志。验证通过：`npm test` 15/15、后端 `tsc --noEmit ... lib/hono/index.ts`、`npm run build`。
 - 用户第二次提供生产 register verify curl；解码后 origin/rpID/UV 都正确，本地 SimpleWebAuthn 校验通过。生产 `login/options` 已返回 `rpId:"nav.ailuoku6.top"`。已继续拆分 `register/verify` 错误消息，下一版会区分 challenge 缺失/过期、origin/rpID、D1 保存错误。验证通过：`npm test` 17/17、后端 `tsc`、`npm run build`。
+- 生产 tail 日志确认 `PASSKEY_ORIGIN` 错配为 `https://nav.ailuoku6.com`，用户已改好配置并确认没问题。
+- 已新增删除 Passkey 二次确认：`src/pages/Login.tsx` 删除前调用 `confirmDeletePasskey()`，helper 和测试在 `src/utils/passkeyConfirm.ts` / `.test.ts`。验证通过：`npm test` 19/19、后端 `tsc`、`npm run build`。
 
 Most relevant files:
 - `docs/superpowers/plans/2026-07-19-passkey-login.md`: 继续实现的施工图。
@@ -23,6 +25,7 @@ Most relevant files:
 - `src/pages/Login.tsx`: 登录/注册页面，后续增加 Passkey 入口。
 - `src/utils/http.ts`: 当前请求封装，WebAuthn 建议新增 JSON POST helper。
 - `src/utils/passkey.ts`: 前端 SimpleWebAuthn browser helper。
+- `src/utils/passkeyConfirm.ts`: 删除 Passkey 二次确认 helper。
 - `lib/hono/SQL/passkeys.sql`: Passkey credential/challenge 表，可重复应用到 D1。
 - `lib/hono/SQL/passkeys_user_column.sql`: `users.passkeyUserId` 一次性迁移；如果已存在则跳过。
 - `lib/hono/SQL/README_passkeys.md`: D1 迁移执行顺序和检查命令。
@@ -32,6 +35,7 @@ Need next:
 - 部署最新代码；可选显式配置 `PASSKEY_RP_ID=nav.ailuoku6.top`、`PASSKEY_RP_NAME=GY Nav`、`PASSKEY_ORIGIN=https://nav.ailuoku6.top`，否则代码会从请求 URL 推导。
 - 若部署后返回“Passkey challenge 已失效或不存在”，查远程 D1 `passkey_challenges` 中对应 challenge/userId/expiresAt；若返回“Passkey 保存失败”，按消息修 `passkey_credentials` 远程 schema。
 - 在真实 Safari/Chrome/iPhone 上手测绑定、登录、取消 prompt、删除凭证。
+- 手测删除凭证二次确认：取消不删除，确认才删除。
 
 Watch out:
 - 生产 RP ID/origin 必须和实际 HTTPS 域名一致。

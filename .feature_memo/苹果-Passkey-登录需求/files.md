@@ -19,6 +19,8 @@
 | `src/utils/Api.ts` | 新增 Passkey API endpoint 常量。 | modified |
 | `src/utils/http.ts` | 新增 `postJson`，用于 WebAuthn 嵌套 JSON payload。 | modified |
 | `src/utils/passkey.ts` | 新增浏览器 WebAuthn helper 和错误文案映射。 | added |
+| `src/utils/passkeyConfirm.ts` | 删除 Passkey 前的二次确认 helper。 | added |
+| `src/utils/passkeyConfirm.test.ts` | 覆盖删除确认时确认/取消的返回行为。 | added |
 | `src/pages/Login.tsx` | 接入 Passkey 登录、绑定、凭证列表、删除和共享登录成功处理。 | modified |
 | `src/pages/login.css` | 新增凭证列表样式。 | modified |
 

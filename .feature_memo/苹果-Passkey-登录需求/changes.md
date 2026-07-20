@@ -53,3 +53,11 @@
 - Changed: Cloudflare Pages Functions tail 日志确认生产 register verify 根因：`expectedOrigin` 为 `https://nav.ailuoku6.com`，但实际 request/credential origin 为 `https://nav.ailuoku6.top`；`expectedRPID` 已是 `nav.ailuoku6.top`。
 - Verification: 日志显示 `Unexpected registration response origin "https://nav.ailuoku6.top", expected "https://nav.ailuoku6.com"`，确认需要修生产环境变量 `PASSKEY_ORIGIN`，不是代码校验逻辑问题。
 - Next: 将 Cloudflare Pages production 的 `PASSKEY_ORIGIN` 改为 `https://nav.ailuoku6.top`，或删除该变量让代码从请求 URL 自动推导；然后重新部署/重新发起绑定。
+
+## 2026-07-20
+
+- Changed: 用户确认生产 Passkey 配置已修好并可用；新增删除 Passkey 二次确认，取消时不调用删除接口。
+- Changed: 新增 `src/utils/passkeyConfirm.ts` 和 `src/utils/passkeyConfirm.test.ts`，`src/pages/Login.tsx` 删除凭证前调用 `confirmDeletePasskey()`。
+- Changed: `vitest.config.ts` 测试 include 扩展为 `lib/**/*.test.ts` 和 `src/**/*.test.ts`。
+- Verification: TDD RED 先因缺少 `src/utils/passkeyConfirm.ts` 失败；实现后 `npm test` 通过 19/19，后端独立 `tsc --noEmit ... lib/hono/index.ts` 通过，`npm run build` 通过。
+- Next: 部署后手测删除凭证：点击删除 -> 取消时保留凭证，确认时删除凭证并刷新列表。
