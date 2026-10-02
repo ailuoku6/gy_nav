@@ -10,7 +10,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "preview": "vite preview",
-    "preview-api": "npm run build && wrangler pages dev"
+    "preview-api": "npm run build && wrangler pages dev",
+    "test:rtc:e2e": "node scripts/rtc-e2e.mjs",
+    "rtc:db:local": "wrangler d1 execute DB --local --file lib/hono/SQL/rtc.sql",
+    "rtc:dev": "npm run build && wrangler pages dev build --port 8789 --binding TokenSecret=rtc-local-e2e"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -48,6 +51,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
+    "playwright": "^1.63.0",
     "prettier": "^3.3.2",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.2.2",

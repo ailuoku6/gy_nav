@@ -25,8 +25,10 @@ import './index.css';
 import { isSafari } from '../../utils/device';
 import { appStore } from '../../store/AppStore';
 import { observer } from 'kisstate';
+import { useHistory } from 'react-router-dom';
 
 const FeaturePanel = () => {
+  const history = useHistory();
   const [display, setDisplay] = useState(false);
 
   const timer = useRef<number | null>(null);
@@ -158,6 +160,12 @@ const FeaturePanel = () => {
           }}
         ></div>
         <div className="panel">
+          <Tooltip title="通过 WebRTC 在线传输文件">
+            <div className="panel-item" onClick={() => history.push('/transfer')}>
+              <div className="panel-item-icon">⇄</div>
+              <div className="panel-item-name">传输文件</div>
+            </div>
+          </Tooltip>
           <Tooltip title="双击上传剪切板内容到云端，单击从云端剪切板复制内容，数据安全相关请看更新日志说明">
             <div
               className="panel-item"

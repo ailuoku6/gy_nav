@@ -25,6 +25,8 @@ export type Bindings = {
   PASSKEY_RP_ID?: string;
   PASSKEY_RP_NAME?: string;
   PASSKEY_ORIGIN?: string;
+  RTC_TURN_KEY_ID?: string;
+  RTC_TURN_KEY_SECRET?: string;
   DB: D1Database;
 };
 

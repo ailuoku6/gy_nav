@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 
 import { jwt } from 'hono/jwt';
+import { HTTPException } from 'hono/http-exception';
 
 import { Bindings } from './types';
 import errorHandle from './middleware/errorHandle';
@@ -12,6 +13,7 @@ import FriendSiteService from './service/friendSiteService';
 import ClipboardService from './service/clipboardService';
 import SiteHealthService from './service/siteHealthService';
 import PasskeyService from './service/passkeyService';
+import RtcService from './service/rtcService';
 
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -24,6 +26,7 @@ const authFreeSet = new Set([
 ]);
 
 app.use('/api/*', (c, next) => {
+  if (c.req.path.startsWith('/api/rtc/')) return next();
   if (authFreeSet.has(c.req.path)) {
     return next();
   }
@@ -32,6 +35,25 @@ app.use('/api/*', (c, next) => {
     secret: c.env.TokenSecret,
   });
   return jwtMiddleware(c, next);
+});
+
+app.use('/api/rtc/*', async (c, next) => {
+  c.header('Cache-Control', 'no-store');
+  c.header('X-Content-Type-Options', 'nosniff');
+  const origin = c.req.header('Origin');
+  if (origin && origin !== new URL(c.req.url).origin) return c.json({ result: false, msg: '不允许跨站请求' }, 403);
+  await next();
+});
+
+// Hono catches route errors inside compose; a surrounding middleware catch
+// does not receive those errors. Keep RTC failures in the JSON API contract.
+app.onError((error, c) => {
+  if (c.req.path.startsWith('/api/rtc/')) {
+    const status = error instanceof HTTPException ? error.status : 503;
+    return c.json({ result: false, msg: status < 500 ? error.message : '信令服务不可用，请确认 D1 已执行 rtc.sql' }, status);
+  }
+  if (error instanceof HTTPException) return error.getResponse();
+  return c.text('Internal Server Error', 500);
 });
 
 app.use(errorHandle);
@@ -150,5 +172,13 @@ app.post('/api/getClipBoard', async (ctx) => {
 app.post('/api/checkSiteHealth', async (ctx) => {
   return await SiteHealthService.checkSiteHealth(ctx);
 });
+
+app.post('/api/rtc/rooms', async (ctx, next) => jwt({ secret: ctx.env.TokenSecret })(ctx, next), async (ctx) => RtcService.create(ctx));
+app.post('/api/rtc/rooms/join', async (ctx) => RtcService.join(ctx));
+app.get('/api/rtc/rooms/:roomId/events', async (ctx) => RtcService.events(ctx));
+app.post('/api/rtc/rooms/:roomId/events', async (ctx) => RtcService.events(ctx));
+app.post('/api/rtc/rooms/:roomId/heartbeat', async (ctx) => RtcService.heartbeat(ctx));
+app.post('/api/rtc/rooms/:roomId/close', async (ctx) => RtcService.close(ctx));
+app.post('/api/rtc/rooms/:roomId/ice-config', async (ctx) => RtcService.ice(ctx));
 
 export default app;

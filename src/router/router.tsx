@@ -4,6 +4,7 @@ import { CircularProgress } from '@mui/material';
 const Home = React.lazy(() => import('../pages/Home'));
 const Login = React.lazy(() => import('../pages/Login'));
 const NotFound = React.lazy(() => import('../pages/NotFound'));
+const FileTransfer = React.lazy(() => import('../pages/FileTransfer'));
 // import About from './pages/about';
 //引入一些模块
 //Router
@@ -62,6 +63,14 @@ const route = (
         component={() => (
           <Suspense fallback={<Loading />}>
             <Home />
+          </Suspense>
+        )}
+      />
+      <Route
+        path="/transfer"
+        component={() => (
+          <Suspense fallback={<Loading />}>
+            <FileTransfer />
           </Suspense>
         )}
       />
