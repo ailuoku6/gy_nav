@@ -47,3 +47,16 @@
 - Changed: 房间 join 增加每 IP 和每房间限流；首页传输入口改为 48px MUI SwapHorizIcon。
 - Verification: `pnpm build` 通过；`pnpm test` 通过（6 文件、45 测试）；真实双 Chrome 本地 E2E 通过 0B、1KiB、1MiB、1MiB+1B、4MiB+1B、重连、最终确认丢失、密文篡改、保存取消、错误码；指定 PDF 55,259,905B 默认 STUN 传输通过且 SHA-256 一致，自动接收约 981ms。
 - Known issues: 8790 本地 E2E 仅同机网络，不能证明跨运营商连通；线上仍是旧部署，未执行远程 D1/deploy；全仓 eslint 仍有既有 88 项问题，改动相关文件无新增阻塞。
+
+## 2026-10-03：传输页面 UI 优化
+
+- Changed: 重排 `/transfer` 页面信息层级，增加发送/接收图标标签、端对端加密标识、文件选择拖放式区域、6 位配对码大字展示、复制按钮、文件信息面板、进度百分比和状态提示。
+- Changed: 保留现有 `input[type=file]`、配对码输入、主要按钮文案和完成后保存行为，避免影响已有自动化传输流程。
+- Verification: `pnpm build` 通过；`pnpm test` 通过（45 tests）；Vite preview 下桌面 1440px 和移动 390px 宽度检查无横向溢出；`git diff --check` 通过。
+
+## 2026-10-03：选择文件后自动启动发送
+
+- Changed: `FileTransfer.tsx` 选择文件后直接创建发送会话并生成配对码，移除发送方的「生成配对码并发送」按钮；配对成功后按现有流程自动发送。文件对象直接传给启动函数，清空 input value 支持取消或失败后再次选择同一个文件。
+- Changed: `scripts/rtc-e2e.mjs` 移除发送按钮点击步骤，并更新接收标签定位为「接收文件」。
+- Verification: `pnpm build`、页面 eslint、`git diff --check` 通过；本地真实双 Chrome 1 KiB E2E 无发送按钮点击通过，选文件到自动接收约 960ms，下载内容 SHA-256 一致。
+- Scope: 本次仅本地实现和验证，未部署线上；E2E 使用同机 host ICE 候选。

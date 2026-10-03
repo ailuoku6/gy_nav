@@ -102,7 +102,7 @@ async function pages({
     sender.goto(`${origin}/transfer`),
     receiver.goto(`${origin}/transfer`),
   ]);
-  await receiver.getByRole('tab', { name: '接收', exact: true }).click();
+  await receiver.getByRole('tab', { name: '接收文件', exact: true }).click();
   return {
     sender,
     receiver,
@@ -114,12 +114,14 @@ async function pages({
 }
 async function connect(pair, bytes) {
   await pair.sender.locator('input[type=file]').setInputFiles(
-    testFile && bytes === testFile ? process.env.RTC_E2E_FILE : {
-      name: 'rtc-test.bin',
-      mimeType: 'application/octet-stream',
-      buffer: bytes,
-    });
-  await pair.sender.getByRole('button', { name: '生成配对码并发送' }).click();
+    testFile && bytes === testFile
+      ? process.env.RTC_E2E_FILE
+      : {
+          name: 'rtc-test.bin',
+          mimeType: 'application/octet-stream',
+          buffer: bytes,
+        }
+  );
   const code = pair.sender.getByTestId('pairing-code');
   await code.waitFor({ timeout: 30000 });
   const codeValue = await code.textContent();
