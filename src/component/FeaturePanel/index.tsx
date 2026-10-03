@@ -26,6 +26,7 @@ import { isSafari } from '../../utils/device';
 import { appStore } from '../../store/AppStore';
 import { observer } from 'kisstate';
 import { useHistory } from 'react-router-dom';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 
 const FeaturePanel = () => {
   const history = useHistory();
@@ -161,8 +162,13 @@ const FeaturePanel = () => {
         ></div>
         <div className="panel">
           <Tooltip title="通过 WebRTC 在线传输文件">
-            <div className="panel-item" onClick={() => history.push('/transfer')}>
-              <div className="panel-item-icon">⇄</div>
+            <div
+              className="panel-item"
+              onClick={() => history.push('/transfer')}
+            >
+              <div className="panel-item-icon">
+                <SwapHorizIcon sx={{ fontSize: 48, color: '#1976d2' }} />
+              </div>
               <div className="panel-item-name">传输文件</div>
             </div>
           </Tooltip>

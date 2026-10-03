@@ -138,6 +138,9 @@ export default class RtcService {
       ctx.env.DB.prepare(
         'DELETE FROM rtc_limits_v1 WHERE key IN (SELECT key FROM rtc_limits_v1 WHERE expires_at_ms <= ? LIMIT 100)'
       ).bind(Date.now()),
+      ctx.env.DB.prepare(
+        'DELETE FROM rtc_join_limits_v1 WHERE room_id IN (SELECT room_id FROM rtc_join_limits_v1 WHERE expires_at_ms <= ? LIMIT 100)'
+      ).bind(Date.now()),
     ]);
   }
   static async create(ctx: Ctx) {
@@ -185,18 +188,29 @@ export default class RtcService {
     return ctx.json({ result: true, data: { expiresAt: room.expires_at_ms } });
   }
   static async join(ctx: Ctx) {
-    await this.limit(ctx, 'join', 20);
+    await this.limit(ctx, 'join', 5);
     const body = await boundedJson(ctx);
     const id = field(body, 'roomId');
     const tokenHash = field(body, 'tokenHash');
-    if (typeof body.proof !== 'string' || !/^[\w-]{43}$/.test(body.proof))
-      return fail(404, '配对码无效或已过期');
     const now = Date.now();
+    const activeRoom = await ctx.env.DB.prepare(
+      "SELECT id FROM rtc_rooms_v1 WHERE id=? AND expires_at_ms>? AND status!='closed'"
+    )
+      .bind(id, now)
+      .first<{ id: string }>();
+    if (!activeRoom) return fail(404, '配对码无效或已过期');
+    const roomAttempts = await ctx.env.DB.prepare(
+      `INSERT INTO rtc_join_limits_v1 (room_id,count,expires_at_ms) VALUES (?,1,?) ON CONFLICT(room_id) DO UPDATE SET count=CASE WHEN expires_at_ms<=? THEN 1 ELSE count+1 END, expires_at_ms=CASE WHEN expires_at_ms<=? THEN ? ELSE expires_at_ms END RETURNING count`
+    )
+      .bind(id, now + 60000, now, now, now + 60000)
+      .first<{ count: number }>();
+    if (!roomAttempts || roomAttempts.count > 10)
+      return fail(429, '此配对码尝试次数过多，请发送方重新生成配对码');
     const row = await ctx.env.DB.prepare(
       `UPDATE rtc_rooms_v1 SET receiver_token_hash=?, status='paired', expires_at_ms=MIN(max_expires_at_ms,?)
-      WHERE id=? AND receiver_verifier=? AND expires_at_ms>? AND status!='closed' AND (receiver_token_hash IS NULL OR receiver_token_hash=?) RETURNING expires_at_ms`
+      WHERE id=? AND expires_at_ms>? AND status!='closed' AND (receiver_token_hash IS NULL OR receiver_token_hash=?) RETURNING expires_at_ms`
     )
-      .bind(tokenHash, now + 600000, id, await hash(body.proof), now, tokenHash)
+      .bind(tokenHash, now + 600000, id, now, tokenHash)
       .first<{ expires_at_ms: number }>();
     if (!row) return fail(404, '配对码无效、已被领取或已过期');
     return ctx.json({ result: true, data: { expiresAt: row.expires_at_ms } });
@@ -231,15 +245,21 @@ export default class RtcService {
         .all();
       return ctx.json({ result: true, data: { events: rows.results } });
     }
-    await this.limit(ctx, 'publish', 60);
+    await this.limit(ctx, 'publish', 180);
     const body = await boundedJson(ctx);
     const signal = body.signal as Body | undefined;
+    const candidate =
+      signal?.candidate && typeof signal.candidate === 'object'
+        ? (signal.candidate as Body)
+        : undefined;
     if (
       !signal ||
-      signal.version !== 1 ||
+      signal.version !== 2 ||
       signal.roomId !== room.id ||
       signal.role !== role ||
-      signal.type !== (role === 'sender' ? 'offer' : 'answer') ||
+      (signal.type === 'offer' && role !== 'sender') ||
+      (signal.type === 'answer' && role !== 'receiver') ||
+      !['offer', 'answer', 'candidate'].includes(String(signal.type)) ||
       typeof signal.generation !== 'number' ||
       !Number.isSafeInteger(signal.generation) ||
       signal.generation < 1 ||
@@ -248,12 +268,22 @@ export default class RtcService {
       !/^[a-f0-9-]{36}$/.test(signal.nonce) ||
       typeof signal.sdp !== 'string' ||
       signal.sdp.length > 48000 ||
-      typeof signal.mac !== 'string' ||
-      !/^[\w-]{43}$/.test(signal.mac)
+      (signal.type === 'candidate' &&
+        (!candidate ||
+          typeof candidate.candidate !== 'string' ||
+          candidate.candidate.length > 4096 ||
+          (candidate.sdpMid != null &&
+            (typeof candidate.sdpMid !== 'string' ||
+              candidate.sdpMid.length > 256)) ||
+          (candidate.sdpMLineIndex != null &&
+            (!Number.isSafeInteger(candidate.sdpMLineIndex) ||
+              Number(candidate.sdpMLineIndex) < 0)))) ||
+      (signal.type === 'candidate' && signal.sdp !== '') ||
+      (signal.type !== 'candidate' && !signal.sdp)
     )
       fail(400, '信令事件无效');
     const payload = JSON.stringify(signal);
-    const eventId = String(signal.generation);
+    const eventId = `${signal.generation}:${signal.nonce}`;
     await ctx.env.DB.prepare(
       `INSERT INTO rtc_signals_v1 (room_id,event_id,role,payload) SELECT ?,?,?,?
       WHERE EXISTS (SELECT 1 FROM rtc_rooms_v1 WHERE id=? AND expires_at_ms>? AND status!='closed')

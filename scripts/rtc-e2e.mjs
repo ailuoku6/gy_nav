@@ -22,6 +22,9 @@ const browser = await chromium.launch({
 });
 const hash = (data) => createHash('sha256').update(data).digest('hex');
 const errors = [];
+const testFile = process.env.RTC_E2E_FILE
+  ? await readFile(process.env.RTC_E2E_FILE)
+  : undefined;
 
 async function pages({
   disconnect = false,
@@ -110,38 +113,47 @@ async function pages({
   };
 }
 async function connect(pair, bytes) {
-  await pair.sender.locator('input[type=file]').setInputFiles({
-    name: 'rtc-test.bin',
-    mimeType: 'application/octet-stream',
-    buffer: bytes,
-  });
+  await pair.sender.locator('input[type=file]').setInputFiles(
+    testFile && bytes === testFile ? process.env.RTC_E2E_FILE : {
+      name: 'rtc-test.bin',
+      mimeType: 'application/octet-stream',
+      buffer: bytes,
+    });
   await pair.sender.getByRole('button', { name: '生成配对码并发送' }).click();
   const code = pair.sender.getByTestId('pairing-code');
   await code.waitFor({ timeout: 30000 });
-  await pair.receiver.getByLabel('配对码').fill(await code.textContent());
+  const codeValue = await code.textContent();
+  assert.match(codeValue, /^[0-9A-Z]{6}$/);
+  await pair.receiver.getByLabel('配对码').fill(codeValue);
   await pair.receiver
     .getByRole('button', { name: '加入会话', exact: true })
     .click();
 }
 
 try {
-  for (const size of process.env.RTC_E2E_SIZE
-    ? [Number(process.env.RTC_E2E_SIZE)]
-    : [0, 1024, 1024 * 1024, 1024 * 1024 + 1, 4 * 1024 * 1024 + 1]) {
-    const disconnect = size > 2 * 1024 * 1024;
+  for (const size of testFile
+    ? [testFile.length]
+    : process.env.RTC_E2E_SIZE
+      ? [Number(process.env.RTC_E2E_SIZE)]
+      : process.env.RTC_E2E_SKIP_SIZES === '1'
+        ? []
+        : [0, 1024, 1024 * 1024, 1024 * 1024 + 1, 4 * 1024 * 1024 + 1]) {
+    const disconnect = !testFile && size > 2 * 1024 * 1024;
     const pair = await pages({ disconnect });
     try {
-      const bytes = Buffer.alloc(size);
-      for (let i = 0; i < size; i++) bytes[i] = i % 251;
+      const bytes = testFile || Buffer.alloc(size);
+      if (!testFile) for (let i = 0; i < size; i++) bytes[i] = i % 251;
+      const started = Date.now();
       await connect(pair, bytes);
       await pair.receiver
-        .getByRole('button', { name: '确认接收文件' })
-        .click({ timeout: 150000 });
+        .getByText(/正在接收：|接收完成/)
+        .waitFor({ timeout: 90000 });
+      console.log(`Pair + automatic receive: ${Date.now() - started} ms`);
       await pair.receiver
-        .getByRole('link', { name: '下载文件' })
+        .getByRole('button', { name: '下载文件' })
         .waitFor({ timeout: 90000 });
       const downloadPromise = pair.receiver.waitForEvent('download');
-      await pair.receiver.getByRole('link', { name: '下载文件' }).click();
+      await pair.receiver.getByRole('button', { name: '下载文件' }).click();
       const download = await downloadPromise;
       const received = await readFile(await download.path());
       assert.equal(received.length, bytes.length);
@@ -183,75 +195,97 @@ try {
       await pair.close();
     }
   }
-  const finalPair = await pages({ lostSaved: true });
-  try {
-    await connect(finalPair, Buffer.from('lost final save confirmation'));
-    await finalPair.receiver
-      .getByRole('button', { name: '确认接收文件' })
-      .click({ timeout: 150000 });
-    await finalPair.sender
-      .getByText('发送完成，接收方已确认接收全部数据', { exact: true })
-      .waitFor({ timeout: 150000 });
-    assert.ok(
-      await finalPair.sender.evaluate(() => window.__rtcPeers.length >= 2)
-    );
-    console.log('PASS reconnect after lost save confirmation');
-  } finally {
-    await finalPair.close();
-  }
-  const tamperPair = await pages({ tamper: true });
-  try {
-    await connect(tamperPair, Buffer.from('authenticated ciphertext'));
-    await tamperPair.receiver
-      .getByRole('button', { name: '确认接收文件' })
-      .click({ timeout: 150000 });
-    await tamperPair.receiver
-      .getByText('文件加密校验失败，已停止传输', { exact: true })
-      .waitFor();
-    assert.equal(
-      await tamperPair.receiver.getByRole('link', { name: '下载文件' }).count(),
-      0
-    );
-    await tamperPair.sender
-      .getByText('接收方已取消或拒绝传输', { exact: true })
-      .waitFor();
-    console.log('PASS ciphertext tamper rejection');
-  } finally {
-    await tamperPair.close();
-  }
-  const pickerPair = await pages({ pickerCancel: true });
-  try {
-    await connect(pickerPair, Buffer.from('picker cancellation'));
-    await pickerPair.receiver
-      .getByRole('button', { name: '选择保存位置并接收' })
-      .click({ timeout: 150000 });
-    await pickerPair.receiver
-      .getByText('已取消选择保存位置，可再次点击接收', { exact: true })
-      .waitFor();
-    assert.equal(
-      await pickerPair.receiver.getByRole('link', { name: '下载文件' }).count(),
-      0
-    );
-    await pickerPair.receiver.getByRole('button', { name: '取消传输' }).click();
-    await pickerPair.sender
-      .getByText('接收方已取消或拒绝传输', { exact: true })
-      .waitFor({ timeout: 15000 });
-    console.log('PASS picker cancellation and peer cancellation');
-  } finally {
-    await pickerPair.close();
-  }
-  const badPair = await pages();
-  try {
-    await badPair.receiver.getByLabel('配对码').fill('0'.repeat(26));
-    await badPair.receiver
-      .getByRole('button', { name: '加入会话', exact: true })
-      .click();
-    await badPair.receiver
-      .getByText('配对码无效、已被领取或已过期', { exact: true })
-      .waitFor();
-    console.log('PASS invalid pairing code');
-  } finally {
-    await badPair.close();
+  if (process.env.RTC_E2E_SINGLE !== '1') {
+    const finalPair = await pages({ lostSaved: true });
+    finalPair.sender.on('console', (message) => {
+      if (message.type() === 'error')
+        console.log('sender console', message.text());
+    });
+    try {
+      await connect(finalPair, Buffer.from('lost final save confirmation'));
+      await finalPair.sender
+        .getByText('发送完成，接收方已确认接收全部数据', { exact: true })
+        .waitFor({ timeout: 30000 });
+      assert.ok(
+        await finalPair.sender.evaluate(() => window.__rtcPeers.length >= 2)
+      );
+      console.log('PASS reconnect after lost save confirmation');
+    } catch (error) {
+      console.error(
+        'Final sender',
+        await finalPair.sender.locator('[role=alert]').allTextContents()
+      );
+      console.error(
+        'Final receiver',
+        await finalPair.receiver.locator('[role=alert]').allTextContents()
+      );
+      console.error(
+        'Final phases',
+        await finalPair.sender
+          .locator('.MuiTypography-caption')
+          .allTextContents(),
+        await finalPair.receiver
+          .locator('.MuiTypography-caption')
+          .allTextContents()
+      );
+      throw error;
+    } finally {
+      await finalPair.close();
+    }
+    const tamperPair = await pages({ tamper: true });
+    try {
+      await connect(tamperPair, Buffer.from('authenticated ciphertext'));
+      await tamperPair.receiver
+        .getByText('文件加密校验失败，已停止传输', { exact: true })
+        .waitFor();
+      assert.equal(
+        await tamperPair.receiver
+          .getByRole('button', { name: '下载文件' })
+          .count(),
+        0
+      );
+      await tamperPair.sender
+        .getByText('接收方已取消或拒绝传输', { exact: true })
+        .waitFor();
+      console.log('PASS ciphertext tamper rejection');
+    } finally {
+      await tamperPair.close();
+    }
+    const pickerPair = await pages({ pickerCancel: true });
+    try {
+      await connect(pickerPair, Buffer.from('picker cancellation'));
+      await pickerPair.receiver
+        .getByRole('button', { name: '选择保存位置' })
+        .click({ timeout: 150000 });
+      await pickerPair.receiver
+        .getByText('已取消选择保存位置', { exact: true })
+        .waitFor();
+      assert.equal(
+        await pickerPair.receiver
+          .getByRole('button', { name: '下载文件' })
+          .count(),
+        0
+      );
+      await pickerPair.sender
+        .getByText('发送完成，接收方已确认接收全部数据', { exact: true })
+        .waitFor({ timeout: 15000 });
+      console.log('PASS save picker cancellation after automatic receipt');
+    } finally {
+      await pickerPair.close();
+    }
+    const badPair = await pages();
+    try {
+      await badPair.receiver.getByLabel('配对码').fill('0'.repeat(6));
+      await badPair.receiver
+        .getByRole('button', { name: '加入会话', exact: true })
+        .click();
+      await badPair.receiver
+        .getByText('配对码无效或已过期', { exact: true })
+        .waitFor();
+      console.log('PASS invalid pairing code');
+    } finally {
+      await badPair.close();
+    }
   }
   assert.deepEqual(errors, [], 'Unexpected browser errors');
 } finally {

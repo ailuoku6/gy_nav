@@ -39,3 +39,11 @@
 - 最终验证：`npm run build`、`npm test -- --run`（6 文件/43 测试）、新增文件 eslint、后端 tsc、`git diff --check` 通过。
 - 本地 D1 执行 rtc.sql 成功；真实 Chrome DataChannel/Worker/D1 E2E 9 场景通过：0 B、1 KiB、1 MiB、1 MiB+1 B、4 MiB+1 B 内容 SHA-256；块 ACK 丢失续传；最终 saved 丢失恢复；密文篡改拒绝；picker 取消和对端取消；错误配对码。主矩阵 ICE 配置仅本机候选，不视为跨网络测试；另已通过默认 STUN 配置的空文件传输，公网 STUN 不可达时 gathering 延迟接近一分钟。
 - 云端只读访问检查：`wrangler whoami` 返回 Not logged in。未执行远程 D1 schema/部署/创建 TURN key；需要用户登录后继续 preview 部署和真机跨网络验收。
+
+## 2026-10-03：短码与接收体验改造
+
+- Changed: 配对码改为无偏 36 进制 6 位；移除短码直接派生文件/信令 MAC，改用 CPace draft-20 + PBKDF2 PRS + 双向 HMAC key confirmation。
+- Changed: 信令版本 2 支持 trickle ICE candidate；接收配对后立即创建 OPFS/内存 sink，传输完成后再调用保存选择器。
+- Changed: 房间 join 增加每 IP 和每房间限流；首页传输入口改为 48px MUI SwapHorizIcon。
+- Verification: `pnpm build` 通过；`pnpm test` 通过（6 文件、45 测试）；真实双 Chrome 本地 E2E 通过 0B、1KiB、1MiB、1MiB+1B、4MiB+1B、重连、最终确认丢失、密文篡改、保存取消、错误码；指定 PDF 55,259,905B 默认 STUN 传输通过且 SHA-256 一致，自动接收约 981ms。
+- Known issues: 8790 本地 E2E 仅同机网络，不能证明跨运营商连通；线上仍是旧部署，未执行远程 D1/deploy；全仓 eslint 仍有既有 88 项问题，改动相关文件无新增阻塞。

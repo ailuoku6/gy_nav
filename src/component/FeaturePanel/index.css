@@ -82,6 +82,9 @@
   height: 60px;
   width: 60px;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .panel-item-icon img {

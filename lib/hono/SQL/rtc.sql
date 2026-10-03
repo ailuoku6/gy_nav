@@ -20,3 +20,6 @@ CREATE TABLE IF NOT EXISTS rtc_signals_v1 (
 CREATE INDEX IF NOT EXISTS idx_rtc_signals_room ON rtc_signals_v1(room_id, seq);
 CREATE INDEX IF NOT EXISTS idx_rtc_expiry ON rtc_rooms_v1(expires_at_ms);
 CREATE TABLE IF NOT EXISTS rtc_limits_v1 (key TEXT PRIMARY KEY, count INTEGER NOT NULL, expires_at_ms INTEGER NOT NULL);
+
+CREATE TABLE IF NOT EXISTS rtc_join_limits_v1 (room_id TEXT PRIMARY KEY, count INTEGER NOT NULL, expires_at_ms INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS idx_rtc_join_expiry ON rtc_join_limits_v1(expires_at_ms);

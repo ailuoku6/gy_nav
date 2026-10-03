@@ -2,7 +2,9 @@ export const CHUNK_SIZE = 1024 * 1024;
 export const FRAME_SIZE = 16 * 1024;
 export const MAX_FILE_SIZE = 1024 * 1024 * 1024;
 const encoder = new TextEncoder();
-const alphabet = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+export const PAIRING_CODE_LENGTH = 6;
+// 36 进制短码用于用户输入；真正的文件密钥仍由每个文件随机生成。
+const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 const toHex = (value: ArrayBuffer) =>
   Array.from(new Uint8Array(value), (b) =>
@@ -11,17 +13,23 @@ const toHex = (value: ArrayBuffer) =>
 
 export const normalizeCode = (value: string) => {
   const code = value.toUpperCase().replace(/[\s-]/g, '');
-  if (!/^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$/.test(code))
-    throw new Error('请输入完整的 26 位配对码');
+  if (!/^[0-9A-Z]{6}$/.test(code)) throw new Error('请输入完整的 6 位配对码');
   return code;
 };
-export const generatePairingCode = () =>
-  Array.from(
-    crypto.getRandomValues(new Uint8Array(26)),
-    (byte) => alphabet[byte & 31]
-  ).join('');
-export const displayPairingCode = (value: string) =>
-  value.match(/.{1,5}/g)?.join('-') || value;
+export const generatePairingCode = () => {
+  const result: string[] = [];
+  const random = new Uint8Array(32);
+  while (result.length < PAIRING_CODE_LENGTH) {
+    crypto.getRandomValues(random);
+    for (const byte of random) {
+      if (byte >= 252) continue; // 7 * 36; avoids modulo bias.
+      result.push(alphabet[byte % 36]);
+      if (result.length === PAIRING_CODE_LENGTH) break;
+    }
+  }
+  return result.join('');
+};
+export const displayPairingCode = (value: string) => normalizeCode(value);
 export const roomIdForCode = async (value: string) =>
   toHex(
     await crypto.subtle.digest(
@@ -69,120 +77,38 @@ export const unbase64 = (value: string, length?: number) => {
   return bytes;
 };
 
-async function hkdf(
-  code: string,
-  salt: Uint8Array,
-  info: string,
-  usage: KeyUsage[],
-  algorithm: 'AES-GCM' | 'HMAC'
-) {
-  const base = await crypto.subtle.importKey(
-    'raw',
-    encoder.encode(normalizeCode(code)),
-    'HKDF',
-    false,
-    ['deriveKey']
-  );
-  return crypto.subtle.deriveKey(
-    {
-      name: 'HKDF',
-      hash: 'SHA-256',
-      salt,
-      info: encoder.encode(`gy-rtc/v1/${info}`),
-    },
-    base,
-    algorithm === 'HMAC'
-      ? { name: algorithm, hash: 'SHA-256', length: 256 }
-      : { name: algorithm, length: 256 },
-    false,
-    usage
-  );
-}
-
-export const receiverProof = async (code: string) => {
-  const key = await hkdf(
-    code,
-    new Uint8Array(32),
-    'receiver-proof',
-    ['sign'],
-    'HMAC'
-  );
-  return base64(await crypto.subtle.sign('HMAC', key, encoder.encode('join')));
-};
-
 export type Signal = {
-  version: 1;
+  version: 2;
   roomId: string;
   generation: number;
   nonce: string;
   role: 'sender' | 'receiver';
-  type: 'offer' | 'answer';
+  type: 'offer' | 'answer' | 'candidate';
   sdp: string;
-  mac: string;
+  candidate?: RTCIceCandidateInit;
 };
-const signalBytes = (signal: Omit<Signal, 'mac'>) =>
-  encoder.encode(
-    JSON.stringify([
-      signal.version,
-      signal.roomId,
-      signal.generation,
-      signal.nonce,
-      signal.role,
-      signal.type,
-      signal.sdp,
-    ])
-  );
-export async function signSignal(
-  code: string,
-  signal: Omit<Signal, 'mac'>
-): Promise<Signal> {
-  const key = await hkdf(
-    code,
-    new Uint8Array(32),
-    `signal/${signal.roomId}`,
-    ['sign'],
-    'HMAC'
-  );
-  return {
-    ...signal,
-    mac: base64(await crypto.subtle.sign('HMAC', key, signalBytes(signal))),
-  };
-}
-export async function verifySignal(
-  code: string,
-  signal: Signal,
-  roomId: string
-) {
+export function validateSignal(signal: Signal, roomId: string) {
   if (
-    signal.version !== 1 ||
+    signal.version !== 2 ||
     signal.roomId !== roomId ||
     !Number.isSafeInteger(signal.generation) ||
     signal.generation < 1 ||
     signal.generation > 8 ||
     !['sender', 'receiver'].includes(signal.role) ||
-    signal.type !== (signal.role === 'sender' ? 'offer' : 'answer') ||
+    !['offer', 'answer', 'candidate'].includes(signal.type) ||
+    (signal.type === 'offer' && signal.role !== 'sender') ||
+    (signal.type === 'answer' && signal.role !== 'receiver') ||
     typeof signal.sdp !== 'string' ||
     signal.sdp.length > 48000 ||
-    typeof signal.nonce !== 'string' ||
-    !/^[a-f0-9-]{36}$/.test(signal.nonce)
+    !/^[a-f0-9-]{36}$/.test(signal.nonce) ||
+    (signal.type === 'candidate' &&
+      (!signal.candidate ||
+        typeof signal.candidate.candidate !== 'string' ||
+        signal.candidate.candidate.length > 4096 ||
+        signal.sdp !== '')) ||
+    (signal.type !== 'candidate' && !signal.sdp)
   )
     throw new Error('信令数据无效');
-  const key = await hkdf(
-    code,
-    new Uint8Array(32),
-    `signal/${roomId}`,
-    ['verify'],
-    'HMAC'
-  );
-  if (
-    !(await crypto.subtle.verify(
-      'HMAC',
-      key,
-      unbase64(signal.mac, 32),
-      signalBytes(signal)
-    ))
-  )
-    throw new Error('配对认证失败');
 }
 
 export interface Manifest {
@@ -196,16 +122,14 @@ export interface Manifest {
   noncePrefix: string;
 }
 export interface Envelope {
-  version: 1;
+  version: 2;
   transferId: string;
-  salt: string;
-  wrapIv: string;
-  wrappedKey: string;
-  metaIv: string;
-  metadata: string;
+  iv: string;
+  ciphertext: string;
 }
 export interface FileContext {
   key: CryptoKey;
+  keyFingerprint: string;
   manifest: Manifest;
   envelope: Envelope;
 }
@@ -231,13 +155,11 @@ function validateManifest(manifest: Manifest) {
 }
 
 export async function createFileContext(
-  code: string,
   file: Pick<File, 'name' | 'size' | 'type'>
 ): Promise<FileContext> {
   const transferId = crypto.randomUUID();
   const rawKey = crypto.getRandomValues(new Uint8Array(32));
-  const salt = crypto.getRandomValues(new Uint8Array(16));
-  const key = await crypto.subtle.importKey('raw', rawKey, 'AES-GCM', false, [
+  const key = await crypto.subtle.importKey('raw', rawKey, 'AES-GCM', true, [
     'encrypt',
     'decrypt',
   ]);
@@ -252,91 +174,97 @@ export async function createFileContext(
     noncePrefix: base64(crypto.getRandomValues(new Uint8Array(8))),
   };
   validateManifest(manifest);
-  const wrappingKey = await hkdf(
-    code,
-    salt,
-    `wrap/${transferId}`,
-    ['encrypt'],
-    'AES-GCM'
-  );
-  const wrapIv = crypto.getRandomValues(new Uint8Array(12));
-  const metaIv = crypto.getRandomValues(new Uint8Array(12));
-  const wrappedKey = await crypto.subtle.encrypt(
-    {
-      name: 'AES-GCM',
-      iv: wrapIv,
-      additionalData: encoder.encode(`wrap/${transferId}`),
-    },
-    wrappingKey,
-    rawKey
-  );
-  const metadata = await crypto.subtle.encrypt(
-    {
-      name: 'AES-GCM',
-      iv: metaIv,
-      additionalData: encoder.encode(`meta/${transferId}`),
-    },
-    key,
-    encoder.encode(JSON.stringify(manifest))
-  );
+  const keyFingerprint = toHex(await crypto.subtle.digest('SHA-256', rawKey));
   rawKey.fill(0);
-  return {
+  const context: FileContext = {
     key,
+    keyFingerprint,
     manifest,
-    envelope: {
-      version: 1,
-      transferId,
-      salt: base64(salt),
-      wrapIv: base64(wrapIv),
-      wrappedKey: base64(wrappedKey),
-      metaIv: base64(metaIv),
-      metadata: base64(metadata),
-    },
+    envelope: { version: 2, transferId, iv: '', ciphertext: '' },
   };
+  return context;
 }
 
+async function envelopeKey(isk: Uint8Array) {
+  const material = await crypto.subtle.importKey('raw', isk, 'HKDF', false, [
+    'deriveKey',
+  ]);
+  return crypto.subtle.deriveKey(
+    {
+      name: 'HKDF',
+      hash: 'SHA-256',
+      salt: new Uint8Array(32),
+      info: encoder.encode('gy-nav/webrtc/v2/file-envelope'),
+    },
+    material,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt']
+  );
+}
+export async function sealFileEnvelope(context: FileContext, isk: Uint8Array) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const aad = encoder.encode(
+    `gy-nav/webrtc/v2/envelope/${context.manifest.transferId}`
+  );
+  const key = await envelopeKey(isk);
+  const rawFileKey = new Uint8Array(
+    await crypto.subtle.exportKey('raw', context.key)
+  );
+  const payload = encoder.encode(
+    JSON.stringify({ manifest: context.manifest, fileKey: base64(rawFileKey) })
+  );
+  rawFileKey.fill(0);
+  const ciphertext = await crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv, additionalData: aad },
+    key,
+    payload
+  );
+  return {
+    version: 2 as const,
+    transferId: context.manifest.transferId,
+    iv: base64(iv),
+    ciphertext: base64(ciphertext),
+  };
+}
 export async function openFileContext(
-  code: string,
+  isk: Uint8Array,
   envelope: Envelope
 ): Promise<FileContext> {
-  if (envelope.version !== 1 || !/^[a-f0-9-]{36}$/.test(envelope.transferId))
+  if (envelope.version !== 2 || !/^[a-f0-9-]{36}$/.test(envelope.transferId))
     throw new Error('文件协议无效');
-  const salt = unbase64(envelope.salt, 16);
-  const wrappingKey = await hkdf(
-    code,
-    salt,
-    `wrap/${envelope.transferId}`,
-    ['decrypt'],
-    'AES-GCM'
-  );
-  const rawKey = await crypto.subtle.decrypt(
+  const key = await envelopeKey(isk);
+  const plaintext = await crypto.subtle.decrypt(
     {
       name: 'AES-GCM',
-      iv: unbase64(envelope.wrapIv, 12),
-      additionalData: encoder.encode(`wrap/${envelope.transferId}`),
-    },
-    wrappingKey,
-    unbase64(envelope.wrappedKey, 48)
-  );
-  const key = await crypto.subtle.importKey('raw', rawKey, 'AES-GCM', false, [
-    'encrypt',
-    'decrypt',
-  ]);
-  const metadata = await crypto.subtle.decrypt(
-    {
-      name: 'AES-GCM',
-      iv: unbase64(envelope.metaIv, 12),
-      additionalData: encoder.encode(`meta/${envelope.transferId}`),
+      iv: unbase64(envelope.iv, 12),
+      additionalData: encoder.encode(
+        `gy-nav/webrtc/v2/envelope/${envelope.transferId}`
+      ),
     },
     key,
-    unbase64(envelope.metadata)
+    unbase64(envelope.ciphertext)
   );
-  const manifest = JSON.parse(new TextDecoder().decode(metadata)) as Manifest;
-  validateManifest(manifest);
-  if (manifest.transferId !== envelope.transferId)
+  const payload = JSON.parse(new TextDecoder().decode(plaintext)) as {
+    manifest: Manifest;
+    fileKey: string;
+  };
+  validateManifest(payload.manifest);
+  if (payload.manifest.transferId !== envelope.transferId)
     throw new Error('文件会话不匹配');
-  new Uint8Array(rawKey).fill(0);
-  return { key, manifest, envelope };
+  const rawFileKey = unbase64(payload.fileKey, 32);
+  const fileKey = await crypto.subtle.importKey(
+    'raw',
+    rawFileKey,
+    'AES-GCM',
+    false,
+    ['encrypt', 'decrypt']
+  );
+  const keyFingerprint = toHex(
+    await crypto.subtle.digest('SHA-256', rawFileKey)
+  );
+  rawFileKey.fill(0);
+  return { key: fileKey, keyFingerprint, manifest: payload.manifest, envelope };
 }
 
 export const chunkLength = (manifest: Manifest, index: number) => {

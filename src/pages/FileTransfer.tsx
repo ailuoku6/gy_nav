@@ -12,7 +12,14 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { Manifest, MAX_FILE_SIZE } from '../utils/rtcCrypto';
-import { blobLimit, canStreamSave, SaveResult } from '../utils/rtcSave';
+import {
+  blobLimit,
+  canChooseSaveLocation,
+  disposeSaveResult,
+  saveResultToPicker,
+  SaveResult,
+  supportsOpfs,
+} from '../utils/rtcSave';
 import { RtcTransfer, TransferCallbacks } from '../utils/rtcTransfer';
 
 const fileSize = (size: number) =>
@@ -26,15 +33,14 @@ function TransferPane({ sending }: { sending: boolean }) {
   const session = useRef<RtcTransfer>();
   const fileInput = useRef<HTMLInputElement>(null);
   const alive = useRef(true);
-  const downloadUrl = useRef<string>();
+  const resultRef = useRef<SaveResult>();
   const [code, setCode] = useState('');
   const [status, setStatus] = useState('');
+  const [phase, setPhase] = useState('');
   const [error, setError] = useState(false);
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState(0);
   const [manifest, setManifest] = useState<Manifest>();
-  const [accepting, setAccepting] = useState(false);
-  const [accepted, setAccepted] = useState(false);
   const [result, setResult] = useState<SaveResult>();
 
   useEffect(() => {
@@ -45,7 +51,7 @@ function TransferPane({ sending }: { sending: boolean }) {
       alive.current = false;
       window.removeEventListener('pagehide', unload);
       session.current?.cancel();
-      if (downloadUrl.current) URL.revokeObjectURL(downloadUrl.current);
+      if (resultRef.current) void disposeSaveResult(resultRef.current);
     };
   }, []);
 
@@ -57,19 +63,22 @@ function TransferPane({ sending }: { sending: boolean }) {
       return;
     }
     session.current?.cancel();
-    if (downloadUrl.current) URL.revokeObjectURL(downloadUrl.current);
-    downloadUrl.current = undefined;
+    if (resultRef.current) void disposeSaveResult(resultRef.current);
+    resultRef.current = undefined;
     setBusy(true);
     setError(false);
     setProgress(0);
+    setPhase('');
     setManifest(undefined);
     setResult(undefined);
-    setAccepted(false);
     setStatus(sending ? '正在创建安全会话…' : '正在加入安全会话…');
     const active = () => alive.current && session.current === transfer;
     const callbacks: TransferCallbacks = {
       status: (value) => {
         if (active()) setStatus(value);
+      },
+      phase: (value) => {
+        if (active()) setPhase(value);
       },
       progress: (value) => {
         if (active()) setProgress(value);
@@ -82,7 +91,7 @@ function TransferPane({ sending }: { sending: boolean }) {
       },
       complete: (value) => {
         if (!active()) {
-          if (value?.url) URL.revokeObjectURL(value.url);
+          if (value) void disposeSaveResult(value);
           return;
         }
         setBusy(false);
@@ -92,11 +101,11 @@ function TransferPane({ sending }: { sending: boolean }) {
           sending
             ? '发送完成，接收方已确认接收全部数据'
             : value?.streamed
-              ? '接收完成，文件已保存'
+              ? '接收完成，请选择保存位置'
               : '接收完成，请下载文件'
         );
         setResult(value);
-        downloadUrl.current = value?.url;
+        resultRef.current = value;
       },
       error: (value) => {
         if (active()) {
@@ -119,17 +128,30 @@ function TransferPane({ sending }: { sending: boolean }) {
     session.current?.cancel();
     setBusy(false);
     setManifest(undefined);
-    setAccepted(false);
     setStatus('已取消传输');
     setError(false);
   }
-  async function accept() {
-    const transfer = session.current;
-    setAccepting(true);
-    const received = await transfer?.accept();
-    if (alive.current && session.current === transfer) {
-      setAccepting(false);
-      setAccepted(!!received);
+  async function saveAfterTransfer() {
+    const value = result;
+    if (!value) return;
+    try {
+      if (canChooseSaveLocation()) {
+        await saveResultToPicker(value);
+        setStatus('文件已保存到所选位置');
+      } else {
+        const link = document.createElement('a');
+        link.href = value.url;
+        link.download = value.name;
+        link.click();
+        setStatus('下载已开始');
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError')
+        setStatus('已取消选择保存位置');
+      else {
+        setError(true);
+        setStatus(error instanceof Error ? error.message : '保存失败');
+      }
     }
   }
 
@@ -203,25 +225,13 @@ function TransferPane({ sending }: { sending: boolean }) {
           </Button>
         </Box>
       )}
-      {manifest && !accepted && (
-        <Box sx={{ mt: 2 }}>
-          <Typography sx={{ overflowWrap: 'anywhere' }}>
-            文件：{manifest.name}（{fileSize(manifest.size)}）
-          </Typography>
-          {!canStreamSave() && (
-            <Typography variant="body2" color="text.secondary">
-              当前浏览器接收上限为 {fileSize(blobLimit())}，接收完成后点击下载。
-            </Typography>
-          )}
-          <Button
-            variant="contained"
-            disabled={accepting}
-            onClick={() => void accept()}
-            sx={{ mt: 1 }}
-          >
-            {canStreamSave() ? '选择保存位置并接收' : '确认接收文件'}
-          </Button>
-        </Box>
+      {manifest && !sending && (
+        <Typography sx={{ mt: 2, overflowWrap: 'anywhere' }}>
+          文件：{manifest.name}（{fileSize(manifest.size)}）
+          {supportsOpfs()
+            ? ' · 将自动接收，完成后再选择保存位置'
+            : ` · 自动接收上限 ${fileSize(blobLimit())}`}
+        </Typography>
       )}
       {(busy || progress > 0) && (
         <Box sx={{ mt: 2 }}>
@@ -231,16 +241,23 @@ function TransferPane({ sending }: { sending: boolean }) {
           </Typography>
         </Box>
       )}
-      {result?.url && (
+      {result?.url && !sending && (
         <Button
-          component="a"
-          href={result.url}
-          download={result.name}
           variant="contained"
+          onClick={() => void saveAfterTransfer()}
           sx={{ mt: 2 }}
         >
-          下载文件
+          {canChooseSaveLocation() ? '选择保存位置' : '下载文件'}
         </Button>
+      )}
+      {phase && (
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ display: 'block', mt: 1 }}
+        >
+          {phase}
+        </Typography>
       )}
       {status && (
         <Alert sx={{ mt: 2 }} severity={error ? 'error' : 'info'}>

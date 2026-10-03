@@ -39,19 +39,42 @@ export class ChunkAssembler {
 }
 
 export interface ControlMessage {
-  type: 'hello' | 'ready' | 'ack' | 'complete' | 'saved' | 'cancel' | 'error';
+  type:
+    | 'hello'
+    | 'ready'
+    | 'ack'
+    | 'complete'
+    | 'saved'
+    | 'cancel'
+    | 'error'
+    | 'pake-init'
+    | 'pake-share'
+    | 'pake-confirm';
   envelope?: FileContext['envelope'];
   nextChunk?: number;
   index?: number;
+  sid?: string;
+  share?: string;
+  role?: 'sender' | 'receiver';
+  confirmation?: string;
 }
 export function parseControl(data: string): ControlMessage {
   if (data.length > 32768) throw new Error('控制消息过大');
   const value = JSON.parse(data) as ControlMessage;
   if (
     !value ||
-    !['hello', 'ready', 'ack', 'complete', 'saved', 'cancel', 'error'].includes(
-      value.type
-    )
+    ![
+      'hello',
+      'ready',
+      'ack',
+      'complete',
+      'saved',
+      'cancel',
+      'error',
+      'pake-init',
+      'pake-share',
+      'pake-confirm',
+    ].includes(value.type)
   )
     throw new Error('控制消息无效');
   return value;

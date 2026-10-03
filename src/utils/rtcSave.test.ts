@@ -26,7 +26,7 @@ describe('file save lifecycle', () => {
     await sink.write(new Uint8Array([1, 2]));
     await expect(sink.finish()).rejects.toThrow('不完整');
     await sink.write(new Uint8Array([3]));
-    expect(await sink.finish()).toMatchObject({ streamed: true });
+    expect(await sink.finish()).toMatchObject({ streamed: false });
     await sink.abort();
     expect(writable.close).toHaveBeenCalledOnce();
     expect(writable.abort).not.toHaveBeenCalled();

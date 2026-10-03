@@ -9,10 +9,8 @@ import { Bindings } from '../types';
 import {
   generatePairingCode,
   randomToken,
-  receiverProof,
   roomIdForCode,
   sha256,
-  signSignal,
 } from '../../../src/utils/rtcCrypto';
 
 // Exercise actual SQLite statements and the Hono middleware/API contract.
@@ -54,9 +52,13 @@ let code: string;
 let roomId: string;
 let sender: string;
 let receiver: string;
-let proof: string;
 
-async function request(path: string, token: string, body?: unknown) {
+async function request(
+  path: string,
+  token: string,
+  body?: unknown,
+  ip = '127.0.0.1'
+) {
   const response = await app.request(
     `/api/rtc/${path}`,
     {
@@ -64,6 +66,7 @@ async function request(path: string, token: string, body?: unknown) {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
+        'CF-Connecting-IP': ip,
       },
       body: body === undefined ? undefined : JSON.stringify(body),
     },
@@ -76,14 +79,13 @@ async function create() {
   return request('rooms', jwt, {
     roomId,
     tokenHash: await sha256(sender),
-    verifier: await sha256(proof),
+    verifier: await sha256(receiver),
   });
 }
 async function join(token = receiver) {
   return request('rooms/join', token, {
     roomId,
     tokenHash: await sha256(token),
-    proof,
   });
 }
 
@@ -103,7 +105,6 @@ beforeEach(async () => {
   roomId = await roomIdForCode(code);
   sender = randomToken();
   receiver = randomToken();
-  proof = await receiverProof(code);
 });
 afterEach(() => db.sqlite.close());
 
@@ -122,33 +123,25 @@ describe('RTC signaling API', () => {
     const row = db.sqlite.prepare('SELECT * FROM rtc_rooms_v1').get()!;
     expect(row.sender_token_hash).toBe(await sha256(sender));
     expect(row.receiver_token_hash).toBe(await sha256(receiver));
-    expect(JSON.stringify(row)).not.toContain(proof);
+    expect(row.receiver_verifier).not.toBe(await sha256(code));
   });
-  it('rejects a wrong proof without occupying the receiver role', async () => {
+  it('allows only the paired receiver capability to claim a room', async () => {
     await create();
-    expect(
-      (
-        await request('rooms/join', receiver, {
-          roomId,
-          tokenHash: await sha256(receiver),
-          proof: 'a'.repeat(43),
-        })
-      ).status
-    ).toBe(404);
     expect((await join()).status).toBe(200);
+    expect((await join(randomToken())).status).toBe(404);
   });
   it('enforces room authentication and publishing roles', async () => {
     await create();
     await join();
-    const signal = await signSignal(code, {
-      version: 1,
+    const signal = {
+      version: 2,
       roomId,
       generation: 1,
       nonce: crypto.randomUUID(),
       role: 'sender',
       type: 'offer',
       sdp: 'sample-sdp',
-    });
+    };
     expect(
       (await request(`rooms/${roomId}/events`, receiver, { signal })).status
     ).toBe(400);
@@ -214,18 +207,40 @@ describe('RTC signaling API', () => {
       404
     );
   });
+  it('limits online pairing guesses for one active code across client IPs', async () => {
+    await create();
+    for (let index = 0; index < 10; index++) {
+      const token = randomToken();
+      const result = await request(
+        'rooms/join',
+        token,
+        {
+          roomId,
+          tokenHash: await sha256(token),
+        },
+        `192.0.2.${index}`
+      );
+      expect(result.status).toBe(index === 0 ? 200 : 404);
+    }
+    const token = randomToken();
+    const denied = await request('rooms/join', token, {
+      roomId,
+      tokenHash: await sha256(token),
+    });
+    expect(denied.status).toBe(429);
+  });
   it('closes a room, removes signaling and rejects new access', async () => {
     await create();
     await join();
-    const signal = await signSignal(code, {
-      version: 1,
+    const signal = {
+      version: 2,
       roomId,
       generation: 1,
       nonce: crypto.randomUUID(),
       role: 'sender',
       type: 'offer',
       sdp: 'sample-sdp',
-    });
+    };
     await request(`rooms/${roomId}/events`, sender, { signal });
     expect((await request(`rooms/${roomId}/close`, receiver, {})).status).toBe(
       200

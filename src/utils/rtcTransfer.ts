@@ -11,12 +11,11 @@ import {
   openFileContext,
   randomToken,
   readApplicationToken,
-  receiverProof,
   roomIdForCode,
   sha256,
   Signal,
-  signSignal,
-  verifySignal,
+  validateSignal,
+  sealFileEnvelope,
 } from './rtcCrypto';
 import {
   ChunkAssembler,
@@ -34,6 +33,16 @@ import {
   SignalingError,
 } from './rtcSignalingApi';
 import { CryptoWorker } from './rtcWorker';
+import {
+  createPakeConfirmation,
+  createPakeEphemeral,
+  decodePakeBytes,
+  derivePakeSessionKey,
+  encodePakeBytes,
+  pakeSid,
+  verifyPakeConfirmation,
+} from './rtcPake';
+import { ControlInbox, sendControl } from './rtcControl';
 
 interface Room {
   roomId: string;
@@ -47,6 +56,7 @@ export interface TransferCallbacks {
   file?(value: Manifest): void;
   complete(result?: SaveResult): void;
   error(message: string): void;
+  phase?(message: string): void;
 }
 class ConnectionLost extends Error {}
 class ProtocolError extends Error {}
@@ -107,14 +117,6 @@ function watchPeer(pc: RTCPeerConnection, lifetime: AbortSignal) {
   if (lifetime.aborted) abort();
   return attempt;
 }
-async function gather(pc: RTCPeerConnection, signal: AbortSignal) {
-  await waitUntil(
-    () => pc.iceGatheringState === 'complete',
-    signal,
-    60000,
-    '网络候选收集超时'
-  );
-}
 
 /** Keeps all capabilities, file keys and resume state in this page's memory. */
 export class RtcTransfer {
@@ -128,12 +130,13 @@ export class RtcTransfer {
   private sink?: FileSink;
   private assembler?: ChunkAssembler;
   private receiveQueue: Promise<void> = Promise.resolve();
+  private pendingRemoteCandidates: RTCIceCandidateInit[] = [];
+  private pakeKey?: Uint8Array;
   private saved?: SaveResult;
-  private accepting = false;
-  private helloChannel?: RTCDataChannel;
   private completed = false;
   private generation = 0;
   private terminalTimer?: ReturnType<typeof setTimeout>;
+  private startedAt = performance.now();
 
   constructor(private callbacks: TransferCallbacks) {}
   get stopped() {
@@ -145,6 +148,40 @@ export class RtcTransfer {
   private notifyStatus(value: string) {
     if (!this.stopped) this.callbacks.status(value);
   }
+  private markPhase(value: string) {
+    if (!this.stopped)
+      this.callbacks.phase?.(
+        `${value} · ${((performance.now() - this.startedAt) / 1000).toFixed(1)} 秒`
+      );
+  }
+  private async reportSelectedCandidatePair(pc: RTCPeerConnection) {
+    try {
+      const stats = await pc.getStats();
+      const transport = [...stats.values()].find(
+        (item) => item.type === 'transport' && item.selectedCandidatePairId
+      );
+      const pairId = transport?.selectedCandidatePairId;
+      const pair = pairId
+        ? stats.get(pairId)
+        : [...stats.values()].find(
+            (item) =>
+              item.type === 'candidate-pair' &&
+              item.state === 'succeeded' &&
+              item.nominated
+          );
+      if (!pair) {
+        this.markPhase('ICE 已连接（未读取到候选对）');
+        return;
+      }
+      const local =
+        stats.get(pair.localCandidateId)?.candidateType || 'unknown';
+      const remote =
+        stats.get(pair.remoteCandidateId)?.candidateType || 'unknown';
+      this.markPhase(`ICE 通路 ${local} ↔ ${remote}`);
+    } catch {
+      this.markPhase('ICE 已连接');
+    }
+  }
 
   private async makeRoom(code: string, sender: boolean) {
     const room = {
@@ -153,7 +190,6 @@ export class RtcTransfer {
       token: randomToken(),
     };
     this.ensureActive();
-    const proof = await receiverProof(code);
     // Keep the capability before POST, so cancellation can clean up a lost response.
     this.room = room;
     await rtcRequest(
@@ -163,9 +199,9 @@ export class RtcTransfer {
         ? {
             roomId: room.roomId,
             tokenHash: await sha256(room.token),
-            verifier: await sha256(proof),
+            verifier: await sha256(randomToken()),
           }
-        : { roomId: room.roomId, tokenHash: await sha256(room.token), proof },
+        : { roomId: room.roomId, tokenHash: await sha256(room.token) },
       this.lifetime.signal
     );
     this.ensureActive();
@@ -199,16 +235,24 @@ export class RtcTransfer {
       this.pc.close();
     }
     this.channel = undefined;
-    this.helloChannel = undefined;
     this.pc = undefined;
   }
 
   private newPeer(iceServers: RTCIceServer[]) {
     this.ensureActive();
     this.resetPeer();
-    const pc = new RTCPeerConnection({ iceServers });
+    this.pendingRemoteCandidates = [];
+    const pc = new RTCPeerConnection({ iceServers, iceCandidatePoolSize: 4 });
     this.pc = pc;
     this.attempt = watchPeer(pc, this.lifetime.signal);
+    pc.addEventListener('connectionstatechange', () => {
+      if (pc.connectionState === 'connected')
+        void this.reportSelectedCandidatePair(pc);
+    });
+    pc.addEventListener('icecandidateerror', (event) => {
+      const error = event as RTCPeerConnectionIceErrorEvent;
+      this.markPhase(`ICE 候选错误 ${error.errorCode}`);
+    });
     return pc;
   }
 
@@ -228,17 +272,70 @@ export class RtcTransfer {
     signal: AbortSignal
   ) {
     const room = this.room!;
-    await gather(pc, signal);
-    const value = await signSignal(room.code, {
-      version: 1,
+    const value: Signal = {
+      version: 2,
       roomId: room.roomId,
       generation,
       role,
       type: role === 'sender' ? 'offer' : 'answer',
       nonce: crypto.randomUUID(),
       sdp: pc.localDescription?.sdp || '',
-    });
+    };
     await sendSignal(room.roomId, room.token, value, signal);
+  }
+
+  private async publishCandidate(
+    generation: number,
+    role: 'sender' | 'receiver',
+    candidate: RTCIceCandidateInit,
+    signal: AbortSignal
+  ) {
+    const room = this.room!;
+    const value: Signal = {
+      version: 2,
+      roomId: room.roomId,
+      generation,
+      role,
+      type: 'candidate',
+      nonce: crypto.randomUUID(),
+      sdp: '',
+      candidate,
+    };
+    await sendSignal(room.roomId, room.token, value, signal);
+  }
+
+  private startTrickle(
+    pc: RTCPeerConnection,
+    generation: number,
+    role: 'sender' | 'receiver',
+    signal: AbortSignal,
+    attempt: AbortController
+  ) {
+    let descriptionPublished = false;
+    let queued: RTCIceCandidateInit[] = [];
+    let publishChain = Promise.resolve();
+    const append = (candidate: RTCIceCandidateInit) => {
+      publishChain = publishChain.then(() =>
+        this.publishCandidate(generation, role, candidate, signal)
+      );
+      void publishChain.catch((error) => {
+        if (!signal.aborted) attempt.abort(error);
+      });
+    };
+    pc.onicecandidate = (event) => {
+      if (!event.candidate) return;
+      const candidate = event.candidate.toJSON();
+      if (descriptionPublished) append(candidate);
+      else queued.push(candidate);
+    };
+    return async () => {
+      await this.publish(pc, generation, role, signal);
+      descriptionPublished = true;
+      const pending = queued;
+      queued = [];
+      for (const candidate of pending) append(candidate);
+      await publishChain;
+    };
   }
 
   private async poll(
@@ -254,7 +351,7 @@ export class RtcTransfer {
         for (const event of result.events) {
           const value = JSON.parse(event.payload) as Signal;
           try {
-            await verifySignal(room.code, value, room.roomId);
+            validateSignal(value, room.roomId);
           } catch {
             throw new ProtocolError('信令认证失败，已停止传输');
           }
@@ -266,7 +363,7 @@ export class RtcTransfer {
         if (signal.aborted) throw signal.reason;
         if (fatal(error) || ++failures >= 5) throw error;
       }
-      await delay(1500, signal);
+      await delay(this.channel?.readyState === 'open' ? 1500 : 300, signal);
     }
   }
 
@@ -277,10 +374,11 @@ export class RtcTransfer {
       // Validate the file and login before occupying a room.
       readApplicationToken();
       const code = generatePairingCode();
-      this.context = await createFileContext(code, file);
+      this.context = await createFileContext(file);
       this.ensureActive();
       const room = await this.makeRoom(code, true);
       this.callbacks.code?.(displayPairingCode(code));
+      this.markPhase('发送房间已创建');
       this.notifyStatus('配对码已生成，等待接收方连接（10 分钟内有效）…');
       const ice = await getIceServers(
         room.roomId,
@@ -313,6 +411,81 @@ export class RtcTransfer {
     }
   }
 
+  private async senderPake(
+    channel: RTCDataChannel,
+    inbox: ControlInbox,
+    signal: AbortSignal
+  ) {
+    const sid = crypto.getRandomValues(new Uint8Array(32));
+    const state = await createPakeEphemeral(
+      this.room!.code,
+      sid,
+      this.room!.roomId,
+      'sender'
+    );
+    sendControl(channel, {
+      type: 'pake-init',
+      sid: encodePakeBytes(sid),
+      share: encodePakeBytes(state.share),
+    });
+    const peer = await inbox.take('pake-share', signal);
+    if (
+      peer.role !== 'receiver' ||
+      peer.sid !== encodePakeBytes(sid) ||
+      !peer.share
+    )
+      throw new ProtocolError('配对握手无效');
+    const isk = derivePakeSessionKey(state, decodePakeBytes(peer.share, 32));
+    const confirmation = await createPakeConfirmation(isk, 'sender');
+    sendControl(channel, {
+      type: 'pake-confirm',
+      role: 'sender',
+      confirmation,
+    });
+    const response = await inbox.take('pake-confirm', signal);
+    if (response.role !== 'receiver' || !response.confirmation)
+      throw new ProtocolError('配对码验证失败');
+    await verifyPakeConfirmation(isk, 'receiver', response.confirmation);
+    this.pakeKey?.fill(0);
+    this.pakeKey = isk;
+    this.markPhase('配对码验证完成');
+  }
+
+  private async receiverPake(
+    channel: RTCDataChannel,
+    inbox: ControlInbox,
+    init: ControlMessage,
+    signal: AbortSignal
+  ) {
+    if (!init.sid || !init.share) throw new ProtocolError('配对握手无效');
+    const sid = pakeSid(init.sid);
+    const state = await createPakeEphemeral(
+      this.room!.code,
+      sid,
+      this.room!.roomId,
+      'receiver'
+    );
+    sendControl(channel, {
+      type: 'pake-share',
+      role: 'receiver',
+      sid: init.sid,
+      share: encodePakeBytes(state.share),
+    });
+    const isk = derivePakeSessionKey(state, decodePakeBytes(init.share, 32));
+    const confirmation = await inbox.take('pake-confirm', signal);
+    if (confirmation.role !== 'sender' || !confirmation.confirmation)
+      throw new ProtocolError('配对码验证失败');
+    await verifyPakeConfirmation(isk, 'sender', confirmation.confirmation);
+    sendControl(channel, {
+      type: 'pake-confirm',
+      role: 'receiver',
+      confirmation: await createPakeConfirmation(isk, 'receiver'),
+    });
+    this.pakeKey?.fill(0);
+    this.pakeKey = isk;
+    this.markPhase('配对码验证完成');
+  }
+
   private async sendAttempt(
     file: File,
     iceServers: RTCIceServer[],
@@ -324,6 +497,15 @@ export class RtcTransfer {
     this.bindChannel(channel, attempt);
     const signal = attempt.signal;
     const context = this.context!;
+    const flushRemoteCandidates: RTCIceCandidateInit[] = [];
+    const inbox = new ControlInbox();
+    const publishOfferAndCandidates = this.startTrickle(
+      pc,
+      generation,
+      'sender',
+      signal,
+      attempt
+    );
     let expected: 'ready' | 'ack' | 'saved' | undefined;
     let result: ControlMessage | undefined;
     let ackIndex = -1;
@@ -332,6 +514,10 @@ export class RtcTransfer {
         if (typeof event.data !== 'string')
           throw new ProtocolError('收到无效响应');
         const message = parseControl(event.data);
+        if (message.type.startsWith('pake-')) {
+          inbox.push(event.data);
+          return;
+        }
         if (message.type === 'cancel' || message.type === 'error')
           throw new ProtocolError('接收方已取消或拒绝传输');
         if (
@@ -367,27 +553,34 @@ export class RtcTransfer {
     };
     try {
       const polling = this.poll(async (value) => {
-        if (
-          value.role === 'receiver' &&
-          value.generation === generation &&
-          !pc.remoteDescription
-        ) {
+        if (value.generation !== generation || value.role !== 'receiver')
+          return;
+        if (value.type === 'answer' && !pc.remoteDescription) {
           await pc.setRemoteDescription({ type: 'answer', sdp: value.sdp });
+          this.markPhase('Answer 已接收');
+          while (flushRemoteCandidates.length)
+            await pc.addIceCandidate(flushRemoteCandidates.shift()!);
+        } else if (value.type === 'candidate') {
+          if (pc.remoteDescription) await pc.addIceCandidate(value.candidate!);
+          else flushRemoteCandidates.push(value.candidate!);
         }
       }, signal).catch((error) => {
         if (!signal.aborted) attempt.abort(error);
       });
       await pc.setLocalDescription(await pc.createOffer());
-      await this.publish(pc, generation, 'sender', signal);
+      await publishOfferAndCandidates();
+      this.markPhase('Offer 已发送，正在协商 ICE');
       await waitUntil(
         () => channel.readyState === 'open',
         signal,
         generation === 1 ? 600000 : 90000,
         '连接超时：请确认双方在线；当前网络可能需要 TURN'
       );
+      await this.senderPake(channel, inbox, signal);
+      const envelope = await sealFileEnvelope(context, this.pakeKey!);
       const ready = await response(
         'ready',
-        () => control(channel, { type: 'hello', envelope: context.envelope }),
+        () => control(channel, { type: 'hello', envelope }),
         600000
       );
       const next = resumeIndex(ready.nextChunk, context.manifest.chunks);
@@ -452,21 +645,34 @@ export class RtcTransfer {
       if (!window.isSecureContext || !window.RTCPeerConnection)
         throw new Error('请使用支持 WebRTC 的浏览器，通过 HTTPS 打开此页面');
       const room = await this.makeRoom(normalizeCode(pairingCode), false);
+      this.markPhase('接收房间已加入');
       const ice = await getIceServers(
         room.roomId,
         room.token,
         this.lifetime.signal
       );
-      this.notifyStatus('已加入，等待发送方建立加密连接…');
+      this.notifyStatus('配对成功，正在建立加密连接…');
       this.terminalTimer = setTimeout(
         () => this.fail(new Error('会话已超过两小时，请重新配对')),
         7200000
       );
       await this.poll(async (value) => {
-        if (value.role !== 'sender' || value.generation <= this.generation)
-          return;
-        this.generation = value.generation;
-        await this.receiveOffer(value, ice.iceServers);
+        if (
+          value.generation > this.generation &&
+          value.role === 'sender' &&
+          value.type === 'offer'
+        ) {
+          this.generation = value.generation;
+          await this.receiveOffer(value, ice.iceServers);
+        } else if (
+          value.generation === this.generation &&
+          value.role === 'sender' &&
+          value.type === 'candidate'
+        ) {
+          const pc = this.pc;
+          if (pc?.remoteDescription) await pc.addIceCandidate(value.candidate!);
+          else if (pc) this.pendingRemoteCandidates.push(value.candidate!);
+        }
       }, this.lifetime.signal);
     } catch (error) {
       if (this.completed) this.stop(false);
@@ -477,6 +683,14 @@ export class RtcTransfer {
   private async receiveOffer(value: Signal, iceServers: RTCIceServer[]) {
     const pc = this.newPeer(iceServers);
     const attempt = this.attempt!;
+    const flushRemoteCandidates: RTCIceCandidateInit[] = [];
+    const publishAnswerAndCandidates = this.startTrickle(
+      pc,
+      value.generation,
+      'receiver',
+      attempt.signal,
+      attempt
+    );
     // Serialize new hello behind any old write, including an ACK lost on disconnect.
     pc.ondatachannel = (event) => {
       const channel = event.channel;
@@ -489,7 +703,30 @@ export class RtcTransfer {
         return;
       }
       this.bindChannel(channel, attempt);
+      const inbox = new ControlInbox();
       channel.onmessage = (message) => {
+        if (typeof message.data === 'string') {
+          try {
+            const controlMessage = parseControl(message.data);
+            if (controlMessage.type.startsWith('pake-')) {
+              inbox.push(message.data);
+              if (controlMessage.type === 'pake-init')
+                void this.receiverPake(
+                  channel,
+                  inbox,
+                  controlMessage,
+                  attempt.signal
+                ).catch((error) => {
+                  if (!attempt.signal.aborted && channel === this.channel)
+                    this.fail(new ProtocolError(errorText(error)));
+                });
+              return;
+            }
+          } catch (error) {
+            this.fail(error);
+            return;
+          }
+        }
         this.receiveQueue = this.receiveQueue
           .then(async () => {
             if (this.stopped || channel !== this.channel) return;
@@ -505,15 +742,20 @@ export class RtcTransfer {
         'abort',
         () => {
           if (!this.completed && !this.stopped && this.channel === channel)
-            this.notifyStatus('连接中断，等待发送方重连，已保存的部分会保留…');
+            this.notifyStatus('连接中断，正在自动重连…');
         },
         { once: true }
       );
     };
     try {
       await pc.setRemoteDescription({ type: 'offer', sdp: value.sdp });
+      while (this.pendingRemoteCandidates.length)
+        await pc.addIceCandidate(this.pendingRemoteCandidates.shift()!);
+      while (flushRemoteCandidates.length)
+        await pc.addIceCandidate(flushRemoteCandidates.shift()!);
       await pc.setLocalDescription(await pc.createAnswer());
-      await this.publish(pc, value.generation, 'receiver', attempt.signal);
+      await publishAnswerAndCandidates();
+      this.markPhase('Answer 已发送，正在协商 ICE');
     } catch (error) {
       if (!attempt.signal.aborted || fatal(error)) throw error;
     }
@@ -528,29 +770,35 @@ export class RtcTransfer {
       if (message.type === 'cancel' || message.type === 'error')
         throw new ProtocolError('发送方已取消传输');
       if (message.type === 'hello') {
-        const context = await openFileContext(
-          this.room!.code,
-          message.envelope!
-        );
+        if (!this.pakeKey) throw new ProtocolError('配对密钥尚未建立');
+        const context = await openFileContext(this.pakeKey, message.envelope!);
         if (
           this.context &&
-          JSON.stringify(this.context.envelope) !==
-            JSON.stringify(context.envelope)
+          (this.context.keyFingerprint !== context.keyFingerprint ||
+            JSON.stringify(this.context.manifest) !==
+              JSON.stringify(context.manifest))
         )
           throw new ProtocolError('续传文件身份不匹配');
-        this.helloChannel = channel;
         this.context ??= context;
         this.assembler ??= new ChunkAssembler(context);
         this.assembler.reset();
-        if (this.sink || this.saved)
+        if (this.saved) {
           control(channel, {
             type: 'ready',
             nextChunk: this.assembler.nextChunk,
           });
-        else {
-          this.callbacks.file?.(context.manifest);
-          this.notifyStatus('请确认文件信息并选择保存位置');
+          return;
         }
+        if (!this.sink) {
+          this.callbacks.file?.(context.manifest);
+          this.notifyStatus('配对成功，准备接收文件…');
+          this.sink = await createSink(context.manifest, { deferPicker: true });
+        }
+        control(channel, {
+          type: 'ready',
+          nextChunk: this.assembler.nextChunk,
+        });
+        this.notifyStatus(`正在接收：${context.manifest.name}`);
         return;
       }
       if (message.type === 'complete') {
@@ -593,6 +841,8 @@ export class RtcTransfer {
     this.ensureActive();
     await this.sink.write(new Uint8Array(plain));
     this.assembler.commit();
+    if (this.assembler.nextChunk === 1)
+      this.markPhase('首个文件块已认证并写入');
     this.callbacks.progress(
       Math.min(
         99,
@@ -604,36 +854,9 @@ export class RtcTransfer {
     control(channel, { type: 'ack', index });
   }
 
-  /** Invoked synchronously from the user's click, before any network/crypto await. */
-  async accept() {
-    if (!this.context || this.stopped || this.sink || this.accepting)
-      return !!this.sink;
-    this.accepting = true;
-    try {
-      const sink = await createSink(this.context.manifest);
-      if (this.stopped) {
-        await sink.abort();
-        return;
-      }
-      this.sink = sink;
-      if (
-        this.channel?.readyState === 'open' &&
-        this.helloChannel === this.channel
-      )
-        control(this.channel, {
-          type: 'ready',
-          nextChunk: this.assembler!.nextChunk,
-        });
-      this.notifyStatus(`正在接收：${this.context.manifest.name}`);
-      return true;
-    } catch (error) {
-      // Cancelling the picker never silently falls back to downloading into memory.
-      if (error instanceof DOMException && error.name === 'AbortError')
-        this.notifyStatus('已取消选择保存位置，可再次点击接收');
-      else this.fail(error);
-    } finally {
-      this.accepting = false;
-    }
+  /** Transfer starts immediately; save location is selected after completion. */
+  get completedFile() {
+    return this.saved;
   }
 
   cancel() {
@@ -670,6 +893,8 @@ export class RtcTransfer {
     clearTimeout(this.terminalTimer);
     this.resetPeer();
     this.worker?.dispose();
+    this.pakeKey?.fill(0);
+    this.pakeKey = undefined;
     void this.receiveQueue
       .then(() => this.sink?.abort())
       .catch(() => undefined);
