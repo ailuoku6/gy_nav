@@ -1,4 +1,25 @@
-# React + TypeScript + Vite
+# GY Nav
+
+This project is a React + TypeScript + Vite application with a Hono API.
+
+## Cloudflare development
+
+The primary development and deployment path now uses the Cloudflare CLI (`cf`):
+
+```sh
+pnpm install
+pnpm dev
+pnpm build
+pnpm deploy
+```
+
+See [docs/cloudflare-cli-migration.md](docs/cloudflare-cli-migration.md) for the
+Worker configuration, D1 environments, required secrets, and the Pages rollback
+path.
+
+The original `wrangler.toml` and `build:pages` command are intentionally kept
+for rollback and compatibility testing. They are not merged into the new
+`cloudflare.config.ts` configuration.
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

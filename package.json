@@ -4,16 +4,18 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build && cp -r functions build/ && cp -r lib build/ && find build/lib -name '*.test.ts' -delete",
+    "dev": "cf dev",
+    "build": "tsc -b && cf build",
+    "build:pages": "tsc -b && vite build --config vite.pages.config.ts && cp -r functions build/ && cp -r lib build/ && find build/lib -name '*.test.ts' -delete",
+    "deploy": "tsc -b && cf deploy",
     "lint": "eslint . --ext ts,tsx --ignore-pattern build --report-unused-disable-directives --max-warnings 0",
     "test": "vitest run",
     "test:watch": "vitest",
     "preview": "vite preview",
-    "preview-api": "npm run build && wrangler pages dev",
+    "preview-api": "npm run build:pages && wrangler pages dev build",
     "test:rtc:e2e": "node scripts/rtc-e2e.mjs",
     "rtc:db:local": "wrangler d1 execute DB --local --file lib/hono/SQL/rtc.sql",
-    "rtc:dev": "npm run build && wrangler pages dev build --port 8789 --binding TokenSecret=rtc-local-e2e"
+    "rtc:dev": "npm run build:pages && wrangler pages dev build --port 8789 --binding TokenSecret=rtc-local-e2e"
   },
   "dependencies": {
     "@cipherman/pake-js": "^0.1.1",
@@ -39,6 +41,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240529.0",
+    "@cloudflare/vite-plugin": "2.0.0-beta.sha-52b0dc0e9",
     "@hono/vite-cloudflare-pages": "^0.4.0",
     "@hono/vite-dev-server": "^0.12.1",
     "@types/jsonp": "^0.2.3",
@@ -48,7 +51,8 @@
     "@types/react-router-dom": "^5.3.3",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^7.13.1",
-    "@vitejs/plugin-react": "^4.3.1",
+    "@vitejs/plugin-react": "^5.1.1",
+    "cf": "1.0.0-beta.12",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
@@ -56,7 +60,7 @@
     "prettier": "^3.3.2",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.2.2",
-    "vite": "^5.3.1",
+    "vite": "^7.3.1",
     "vitest": "2.1.9",
     "wrangler": "^3.57.2"
   }

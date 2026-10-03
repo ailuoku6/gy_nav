@@ -10,5 +10,5 @@
     "noEmit": true,
     "types": ["@cloudflare/workers-types", "vite/client"]
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "vite.pages.config.ts", "cloudflare.config.ts"]
 }
