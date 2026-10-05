@@ -1,6 +1,7 @@
 import { Context } from 'hono';
 
 import { BlankInput } from 'hono/types';
+import type { UserSyncDurableObject } from '../../userSync';
 
 export interface IFriendSite {
   site_name: string;
@@ -28,6 +29,7 @@ export type Bindings = {
   RTC_TURN_KEY_ID?: string;
   RTC_TURN_KEY_SECRET?: string;
   DB: D1Database;
+  USER_SYNC: DurableObjectNamespace<UserSyncDurableObject>;
 };
 
 export type PasskeyChallengeType = 'registration' | 'authentication';

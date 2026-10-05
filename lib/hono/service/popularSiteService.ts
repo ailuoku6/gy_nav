@@ -1,4 +1,5 @@
 import { Ctx } from '../types';
+import { broadcastUserDataUpdate } from './userSyncService';
 
 export default class PopularSiteService {
   public static getPopularSites = async (ctx: Ctx) => {
@@ -39,6 +40,7 @@ export default class PopularSiteService {
         .run();
 
       if (result.success) {
+        await broadcastUserDataUpdate(ctx, 'popularSites');
         return ctx.json({
           result: true,
           msg: 'popularSites updated successfully',

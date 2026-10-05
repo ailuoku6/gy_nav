@@ -42,6 +42,7 @@ import { homeKeyDown } from '../utils/Events';
 import { KeyboardEvent } from 'hono/jsx';
 import { DeviceTypes } from '../types';
 import { observer } from 'kisstate';
+import { connectUserSync } from '../utils/userSync';
 
 const Home = () => {
   const appRef = useRef<HTMLDivElement>(null);
@@ -149,6 +150,7 @@ const Home = () => {
       console.log('验证token');
       post(ValidToken, {});
     }
+    const disconnectUserSync = userRef.current ? connectUserSync() : () => undefined;
     if (userRef.current === null) {
       console.log('读取本地');
 
@@ -210,6 +212,7 @@ const Home = () => {
         });
     }
     return () => {
+      disconnectUserSync();
       window.removeEventListener('scroll', throttleHandleScroll);
       window.removeEventListener('keydown', handleKeyDown);
     };

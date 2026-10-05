@@ -1,4 +1,5 @@
 import { Ctx } from '../types';
+import { broadcastUserDataUpdate } from './userSyncService';
 
 export default class SiteService {
   public static getPartData = async (ctx: Ctx) => {
@@ -46,6 +47,7 @@ export default class SiteService {
         .run();
 
       if (result.success) {
+        await broadcastUserDataUpdate(ctx, 'partData');
         return ctx.json({ result: true, msg: 'partData updated successfully' });
       } else {
         return ctx.json({ result: false, msg: 'Failed to update partData' });

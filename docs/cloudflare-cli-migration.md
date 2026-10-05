@@ -112,3 +112,22 @@ rollback path until that verification is complete.
 
 No production deployment, domain change, database migration, or resource
 creation is performed by this migration.
+
+## Account data synchronization
+
+The active Workers deployment declares `USER_SYNC` and the SQLite-backed
+`UserSyncDurableObject` in `cloudflare.config.ts`. One object per authenticated
+user broadcasts invalidation notifications after successful `upPartData` and
+`upPopularSites` writes. Clients fetch `getPartData` on notification and after
+reconnection, then apply the response without writing it back to the server.
+
+The legacy Pages rollback path does not host this Durable Object. It keeps its
+existing D1 behavior, but live synchronization requires the Workers deployment.
+Deploy with the existing `pnpm deploy` command after verifying the target account
+and secrets. No D1 schema migration is needed for synchronization.
+
+Synchronization is last-write-wins, matching the existing whole-document update
+API; it does not merge simultaneous edits. Notification failures are logged and
+do not change the result of a completed D1 write. Reconnecting fetches the latest
+data. The WebSocket endpoint validates the JWT and rejects cross-origin requests;
+its query string contains the token and must not be recorded in access logs.

@@ -6,6 +6,7 @@ import QS from 'qs';
 import { BaseUrl } from './Api';
 import { GetTokenStore, SetTokenStore } from './localStorageUtil';
 import { history } from '../router/router';
+import { syncDeviceId } from './syncDevice';
 
 const backToLogin = () => {
   history.replace('/login');
@@ -40,6 +41,7 @@ axios.interceptors.request.use(
     // token && (config.headers.Authorization = token);
     // return config;
     const token = GetTokenStore();
+    config.headers.common['X-Device-Id'] = syncDeviceId;
     if (token) {
       // 判断是否存在token，如果存在的话，则每个http header都加上token
       // Bearer是JWT的认证头部信息

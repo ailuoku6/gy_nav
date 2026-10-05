@@ -14,6 +14,7 @@ import ClipboardService from './service/clipboardService';
 import SiteHealthService from './service/siteHealthService';
 import PasskeyService from './service/passkeyService';
 import RtcService from './service/rtcService';
+import { verify } from 'hono/jwt';
 
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -23,6 +24,7 @@ const authFreeSet = new Set([
   '/api/getAllFS',
   '/api/passkey/login/options',
   '/api/passkey/login/verify',
+  '/api/sync',
 ]);
 
 app.use('/api/*', (c, next) => {
@@ -43,6 +45,35 @@ app.use('/api/rtc/*', async (c, next) => {
   const origin = c.req.header('Origin');
   if (origin && origin !== new URL(c.req.url).origin) return c.json({ result: false, msg: '不允许跨站请求' }, 403);
   await next();
+});
+
+app.get('/api/sync', async (ctx) => {
+  const origin = ctx.req.header('Origin');
+  if (origin && origin !== new URL(ctx.req.url).origin) {
+    return ctx.json({ result: false, msg: 'Cross-site connection denied' }, 403);
+  }
+  if (ctx.req.header('Upgrade')?.toLowerCase() !== 'websocket') {
+    return ctx.json({ result: false, msg: 'WebSocket upgrade required' }, 426);
+  }
+
+  const token = new URL(ctx.req.url).searchParams.get('token');
+  if (!token) return ctx.json({ result: false, msg: 'Token is required' }, 401);
+
+  try {
+    const payload = await verify(token, ctx.env.TokenSecret);
+    const userId = (payload.user as { id?: number } | undefined)?.id;
+    const deviceId = new URL(ctx.req.url).searchParams.get('deviceId');
+    if (!userId || !deviceId) {
+      return ctx.json({ result: false, msg: 'Invalid sync identity' }, 401);
+    }
+
+    const headers = new Headers(ctx.req.raw.headers);
+    headers.set('X-Device-Id', deviceId);
+    const request = new Request(ctx.req.raw, { headers });
+    return await ctx.env.USER_SYNC.getByName(String(userId)).fetch(request);
+  } catch {
+    return ctx.json({ result: false, msg: 'Invalid token' }, 401);
+  }
 });
 
 // Hono catches route errors inside compose; a surrounding middleware catch
